@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Skylark and Java rules interoperability - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2017/03/07/java-sandwich.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Skylark and Java rules interoperability">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Skylark and Java rules interoperability</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/iirina">Irina Iancu</a>
+  
+  
+
+
+on <span class="text-muted">07 March 2017</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>As of Bazel 0.4.4, Java compilation is possible from a Skylark rule. This
+facilitates the Skylark and Java interoperability and allows creating what we
+call <em>Java sandwiches</em> in Bazel.</p>
+
+<h2 id="what-is-a-bazel-java-sandwich">What is a Bazel Java sandwich?</h2>
+
+<p>A Java sandwich refers to custom rules written in Skylark being able to depend
+on Bazel native rules (e.g. <code class="language-plaintext highlighter-rouge">java_library</code>) and the other way around. A typical
+Java sandwich in Bazel could be illustrated like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...)</span>
+<span class="nf">java_skylark_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">middle</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+<span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">bottom</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:middle</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+</code></pre></div></div>
+<h2 id="built-in-support-for-java">Built-in support for Java</h2>
+
+<p>In Skylark, an interface to built-in Java functionality is available via the <code class="language-plaintext highlighter-rouge">java_common</code> module.
+The full API can be found in <a href="https://bazel.build/skylark/lib/java_common.html">the documentation</a>.</p>
+
+<h3 id="java_commoncompile"><code class="language-plaintext highlighter-rouge">java_common.compile</code></h3>
+
+<p>Compiles Java source files/jars from the implementation of a Skylark rule and
+returns a <code class="language-plaintext highlighter-rouge">java_common.provider</code> that encapsulates the compilation details.</p>
+
+<h3 id="java_commonmerge"><code class="language-plaintext highlighter-rouge">java_common.merge</code></h3>
+
+<p>Merges the given providers into a single <code class="language-plaintext highlighter-rouge">java_common.provider</code>.</p>
+
+<h2 id="examples">Examples</h2>
+
+<p>To allow other Java rules (native or custom) to depend on a Skylark rule, the
+Skylark rule should return a <code class="language-plaintext highlighter-rouge">java_common.provider</code>. All native Java rules
+return <code class="language-plaintext highlighter-rouge">java_common.provider</code> by default, which makes it possible for any Java
+related Skylark rule to depend on them.</p>
+
+<p>For now, there are 3 ways of creating a <code class="language-plaintext highlighter-rouge">java_common.provider</code>:</p>
+
+<ol>
+  <li>The result of <code class="language-plaintext highlighter-rouge">java_common.compile</code>.</li>
+  <li>Fetching it from a Java dependency.</li>
+  <li>Merging multiple <code class="language-plaintext highlighter-rouge">java_common.provider</code> instances using <code class="language-plaintext highlighter-rouge">java_common.merge</code>.</li>
+</ol>
+
+<h3 id="using-the-java-sandwich-with-compilation-example">Using the Java sandwich with compilation example</h3>
+
+<p>This example illustrates the typical Java sandwich described above, that will
+make use of Java compilation:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...)</span>
+<span class="nf">java_skylark_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">middle</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+<span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">bottom</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:middle</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+</code></pre></div></div>
+
+<p>In the BUILD file we load the Skylark rule and have the rules:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">load</span><span class="p">(</span><span class="sh">'</span><span class="s">:java_skylark_library.bzl</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">java_skylark_library</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="nf">java_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">top</span><span class="sh">"</span><span class="p">,</span>
+  <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">A.java</span><span class="sh">"</span><span class="p">],</span>
+  <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:middle</span><span class="sh">"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nf">java_skylark_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">middle</span><span class="sh">"</span><span class="p">,</span>
+  <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">B.java</span><span class="sh">"</span><span class="p">],</span>
+  <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:bottom</span><span class="sh">"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nf">java_library</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">bottom</span><span class="sh">"</span><span class="p">,</span>
+  <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">C.java</span><span class="sh">"</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The implementation of <code class="language-plaintext highlighter-rouge">java_skylark_library</code> rule does the following:</p>
+
+<ol>
+  <li>Collects all the <code class="language-plaintext highlighter-rouge">java_common.provider</code>s from its dependencies and merges
+them using <code class="language-plaintext highlighter-rouge">java_common.merge</code>.</li>
+  <li>Creates an artifact that will be the output jar of the Java compilation.</li>
+  <li>Compiles the specified Java source files using <code class="language-plaintext highlighter-rouge">java_common.compile</code>, passing
+as dependencies the collected <code class="language-plaintext highlighter-rouge">java_common.provider</code>s.</li>
+  <li>Returns the output jar and the <code class="language-plaintext highlighter-rouge">java_common.provider</code> resulting from the
+compilation.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_impl</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="n">deps</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">ctx</span><span class="p">.</span><span class="n">attr</span><span class="p">.</span><span class="n">deps</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">java_common</span><span class="p">.</span><span class="n">provider</span> <span class="ow">in</span> <span class="n">dep</span><span class="p">:</span>
+      <span class="n">deps</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="n">java_common</span><span class="p">.</span><span class="n">provider</span><span class="p">])</span>
+
+  <span class="n">output_jar</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="nf">new_file</span><span class="p">(</span><span class="sh">"</span><span class="s">lib</span><span class="sh">"</span> <span class="o">+</span> <span class="n">ctx</span><span class="p">.</span><span class="n">label</span><span class="p">.</span><span class="n">name</span> <span class="o">+</span> <span class="sh">"</span><span class="s">.jar</span><span class="sh">"</span><span class="p">)</span>
+
+  <span class="n">compilation_provider</span> <span class="o">=</span> <span class="n">java_common</span><span class="p">.</span><span class="nf">compile</span><span class="p">(</span>
+    <span class="n">ctx</span><span class="p">,</span>
+    <span class="n">source_files</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="n">files</span><span class="p">.</span><span class="n">srcs</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">output_jar</span><span class="p">,</span>
+    <span class="n">javac_opts</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="n">deps</span><span class="p">,</span>
+    <span class="n">strict_deps</span> <span class="o">=</span> <span class="sh">"</span><span class="s">ERROR</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">java_toolchain</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="n">attr</span><span class="p">.</span><span class="n">_java_toolchain</span><span class="p">,</span>
+    <span class="n">host_javabase</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">.</span><span class="n">attr</span><span class="p">.</span><span class="n">_host_javabase</span>
+  <span class="p">)</span>
+  <span class="k">return</span> <span class="nf">struct</span><span class="p">(</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="nf">set</span><span class="p">([</span><span class="n">output_jar</span><span class="p">]),</span>
+    <span class="n">providers</span> <span class="o">=</span> <span class="p">[</span><span class="n">compilation_provider</span><span class="p">]</span>
+  <span class="p">)</span>
+
+<span class="n">java_skylark_library</span> <span class="o">=</span> <span class="nf">rule</span><span class="p">(</span>
+  <span class="n">implementation</span> <span class="o">=</span> <span class="n">_impl</span><span class="p">,</span>
+  <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">srcs</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label_list</span><span class="p">(</span><span class="n">allow_files</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="sh">"</span><span class="s">deps</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label_list</span><span class="p">(),</span>
+    <span class="sh">"</span><span class="s">_java_toolchain</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="nc">Label</span><span class="p">(</span><span class="sh">"</span><span class="s">@bazel_tools//tools/jdk:toolchain</span><span class="sh">"</span><span class="p">)),</span>
+    <span class="sh">"</span><span class="s">_host_javabase</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="nc">Label</span><span class="p">(</span><span class="sh">"</span><span class="s">//tools/defaults:jdk</span><span class="sh">"</span><span class="p">))</span>
+  <span class="p">},</span>
+  <span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">java</span><span class="sh">"</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="just-passing-around-information-about-java-rules-example">Just passing around information about Java rules example</h3>
+
+<p>In some use cases there is no need for Java compilation, but rather just passing
+information about Java rules around. A Skylark rule can have some other
+(irrelevant here) purpose, but if it is placed somewhere between two Java rules
+it should not lose information from bottom to top.</p>
+
+<p>In this example we have the same Bazel sandwich as above:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...)</span>
+<span class="nf">java_skylark_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">middle</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:top</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+<span class="nf">java_library</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">bottom</span><span class="sh">"</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:middle</span><span class="sh">"</span><span class="p">,</span> <span class="p">...],</span> <span class="p">...)</span>
+</code></pre></div></div>
+
+<p>only that <code class="language-plaintext highlighter-rouge">java_skylark_library</code> won’t make use of Java compilation, but will
+make sure that all the Java information encapsulated by the Java library
+<code class="language-plaintext highlighter-rouge">bottom</code> will be passed on to the Java library <code class="language-plaintext highlighter-rouge">top</code>.</p>
+
+<p>The BUILD file is identical to the one from the previous example.</p>
+
+<p>The implementation of <code class="language-plaintext highlighter-rouge">java_skylark_library</code> rule does the following:</p>
+
+<ol>
+  <li>Collects all the <code class="language-plaintext highlighter-rouge">java_common.provider</code>s from its dependencies</li>
+  <li>Returns the <code class="language-plaintext highlighter-rouge">java_common.provider</code> that resulted from merging the collected
+dependencies.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">_impl</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+  <span class="n">deps</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">ctx</span><span class="p">.</span><span class="n">attr</span><span class="p">.</span><span class="n">deps</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">java_common</span><span class="p">.</span><span class="n">provider</span> <span class="ow">in</span> <span class="n">dep</span><span class="p">:</span>
+      <span class="n">deps</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="n">java_common</span><span class="p">.</span><span class="n">provider</span><span class="p">])</span>
+  <span class="n">deps_provider</span> <span class="o">=</span> <span class="n">java_common</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nf">struct</span><span class="p">(</span>
+    <span class="n">providers</span> <span class="o">=</span> <span class="p">[</span><span class="n">deps_provider</span><span class="p">]</span>
+  <span class="p">)</span>
+
+<span class="n">java_skylark_library</span> <span class="o">=</span> <span class="nf">rule</span><span class="p">(</span>
+  <span class="n">implementation</span> <span class="o">=</span> <span class="n">_impl</span><span class="p">,</span>
+  <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">srcs</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label_list</span><span class="p">(</span><span class="n">allow_files</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+    <span class="sh">"</span><span class="s">deps</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label_list</span><span class="p">(),</span>
+    <span class="sh">"</span><span class="s">_java_toolchain</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="nc">Label</span><span class="p">(</span><span class="sh">"</span><span class="s">@bazel_tools//tools/jdk:toolchain</span><span class="sh">"</span><span class="p">)),</span>
+    <span class="sh">"</span><span class="s">_host_javabase</span><span class="sh">"</span><span class="p">:</span> <span class="n">attr</span><span class="p">.</span><span class="nf">label</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="nc">Label</span><span class="p">(</span><span class="sh">"</span><span class="s">//tools/defaults:jdk</span><span class="sh">"</span><span class="p">))</span>
+  <span class="p">},</span>
+  <span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">java</span><span class="sh">"</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+<h2 id="more-to-come">More to come</h2>
+
+<p>Right now there is no way of creating a <code class="language-plaintext highlighter-rouge">java_common.provider</code> that encapsulates
+compiled code (and its transitive dependencies), other than
+<code class="language-plaintext highlighter-rouge">java_common.compile</code>. For example one may want to create a provider from a
+<code class="language-plaintext highlighter-rouge">.jar</code> file produced by some other means.</p>
+
+<p>Soon there will be support for use cases like this. Stay tuned!</p>
+
+<p>If you are interested in tracking the progress on Bazel Java sandwich you can
+subscribe to <a href="https://github.com/bazelbuild/bazel/issues/2614">this Github issue</a>.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

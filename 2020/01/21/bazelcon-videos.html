@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BazelCon 2019 Videos and Birds of a Feather notes - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2020/01/21/bazelcon-videos.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="BazelCon 2019 Videos and Birds of a Feather notes">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">BazelCon 2019 Videos and Birds of a Feather notes</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/mnarinsky">Misha Narinsky</a>
+  
+  
+
+
+on <span class="text-muted">21 January 2020</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>We are truly thankful to everyone in our community for attending our annual <a href="https://sites.google.com/corp/bazel.build/conference2017/2019">Bazel Conference</a> and making it a success! Check out the videos and Birds of a Feather session notes from the conference below:</p>
+
+<h2 id="session-videos-full-playlist">Session Videos (<a href="https://www.youtube.com/playlist?list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj">full playlist</a>)</h2>
+
+<ul>
+  <li><strong><a href="https://www.youtube.com/watch?v=eymphDN7No4&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=2&amp;t=0s">Keynote: The Role of Catastrophic Failure in Software Design</a></strong> – <em>Jeff Atwood (Stack Overflow/Discourse)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=dXhmRal9TsA&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=2">Bazel State of the Union</a></strong> <em>– John Field and Dmirty Lomov (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=Gh4SJuYUoQI&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=3">Building Self Driving Cars with Bazel</a></strong> <em>– Axel Uhlig and Patrick Ziegler (BMW Group)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=BYg3fDFrTz8&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=4">Moving to a Bazel-based CI system: 6 Learnings</a></strong> <em>– Or Shachar (Wix)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=eUlQnJm3NPU&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=5">Bazel Federation</a></strong> <em>– Florian Weikert (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=keT8ixRS6Fk&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=6">Lessons from our First 100,000 Bazel Builds</a></strong> <em>– Kevin Gessner (Etsy)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=NAPeWoimGx8&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=7">Migrating Lyft-iOS to Bazel</a></strong> <em>– Keith Smiley and Dave Lee (Lyft)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=9Dk7mtIm7_A&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=8">Test Selection</a></strong> <em>– Benjamin Peterson (Dropbox)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=gVdkJu3QRA4&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=9">Porting iOS Apps to Bazel</a></strong> <em>– Oscar Bonilla (LinkedIn)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=q3RAOwezexU&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=24">Boosting Dev Box Performance with Remote Execution for Non-Hermetic Build Engines</a></strong> <em>– Erik Mavrinac (Microsoft)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=xP6BIEUZh9Y&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=27">Building on Key - Keeping your Actions and Remote Executions in Tune</a></strong> <em>– George Gensure (UberATG)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=3w_I9ToY04s&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=26">Bazel remote execution API vs Goma</a></strong> <em>– Mostyn Bramley-Moore (Vewd Software)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=21VPe7HcuPE&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=28">Integrating with ease: leveraging BuildStream interaction with Bazel build for consistent results</a></strong> <em>– Daniel Silverstone (Codethink)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=fjfFe98LTm8&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=29">Building Self-Driving Cars with Bazel</a></strong> <em>– Michael Broll and Nico Valigi (Cruise)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=rQv1sjLU4cI&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=30">Make local development (with Bazel) great again!</a></strong> <em>– Ittai Zeidman (Wix)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=b8uR7_vReQ0&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=31">Gradle to Bazel</a></strong> <em>– Chip Dickson and Charles Walker (SUM Global Technology)</em></li>
+  <li><strong>Bazel Bootcamp (<a href="https://www.youtube.com/watch?v=BGOEq5FdNUQ&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=32">part 1</a> and <a href="https://www.youtube.com/watch?v=1KbfkOWO-DY&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=33">part 2</a>)</strong> <em>– Kyle Cordes (Oasis Digital)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=UwuRGpVpmbo&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=34">Bazel migration patterns: how to prove business value with a small investment</a></strong> <em>– Alex Eagle and Greg Magolan (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=MF2bahnAueM&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=35">Dynamic scheduling: Fastest clean and incremental builds</a></strong> <em>– Julio Merino (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=j332WfhNAFg&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=36">Building a great CI with Bazel</a></strong> <em>– Philipp Wollermann (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=JsDwhNTweiQ&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=10">Lightning Talk - A short overview of our company’s journey to sandbox Python</a></strong> <em>– Philipp Schrader (Peloton Technology)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=3DBZpahGnuI&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=12">Lightning Talk - Python Dependencies the Right* Way</a></strong> <em>– Ron Rothman (Beeswax)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=-JRpuIKHIWY&amp;feature=youtu.be">Lightning Talk - Creating Java based  Source Code Generators for Bazel</a></strong> <em>– Gunnar Wagenknecht (Salesforce)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=SkADnC4yFCk&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=11">Lightning Talk - Bazel &amp; Kubernetes:Develop like it’s production</a></strong> <em>– Steeve Morin (Zenly)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=EoYdWmMcqDs&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=13">Lightning Talk - How Bazel Handles Symlinks</a></strong> <em>– Nathan Hamata (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=29xrO-XJaJs&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=14">Lightning Talk - Test Result Caching at Dropbox</a></strong> <em>– Utsav Shah (Dropbox)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=s0nvBUnDqCo&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=15">Lightning Talk - Bazel Eclipse Feature</a></strong> <em>– Peter Laird (Salesforce)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=c7pWF_p38bM&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=16">Lightning Talk - Back to a Maven [repository]</a></strong> <em>– Simon Toens (Salesforce)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=TD1JDPD0hRA&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=17">Lightning Talk - Using Bazel to build a parallel and asynchronous artifact publishing pipeline</a></strong> <em>– Liron Tal (Wix)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=uuWV501y1w4&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=18">Lightning Talk - Testing Bazel’s Remote Execution API</a></strong> <em>– Josh Smith (Codethink)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=jcVvkFnK5gc&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=19">Lightning Talk - Building Eclipse Plug-Ins (and OSGi Bundles) with Bazel</a></strong> <em>– Gunnar Wagenknecht (Salesforce)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=2KzOLddhdoI&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=20">Lightning Talk - Why Not To Have Bazel Dependencies</a></strong> <em>– Alex Eagle, Greg Magolan (Google)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=rq5CRMaqbq0&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=21">Lightning Talk - Speedy Scala Builds  with Bazel at Databricks</a></strong> <em>– Ahir Reddy (Databricks)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=2a3S3MJOa9I&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=22">Lightning Talk - Bazel UI</a></strong> <em>– Paul Johnston (stack.build)</em></li>
+  <li><strong><a href="https://www.youtube.com/watch?v=_7IIc3ZTwKk&amp;list=PLxNYxgaZ8Rsf-7g43Z8LyXct9ax6egdSj&amp;index=23">Lightning Talk - Package manager integration with Bazel</a></strong> <em>– Andreas Herrmann (Tweag)</em></li>
+</ul>
+
+<h2 id="birds-of-a-feather-summaries">Birds of a Feather Summaries</h2>
+
+<ul>
+  <li><strong><a href="/bazel-blog/assets/BoF_2019_Java.pdf">Java Session Summary</a></strong></li>
+  <li><strong><a href="/bazel-blog/assets/BoF_2019_iOS.pdf">iOS Session Summary</a></strong></li>
+  <li><strong><a href="/bazel-blog/assets/BoF_2019_Python.pdf">Python Session Summary</a></strong></li>
+  <li><strong><a href="/bazel-blog/assets/BoF_2019_FrontEnd.pdf">Front End Session Summary</a></strong></li>
+  <li><strong><a href="/bazel-blog/assets/BoF_2019_C++.pdf">C++ Session Summary</a></strong></li>
+</ul>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Protocol Buffers in Bazel - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2017/02/27/protocol-buffers.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Protocol Buffers in Bazel">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Protocol Buffers in Bazel</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/cgrushko">Carmi Grushko</a>
+  
+  
+
+
+on <span class="text-muted">27 February 2017</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>Bazel currently provides rules for Java, JavaLite and C++.</p>
+
+<!-- TODO(yannic): Create documentation for rules_proto and link to that instead. 
+     https://github.com/bazelbuild/bazel/issues/9203 -->
+<p><a href="https://bazel.build/be/protocol-buffer.html#proto_library"><code class="language-plaintext highlighter-rouge">proto_library</code></a>
+is a language-agnostic rule that describes relations between <code class="language-plaintext highlighter-rouge">.proto</code> files.</p>
+
+<p><a href="https://bazel.build/be/java.html#java_proto_library"><code class="language-plaintext highlighter-rouge">java_proto_library</code></a>,
+<a href="https://bazel.build/be/java.html#java_lite_proto_library"><code class="language-plaintext highlighter-rouge">java_lite_proto_library</code></a>
+and
+<a href="https://bazel.build/be/c-cpp.html#cc_proto_library"><code class="language-plaintext highlighter-rouge">cc_proto_library</code></a>
+are rules that “attach” to <code class="language-plaintext highlighter-rouge">proto_library</code> and generate language-specific
+bindings.</p>
+
+<p>By making a <code class="language-plaintext highlighter-rouge">java_library</code> (resp. <code class="language-plaintext highlighter-rouge">cc_library</code>) depend on <code class="language-plaintext highlighter-rouge">java_proto_library</code>
+(resp. <code class="language-plaintext highlighter-rouge">cc_proto_library</code>) your code gains access to the generated code.</p>
+
+<h2 id="tldr---usage-example">TL;DR - Usage example</h2>
+
+<blockquote>
+  <p>TIP:
+<a href="https://github.com/cgrushko/proto_library">https://github.com/cgrushko/proto_library</a>
+contains a buildable example.</p>
+</blockquote>
+
+<h3 id="workspace-file">WORKSPACE file</h3>
+
+<p>Bazel’s proto rules implicitly depend on the
+<a href="https://github.com/google/protobuf">https://github.com/google/protobuf</a>
+distribution (described below, in “Implicit Dependencies and Proto Toolchains”).
+The following satisfies these dependencies:</p>
+
+<blockquote>
+  <p>TIP: Clone <a href="https://github.com/cgrushko/proto_library">https://github.com/cgrushko/proto_library</a> to try protobufs in Bazel now.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>Update (February 2020)</strong>: Starting with Bazel 3.0, the minimum Protocol Buffer
+version required is [<strong>3.11.3</strong>] (https://github.com/protocolbuffers/protobuf/releases/tag/v3.11.3).
+See this <a href="https://github.com/bazelbuild/bazel/issues/10335">issue</a> for more information.</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@bazel_tools//tools/build_defs/repo:http.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">http_archive</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># rules_cc defines rules for generating C++ code from Protocol Buffers.
+</span><span class="nf">http_archive</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_cc</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">35f2fb4ea0b3e61ad64a369de284e4fbbdcdba71836a5555abb5e194cf119509</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_cc-624b5d59dfb45672d4239422fa1e3de1822ee110</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">https://mirror.bazel.build/github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">https://github.com/bazelbuild/rules_cc/archive/624b5d59dfb45672d4239422fa1e3de1822ee110.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># rules_java defines rules for generating Java code from Protocol Buffers.
+</span><span class="nf">http_archive</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_java</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">ccf00372878d141f7d5568cedc4c42ad4811ba367ea3e26bc7c43445bbc52895</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_java-d7bf804c8731edd232cb061cb2a9fe003a85d8ee</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">https://mirror.bazel.build/github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">https://github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># rules_proto defines abstract rules for building Protocol Buffers.
+</span><span class="nf">http_archive</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_cc//cc:repositories.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rules_cc_dependencies</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">rules_cc_dependencies</span><span class="p">()</span>
+
+<span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_java//java:repositories.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rules_java_dependencies</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rules_java_toolchains</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">rules_java_dependencies</span><span class="p">()</span>
+<span class="nf">rules_java_toolchains</span><span class="p">()</span>
+
+<span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_proto//proto:repositories.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rules_proto_dependencies</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rules_proto_toolchains</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">rules_proto_dependencies</span><span class="p">()</span>
+<span class="nf">rules_proto_toolchains</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="build-files">BUILD files</h3>
+
+<blockquote>
+  <p>TIP: Clone <a href="https://github.com/cgrushko/proto_library">https://github.com/cgrushko/proto_library</a> to try protobufs in Bazel now.</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_cc//cc:defs.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">cc_proto_library</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_java//java:defs.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">java_proto_library</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_proto//proto:defs.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">proto_library</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">java_proto_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">person_java_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:person_proto</span><span class="sh">"</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">cc_proto_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">person_cc_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:person_proto</span><span class="sh">"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nf">proto_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">person_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">person.proto</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:address_proto</span><span class="sh">"</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">proto_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">address_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">address.proto</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:zip_code_proto</span><span class="sh">"</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">proto_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">zip_code_proto</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">zip_code.proto</span><span class="sh">"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>This file yields the following dependency graph:</p>
+
+<p><img src="/bazel-blog/assets/proto_library-dep-graph.png" alt="proto_library dependency graph" /></p>
+
+<p>Notice how the <code class="language-plaintext highlighter-rouge">proto_library</code> provide structure for both Java and C++ code
+generators, and how there’s only one <code class="language-plaintext highlighter-rouge">java_proto_library</code> even though there
+multiple <code class="language-plaintext highlighter-rouge">.proto</code> files.</p>
+
+<h2 id="benefits">Benefits</h2>
+
+<p>… in comparison with a macro that’s responsible for compiling all <code class="language-plaintext highlighter-rouge">.proto</code>
+files in a project.</p>
+
+<ol>
+  <li>Caching + incrementality: changing a single <code class="language-plaintext highlighter-rouge">.proto</code> only causes the
+rebuilding of dependant <code class="language-plaintext highlighter-rouge">.proto</code> files. This includes not only regenerating
+code, but also recompiling it. For large proto graphs this could be
+significant.</li>
+  <li>Depend on pieces of a proto graph from multiple places: in the example
+above, one can add a <code class="language-plaintext highlighter-rouge">cc_proto_library</code> that <code class="language-plaintext highlighter-rouge">deps</code> on <code class="language-plaintext highlighter-rouge">zip_code_proto</code>, and
+including it together with <code class="language-plaintext highlighter-rouge">//src:person_cc_proto</code> in the same project.
+Though they both transitively depend on <code class="language-plaintext highlighter-rouge">zip_code_proto</code>, there won’t be a
+linking error.</li>
+</ol>
+
+<h2 id="recommended-code-organization">Recommended Code Organization</h2>
+
+<ol>
+  <li>One proto_library rule per <code class="language-plaintext highlighter-rouge">.proto</code> file.</li>
+  <li>A file named <code class="language-plaintext highlighter-rouge">foo.proto</code> will be in a rule named <code class="language-plaintext highlighter-rouge">foo_proto</code>, which is
+located in the same package.</li>
+  <li>A <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code> that wraps a <code class="language-plaintext highlighter-rouge">proto_library</code> named <code class="language-plaintext highlighter-rouge">foo_proto</code> should be
+called <code class="language-plaintext highlighter-rouge">foo_&lt;lang&gt;_proto</code>, and be located in the same package.</li>
+</ol>
+
+<h2 id="faq">FAQ</h2>
+
+<p><strong>Q:</strong> I already have rules or macros named <code class="language-plaintext highlighter-rouge">proto_library</code>, <code class="language-plaintext highlighter-rouge">java_proto_library</code>,
+and <code class="language-plaintext highlighter-rouge">cc_proto_library</code>. Will there be a problem?<br />
+<strong>A:</strong> No. Since these rules are explicitely loaded through <code class="language-plaintext highlighter-rouge">load</code> statements,
+the new rule should not affect existing usage of the rules or macros.</p>
+
+<!-- TODO(yannic): This is outdated. -->
+<p><strong>Q:</strong> How do I use gRPC with these rules?<br />
+<strong>A:</strong> The Bazel rules do not generate RPC code since <code class="language-plaintext highlighter-rouge">protobuf</code> is independent
+of any RPC system. We will work with the gRPC team to create Skylark extensions
+to do so. (<a href="https://github.com/grpc/grpc/issues/9873">C++ Issue</a>, <a href="https://github.com/grpc/grpc-java/issues/2756">Java
+Issue</a>)</p>
+
+<p><strong>Q:</strong> Do you plan to release additional languages?<br />
+<strong>A:</strong> We’re currently <a href="https://docs.google.com/document/d/1u95vlQ1lWeQNR4bUw5T4cMeHTGJla2_e1dHHx7v4Dvg/edit">rewriting the existing</a>
+rules for C++ and Java in Starlark, making them independent of Bazel.
+We may add rules for other languages after this work is finished.</p>
+
+<p><strong>Q:</strong> How does one use well-known types? (e.g., <code class="language-plaintext highlighter-rouge">any.proto</code>,
+<code class="language-plaintext highlighter-rouge">descriptor.proto</code>)<br />
+<strong>A:</strong> See <a href="https://github.com/cgrushko/proto_library">the example repo</a>, particularly https://github.com/cgrushko/proto_library/blob/beae7b78b85b3af51d3ea54663c421ebde97dc10/src/BUILD#L42.</p>
+
+<!-- TODO(yannic): This is outdated. -->
+<!-- TODO(yannic): rules_proto will contain a framework for writing rules and a guide
+                   how to do so. Link to that instead. -->
+<p><strong>Q:</strong> Any tips for writing my own such rules?<br />
+<strong>A:</strong> First, make sure you’re able to register actions that compile your target
+language. (as far as I know, Bazel Python actions are not exposed to Skylark,
+for example).<br />
+Second, take extra care to generate unique symbol names and unique filenames.
+There’s an implicit assumption that different proto rules with different
+options, generate different symbols. For example, if you write a new rule
+<code class="language-plaintext highlighter-rouge">foo_java_proto_library</code>, it must not generate symbols that <code class="language-plaintext highlighter-rouge">java_proto_library</code>
+might. The risk is that a binary will contain both, leading to a one-definition
+rule violation (e.g., linking errors). The downside is that the binary might
+bloat, as it must contain multiple generated code for the same proto. We’re
+working on a Skylark version of <code class="language-plaintext highlighter-rouge">java_lite_proto_library</code> which should provide a
+good example.</p>
+
+<h2 id="implementation-details">Implementation Details</h2>
+
+<h3 id="implicit-dependencies-and-proto-toolchains">Implicit Dependencies and Proto Toolchains</h3>
+
+<!-- TODO(yannic): This will need to be updated when the flags are removed. -->
+<p>The <code class="language-plaintext highlighter-rouge">proto_library</code> rule implicitly depends on <code class="language-plaintext highlighter-rouge">@com_google_protobuf//:protoc</code>,
+which is the protocol buffer compiler. It must be a binary rule (in protobuf,
+it’s a <code class="language-plaintext highlighter-rouge">cc_binary</code>). The rule can be overridden using the <code class="language-plaintext highlighter-rouge">--proto_compiler</code>
+command-line flag.</p>
+
+<p>Most <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code> rules implicitly depend on
+<code class="language-plaintext highlighter-rouge">@com_google_protobuf//:&lt;lang&gt;_toolchain</code>, which is a <code class="language-plaintext highlighter-rouge">proto_lang_toolchain</code> rule.
+These rules can be overridden using the <code class="language-plaintext highlighter-rouge">--proto_toolchain_for_&lt;lang&gt;</code> command-line
+flags.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">proto_lang_toolchain</code> rule describes how to call the protocol compiler, and
+what is the library (if any) that the resulting generated code needs to compile
+against. See an <a href="https://github.com/google/protobuf/blob/b4b0e304be5a68de3d0ee1af9b286f958750f5e4/BUILD#L773">example in the protobuf
+repository</a>.</p>
+
+<h3 id="bazel-aspects">Bazel Aspects</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code> rules are implemented using <a href="https://bazel.build/skylark/aspects.html">Bazel
+Aspects</a> to have
+the best of two worlds -</p>
+
+<ol>
+  <li>Only need a single <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code> rule for an arbitrarily-large proto
+graph.</li>
+  <li>Incrementality, caching and no linking errors.</li>
+</ol>
+
+<p>Conceptually, an <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code> rule creates a shadow graph of the
+<code class="language-plaintext highlighter-rouge">proto_library</code> it depends on, and each shadow node calls protocol-compiler and
+then compiles the generated code. This way, if there are multiple paths from a
+rule to a <code class="language-plaintext highlighter-rouge">proto_library</code> through <code class="language-plaintext highlighter-rouge">&lt;lang&gt;_proto_library</code>, they all share the same
+node.</p>
+
+<h3 id="descriptor-sets">Descriptor Sets</h3>
+
+<p>When compiled on the command-line, a <code class="language-plaintext highlighter-rouge">proto_library</code> creates a descriptor set
+for the messages it <code class="language-plaintext highlighter-rouge">srcs</code>. The file is a serialized <code class="language-plaintext highlighter-rouge">FileDescriptorSet</code>, which
+is described in
+<a href="https://developers.google.com/protocol-buffers/docs/techniques#self-description">https://developers.google.com/protocol-buffers/docs/techniques#self-description</a>.</p>
+
+<p>One use case for the descriptor set is generating code without having to parse
+<code class="language-plaintext highlighter-rouge">.proto</code> files.
+(<a href="https://github.com/google/protobuf/issues/2725">https://github.com/google/protobuf/issues/2725</a>
+tracks this ability in the protobuf compiler)</p>
+
+<p>The aforementioned file only contains information about the <code class="language-plaintext highlighter-rouge">.proto</code> files
+directly mentioned by a <code class="language-plaintext highlighter-rouge">proto_library</code> rule; the collection of transitive
+descriptor sets is available through the <code class="language-plaintext highlighter-rouge">proto.transitive_descriptor_sets</code>
+Skylark provider. See <a href="https://github.com/bazelbuild/bazel/blob/5dbb23ba44ec0037cf0944b17716ea3f08a69c27/src/main/java/com/google/devtools/build/lib/rules/proto/ProtoSourcesProvider.java#L121">documentation in
+ProtoSourcesProvider</a>.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

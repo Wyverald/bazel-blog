@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel Q2 2026 Community Update - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2026/07/07/bazel-q2-2026-community-update.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel Q2 2026 Community Update">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel Q2 2026 Community Update</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/karolinakalin">Karolina Kalin</a>
+  
+  
+
+
+on <span class="text-muted">07 July 2026</span>
+
+            </div>
+            <div class="blog-post-content">
+              <h2 id="announcements">Announcements</h2>
+
+<p><img src="/bazel-blog/assets/BazelCon 2026 banner.png" /></p>
+
+<h3 id="bazelcon-2026---details">BazelCon 2026 - details</h3>
+
+<p>The Details at a Glance:</p>
+
+<ul>
+  <li>
+    <p><em>What:</em> BazelCon 2026</p>
+  </li>
+  <li>
+    <p><em>Where:</em> Postillion Hotel &amp; Convention Centre Amsterdam, Netherlands</p>
+  </li>
+  <li>
+    <p><em>When:</em> October 13–15, 2026</p>
+
+    <ul>
+      <li>
+        <p>October 13th - Training Day</p>
+      </li>
+      <li>
+        <p>October 14th &amp; 15th - 2 Conference days filled with technical sessions, Birds of a Feather and networking with the best in the field.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>Get your ticket and find all the details via the <a href="https://events.linuxfoundation.org/bazelcon/">BazelCon website</a>!</p>
+
+<p>For the most up to date BazelCon news and updates, follow the <a href="https://x.com/bazelbuild">Bazel X account</a> and the <a href="https://bazelbuild.slack.com/archives/CDAGD8TGR">#bazelcon</a> Bazel Slack channel.</p>
+
+<h3 id="call-for-proposals">Call for Proposals</h3>
+
+<p>This year, we received a tremendous 170 talk submissions!</p>
+
+<p>A huge thank you to everyone who took the time to submit a proposal. The Review Committee is already diligently reviewing them to curate the 2026 schedule.</p>
+
+<p>Speaker confirmations will be sent out on July 20th, and we will announce the schedule a few days later. If your submission isn’t selected this year, we highly encourage you to apply again next time - and we sincerely applaud your willingness to share your stories with the community!</p>
+
+<h3 id="bazelcon-training-day">BazelCon Training Day</h3>
+
+<p>Following last year’s success, we are bringing back Training Day right before the main conference.</p>
+
+<p><a href="https://events.linuxfoundation.org/bazelcon/features/training-day/">The schedule</a> features two parallel tracks with four sessions each, allowing you to choose one session per time slot. You can select your sessions when you secure your BazelCon ticket on the website.</p>
+
+<p><em>Already registered?</em> You can easily edit your existing registration to secure a spot in the trainings of your choice.</p>
+
+<p><strong>Please Note:</strong> Seats are limited. If your plans change and you can no longer attend, please free up your spot so someone on the waitlist can take your place.</p>
+
+<h2 id="product-updates">Product Updates</h2>
+
+<h3 id="upcoming-bazel-releases">Upcoming Bazel releases</h3>
+
+<p><a href="https://github.com/bazelbuild/bazel/issues/29355">Bazel 9.2.0</a> is expected to release on 2026-07-09. <a href="https://github.com/bazelbuild/bazel/releases/tag/9.2.0rc1">RC1</a> was released on 2026-06-25.</p>
+
+<p><a href="https://github.com/bazelbuild/bazel/issues/29489">Bazel 8.8.0</a> is expected to release on 2026-07-15. Please send cherry-pick PRs against the <a href="https://github.com/bazelbuild/bazel/tree/release-8.8.0">release-8.8.0</a> branch before the RC1 cutoff on 2026-07-08.</p>
+
+<h3 id="q2-releases">Q2 releases</h3>
+
+<ul>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/releases/tag/9.1.0">9.1.0</a> was released in April ‘26, followed by patch <a href="https://github.com/bazelbuild/bazel/releases/tag/9.1.1">9.1.1</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/releases/tag/8.7.0">8.7.0</a> was released in May ‘26.</p>
+  </li>
+</ul>
+
+<h2 id="community-corner">Community Corner</h2>
+
+<h3 id="updates-from-the-jetbrains-team">Updates from the JetBrains* team:</h3>
+
+<p><strong>Bazel for CLion plugin updates</strong></p>
+
+<ul>
+  <li>
+    <p>Debug flags are no longer injected automatically by debug run configurations. If your build already includes debug symbols, this change shouldn’t impact you; otherwise, check the details here: <a href="https://jb.gg/clwb-debug-docs">https://jb.gg/clwb-debug-docs</a>.</p>
+  </li>
+  <li>
+    <p>You can now switch configurations if the current source file is built under multiple configurations in your project. Additionally, when you start debugging, we’ll automatically select the correct configuration to keep your code insight and debug session in sync.</p>
+  </li>
+</ul>
+
+<p><strong>Developments in the Bazel plugin by JetBrains for IntelliJ IDEA, PyCharm and GoLand in 2026.1</strong></p>
+
+<ul>
+  <li>
+    <p>Improved stability and less freezes: all known freezes caused by the Bazel plugin have been fixed.</p>
+  </li>
+  <li>
+    <p>Sync performance improved, with overhead removed. Less spurious analysis cache invalidations.</p>
+  </li>
+  <li>
+    <p>Better hot swap in JVM applications.</p>
+  </li>
+  <li>
+    <p>Graceful cancellation for Bazel run and build.</p>
+  </li>
+  <li>
+    <p>Bazel 9 compatibility.</p>
+  </li>
+  <li>
+    <p>More readable build and sync progress in IDE output.</p>
+  </li>
+  <li>
+    <p>Find more details on the plugin “What’s New” page.</p>
+  </li>
+</ul>
+
+<p>In the upcoming 2026.2 version, the team is focusing on improved support for Bazel projects with Python and Go, in particular when opened in PyCharm and GoLand.</p>
+
+<h3 id="meetupbuild-events">Meetup.build events</h3>
+
+<p>Check out the recaps of the latest Build meetups organised by EngFlow!</p>
+
+<p><a href="https://blog.engflow.com/2026/04/14/engflow-x-uber-amsterdam-build-meetup-2026-scaling-builds/">EngFlow x Uber Amsterdam Build Meetup 2026: Scaling Builds</a> - hosted in the Uber office, the attendees got to enjoy 6 talks on all things Build.</p>
+
+<p><a href="https://blog.engflow.com/2026/06/17/munich-bazel-build-meetup-2026---tackling-supply-chain-security-and-monorepo-scalability/#how-i-tried-to-produce-otel-traces-out-of-bep">Munich Bazel Build Meetup 2026: Tackling Supply Chain Security and Monorepo Scalability</a> - the community met in the Salesforce offices for more great talks and knowledge sharing. Recordings of talks will soon be available to watch online.</p>
+
+<p>Keep an eye on <a href="http://meetup.build">meetup.build</a> for next meetup announcements.</p>
+
+<h3 id="community-created-content">Community created content</h3>
+
+<p><strong>Articles</strong></p>
+
+<ul>
+  <li>
+    <p><a href="https://www.buildbuddy.io/blog/content-defined-chunking/">Remote Cache CDC: Reusing Bytes</a> - by Tyler French @BuildBuddy</p>
+  </li>
+  <li>
+    <p><a href="https://www.tweag.io/blog/2026-04-02-making-bazel-builds-more-reliable/">Accessing external resources reliably with Bazel</a> - by Alexey Tereshenkov @Tweag</p>
+  </li>
+  <li>
+    <p><a href="https://developers.redhat.com/articles/2026/06/10/building-and-running-bazel-applications-autosd#">Building and running Bazel applications on AutoSD: Toolchains, containers, and recommended practices</a> - by Bilal Elmoussaoui</p>
+  </li>
+  <li>
+    <p><a href="https://dev.to/mbarzeev/mastering-your-frontend-build-with-bazel-testing-mlg">Mastering Your Frontend Build with Bazel: Testing</a> - by Matti Bar-Zeev</p>
+  </li>
+  <li>
+    <p><a href="https://dev.to/mbarzeev/mastering-your-frontend-build-with-bazel-consolidating-tests-26nl">Mastering Your Frontend Build with Bazel: Consolidating Tests</a> - by Matti Bar-Zeev</p>
+  </li>
+  <li>
+    <p><a href="https://adincebic.com/2026/05/10/a-practical-introduction-to-bazel.html">A Practical Introduction to Bazel Persistent Workers</a> - by Adin Ćebić</p>
+  </li>
+  <li>
+    <p><a href="https://adincebic.com/2026/06/07/cleaning-up-old-bazel-patterns.html">Cleaning up old Bazel patterns</a> - by Adin Ćebić</p>
+  </li>
+  <li>
+    <p><a href="https://medium.com/@somaktukai/micro-benchmarking-java-with-jmh-and-bazel-cdf74dc714f6">Micro-Benchmarking Java with JMH and Bazel</a> - by Somak Dutta</p>
+  </li>
+  <li>
+    <p><a href="https://thecodinggopher.substack.com/p/why-bazel-is-the-endgame-for-build">Why Bazel is the Endgame for Build Systems</a> - by The Coding Gopher</p>
+  </li>
+</ul>
+
+<p><strong>Videos</strong></p>
+
+<ul>
+  <li>
+    <p><a href="https://www.youtube.com/watch?v=GMx6YwdELl4">Introduction to the Bazel build system</a> - by Florent Castelli, presented during Sweden Cpp</p>
+  </li>
+  <li>
+    <p><a href="https://www.youtube.com/watch?v=uSKCNDWuXjc">Bazel for SONiC: What We’ve Learned and Contributed</a> - by Borja Lorente @Aspect Build</p>
+  </li>
+  <li>
+    <p><a href="https://www.youtube.com/watch?v=glJek6y-iQg">Bazel and Rust at OpenAI with David Zbarsky</a> - by Aspect Build</p>
+  </li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li>
+    <p>GitHub repository: <a href="https://github.com/bazelbuild/bazel">https://github.com/bazelbuild/bazel</a></p>
+  </li>
+  <li>
+    <p>Releases: <a href="https://github.com/bazelbuild/bazel/releases">https://github.com/bazelbuild/bazel/releases</a></p>
+  </li>
+  <li>
+    <p>Slack chat: <a href="https://slack.bazel.build">https://slack.bazel.build</a></p>
+  </li>
+  <li>
+    <p>Google group: bazel-discuss@googlegroups.com</p>
+  </li>
+  <li>
+    <p>Special Interest Groups (SIG):</p>
+  </li>
+</ul>
+
+<p>Reach out the email(s) listed below if you’d like to be added to the SIG calendar invites.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>SIG</strong></th>
+      <th><strong>Meeting frequency</strong></th>
+      <th><strong>Point of contact</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://github.com/bazelbuild/community/tree/main/sigs/rules-authors">Rules authors</a></td>
+      <td>Every two weeks</td>
+      <td>bazel-contrib@googlegroups.com</td>
+    </tr>
+    <tr>
+      <td><a href="https://docs.google.com/document/d/1Sv227BguEekx5Q3lwSdPEQqpkHAng6J6gNCNZqJLbtw/edit?resourcekey=0-GK_iaQRAEAu3aYslzlrEfQ&amp;tab=t.0#heading=h.dzj8kjjzgp3s">Android app development</a></td>
+      <td>Monthly</td>
+      <td>ahumesky@google.com</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/bazelbuild/community/tree/main/sigs/bazel-intellij">Bazel plugin for IntelliJ</a></td>
+      <td>Monthly</td>
+      <td>en@jetbrains.com</td>
+    </tr>
+    <tr>
+      <td><a href="https://docs.google.com/document/d/1EtQMTn-7sKFMTxIMlb0oDGpvGCMAuzphVcfx58GWuEM/edit?tab=t.0#heading=h.ol6wthckmbcw">Remote execution API working group</a></td>
+      <td>Monthly</td>
+      <td>chiwang@google.com</td>
+    </tr>
+    <tr>
+      <td><a href="https://docs.google.com/document/d/1WhScaOLERet4Fxi4fa2Lpke2MgJZGvEE4EXeq6yb0LU/edit?usp=sharing">Supply chain security / SBOM</a></td>
+      <td>Weekly</td>
+      <td>fwe@google.com</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Interested in learning about SIGs or starting a new one? Find more information on our <a href="https://bazel.build/community/sig">website</a>.</p>
+
+<p>Want to get your SIG listed? Please add it to the <a href="https://github.com/bazelbuild/community/tree/main/sigs">Community repository</a>.</p>
+
+<h2 id="ideas-feedback-and-submissions-are-welcome">Ideas, feedback, and submissions are welcome!</h2>
+
+<p>Thank you for reading this edition! Let us know if you’d like to see any new information or changes in future community updates by reaching out to product@bazel.build. We look forward to hearing from you.</p>
+
+<p>Thanks,</p>
+
+<p>Google Bazel team</p>
+
+<p><em>*Copyright © 2026 JetBrains s.r.o. JetBrains and IntelliJ are registered trademarks of JetBrains s.r.o.</em></p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

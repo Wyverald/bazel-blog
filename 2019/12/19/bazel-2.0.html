@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel 2.0 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2019/12/19/bazel-2.0.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel 2.0">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel 2.0</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/aehlig">Klaus Aehlig</a>
+  
+  
+
+
+on <span class="text-muted">19 December 2019</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>A new major version of Bazel,
+<a href="https://github.com/bazelbuild/bazel/releases/tag/2.0.0">Bazel 2.0</a> has just
+been released. In particular, it brings some important flag flips that did
+not make it into
+<a href="https://blog.bazel.build/2019/10/10/bazel-1.0.html">Bazel 1.0</a>.</p>
+
+<h2 id="incompatible-changes">Incompatible changes</h2>
+<p>Bazel 2.0 is a new major release and brings the following incompatible changes.</p>
+
+<ul>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/issues/7130"><code class="language-plaintext highlighter-rouge">--incompatible_remap_main_repo</code></a>
+is enabled by default. Both ways of addressing the main repository (by its
+name and by ‘@’) are now considered referring to the same repository.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/issues/9184"><code class="language-plaintext highlighter-rouge">--incompatible_disallow_dict_lookup_unhashable_keys</code></a>
+is enabled by default.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/issues/6799"><code class="language-plaintext highlighter-rouge">--incompatible_remove_native_maven_jar</code></a>
+is now enabled by default and the flag removed.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/bazelbuild/bazel/issues/10000"><code class="language-plaintext highlighter-rouge">--incompatible_prohibit_aapt1</code></a>
+is enabled by default.</p>
+  </li>
+</ul>
+
+<h2 id="aquery">Aquery</h2>
+
+<ul>
+  <li>Proto v2 for aquery proto output formats, which reduces the output size
+compared to v1, guarded behind the flag
+<a href="https://github.com/bazelbuild/bazel/issues/10358"><code class="language-plaintext highlighter-rouge">--incompatible_proto_output_v2</code></a>.
+This proto format is still experimental and subject to further changes.</li>
+</ul>
+
+<h2 id="platforms">Platforms</h2>
+
+<ul>
+  <li>New incompatible flag, <a href="https://github.com/bazelbuild/bazel/issues/10262"><code class="language-plaintext highlighter-rouge">--incompatible_remove_enabled_toolchain_types</code></a>,
+which allows removing the <code class="language-plaintext highlighter-rouge">PlatformConfiguration.enabled_toolchain_types</code>
+field.</li>
+</ul>
+
+<h2 id="other-important-changes">Other important changes</h2>
+
+<ul>
+  <li>
+    <p>Package loading now consistently fails if package loading had a glob
+evaluation that encountered a symlink cycle or symlink infinite
+expansion. Previously, such package loading with such glob evaluations would
+fail only in some cases.</p>
+  </li>
+  <li>
+    <p>The <code class="language-plaintext highlighter-rouge">--disk_cache</code> flag can now also be used together with the gRPC remote
+cache.</p>
+  </li>
+  <li>
+    <p>An action’s discover inputs runtime metrics is now categorized as parse time
+on the CriticalPathComponent.</p>
+  </li>
+  <li>
+    <p>Bazel’s Debian package and the binary installer now include an improved
+wrapper that understands <code class="language-plaintext highlighter-rouge">&lt;WORKSPACE&gt;/.bazelversion</code> files and the
+<code class="language-plaintext highlighter-rouge">$USE_BAZEL_VERSION</code> environment variable. This is similar to <a href="https://github.com/bazelbuild/bazelisk#how-does-bazelisk-know-which-bazel-version-to-run-and-where-to-get-it-from">what Bazelisk
+offers</a>,
+except that it works offline and integrates with apt-get.</p>
+  </li>
+  <li>
+    <p>We are planning to deprecate the runfiles manifest files, which aren’t safe in
+the presence of whitespace, and also unnecessarily require local CPU when
+remote execution is used. This release adds
+<code class="language-plaintext highlighter-rouge">--experimental_skip_runfiles_manifests</code> to disable the generation of the
+input manifests (rule.manifest files) in most cases. This can be used for
+initial testing, but the exact semantics are still subject to change; let us
+know if this is causing problems. Note that this flag has no effect on Windows
+by default or if <code class="language-plaintext highlighter-rouge">--experimental_enable_runfiles</code> is explicitly set to false.</p>
+  </li>
+</ul>
+
+<h2 id="community">Community</h2>
+
+<p>This release contains contributions from many people at Google, as well as
+aldersondrive, Benjamin Peterson, Bor Kae Hwang, David Ostrovsky, John Millikin,
+Keith Smiley, Lauri Peltonen, nikola-sh, Peter Mounce, Tony Hsu.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

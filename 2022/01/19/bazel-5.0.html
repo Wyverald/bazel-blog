@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel 5.0 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2022/01/19/bazel-5.0.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel 5.0">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel 5.0</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/Wyverald">Xudong Yang</a>
+  
+  
+
+
+on <span class="text-muted">19 January 2022</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>Bazel 5.0 is a major release and Bazel’s <a href="https://blog.bazel.build/2020/11/10/long-term-support-release.html">second LTS release</a>. It contains new features and backwards incompatible changes from 4.x, the previous LTS release.</p>
+
+<h2 id="highlights">Highlights</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_enable_bzlmod</code> enables the new external dependency subsystem, <a href="https://docs.bazel.build/versions/5.0.0/bzlmod.html">Bzlmod</a>.</li>
+  <li>The minimum required JDK to run Bazel itself is now OpenJDK 11. Note that compiling binaries using JDK 8 and lower is still supported.</li>
+  <li>Java rules now use toolchain resolution. (<a href="https://github.com/bazelbuild/bazel/issues/7849">#7849</a>)</li>
+  <li>Starlark now permits <code class="language-plaintext highlighter-rouge">def</code> statements to be nested (closures) and supports lambda expressions (anonymous functions).</li>
+</ul>
+
+<h2 id="general">General</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">//visibility:legacy_public</code> has been removed.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">--all_incompatible_changes</code> flag is now a no-op.</li>
+  <li>Specifying a target pattern underneath a directory specified by <code class="language-plaintext highlighter-rouge">.bazelignore</code> will now emit a warning, not an error.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">test</code> and <code class="language-plaintext highlighter-rouge">coverage</code> commands no longer return 3 when a test action fails because of a system error. Instead, the exit code reflects the type of system error.</li>
+  <li>Bazel will no longer create a <code class="language-plaintext highlighter-rouge">bazel-out</code> symlink if <code class="language-plaintext highlighter-rouge">--symlink_prefix</code> is specified: the directory pointed to via the <code class="language-plaintext highlighter-rouge">bazel-out</code> symlink is accessible via <code class="language-plaintext highlighter-rouge">${symlink_prefix}-out</code>.</li>
+  <li>Removed flag <code class="language-plaintext highlighter-rouge">--experimental_no_product_name_out_symlink</code>; it is effectively always true.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--action_graph</code> from the <code class="language-plaintext highlighter-rouge">dump</code> command.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--incompatible_restrict_string_escapes</code> from the <code class="language-plaintext highlighter-rouge">build</code> command.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--{experimental_,}json_trace_compression</code>; its value is determined by the profile name.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--experimental_profile_cpu_usage</code>; it is effectively always true.</li>
+  <li><code class="language-plaintext highlighter-rouge">--legacy_dynamic_scheduler</code> is now a no-op.</li>
+  <li>Flipped <code class="language-plaintext highlighter-rouge">--trim_test_configuration</code> to true. (<a href="https://github.com/bazelbuild/bazel/issues/6842">#6842</a>)</li>
+  <li>When using <code class="language-plaintext highlighter-rouge">--allow_analysis_failures</code> (for example, via bazel-skylib’s <code class="language-plaintext highlighter-rouge">analysistest</code> with <code class="language-plaintext highlighter-rouge">expect_failure = True</code>), analysis-time failures in aspect implementation functions will now be propagated and saved in <code class="language-plaintext highlighter-rouge">AnalysisFailureInfo</code>, just like analysis-time failures in rules.</li>
+  <li>Added <code class="language-plaintext highlighter-rouge">--experimental_reuse_sandbox_directories</code> to reuse already-created non-worker sandboxes with cleanup.</li>
+  <li>Renamed <code class="language-plaintext highlighter-rouge">--experimental_run_validations</code> to <code class="language-plaintext highlighter-rouge">--run_validations</code> and flipped its default to true.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--experimental_forward_instrumented_files_info_by_default</code>, now that this behavior is the default.</li>
+  <li>When using MemoryProfiler with multiple GCs via the <code class="language-plaintext highlighter-rouge">--memory_profile_stable_heap_parameters</code> flag, we do a more precise calculation of heap used at the end of the build. This will generally result in lower values.</li>
+  <li>Added support to length-delimited protos as undeclared output annotations.</li>
+  <li>Added experimental flag <code class="language-plaintext highlighter-rouge">--experimental_dynamic_skip_first_build</code> to skip local execution in dynamic execution until there has been a successful build. This allows doing a first clean build from remote only, filling the cache.</li>
+</ul>
+
+<h2 id="android">Android</h2>
+
+<ul>
+  <li>The minimum Android build tools version for the Android rules is now 30.0.0.</li>
+  <li>The Android rules’ <code class="language-plaintext highlighter-rouge">--use_singlejar_apkbuilder</code> is now a no-op. SingleJar will always be used to build APKs.</li>
+  <li><code class="language-plaintext highlighter-rouge">--apk_signing_method</code> now accepts the value <code class="language-plaintext highlighter-rouge">v4</code>.</li>
+  <li>Proguard configs generated from aapt2 link step now exclude path location comments for better determinism.</li>
+  <li>Removed obsolete <code class="language-plaintext highlighter-rouge">--incompatible_prohibit_aapt1</code>.</li>
+</ul>
+
+<h2 id="apple--xcode">Apple / Xcode</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--apple_sdk</code> has been deleted. It is a no-op.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">--incompatible_disable_native_apple_binary_rule</code> flag has been added which disables the native <code class="language-plaintext highlighter-rouge">apple_binary</code> rule. Users who need to use <code class="language-plaintext highlighter-rouge">apple_binary</code> directly (if they cannot use one of the more specific Apple rules) should load it from <a href="https://github.com/bazelbuild/rules_apple"><code class="language-plaintext highlighter-rouge">rules_apple</code></a>.</li>
+  <li>Allowing the LIPO operations to be conditional in the <code class="language-plaintext highlighter-rouge">linkMultiArchBinary</code> API for Apple binaries. Single architecture slices are now returned through AppleBinaryOutput and the Starlark API.</li>
+  <li>If <code class="language-plaintext highlighter-rouge">--experimental_prefer_mutual_xcode</code> is passed, Bazel will choose the local default (instead of the newest mutually available version) if it’s available both locally and remotely.</li>
+</ul>
+
+<h2 id="build-event-protocol">Build Event Protocol</h2>
+
+<ul>
+  <li>In the build event stream, <code class="language-plaintext highlighter-rouge">BuildMetrics.TargetMetrics.targets_loaded</code> is no longer populated. Its value was always mostly meaningless. <code class="language-plaintext highlighter-rouge">BuildMetrics.TargetMetrics.targets_configured</code> and <code class="language-plaintext highlighter-rouge">BuildMetrics.ActionSummary.actions_created</code> now include configured aspect data.</li>
+  <li><code class="language-plaintext highlighter-rouge">--bep_publish_used_heap_size_post_build</code> is removed. Use <code class="language-plaintext highlighter-rouge">--memory_profile=/dev/null</code> instead; the <code class="language-plaintext highlighter-rouge">used_heap_size_post_build</code> field in BEP is now populated when the <code class="language-plaintext highlighter-rouge">--memory_profile</code> flag is set.</li>
+  <li>Added <code class="language-plaintext highlighter-rouge">--bes_header</code> flag to pass extra headers to the BES server.</li>
+  <li>BEP now includes test suite expansions.</li>
+  <li>BEP now includes all files from successful actions in requested output groups. Previously, an output group’s files were excluded if any file in the output group was not produced due to a failing action. Users can expect BEP output to be larger for failed builds.</li>
+  <li>In BEP, <code class="language-plaintext highlighter-rouge">TargetComplete.output_group</code> has a new field <code class="language-plaintext highlighter-rouge">incomplete</code> indicating that the <code class="language-plaintext highlighter-rouge">file_sets</code> field is missing one or more declared artifacts whose generating actions failed.</li>
+  <li>When <code class="language-plaintext highlighter-rouge">--experimental_bep_target_summary</code> is enabled, BEP contains a new event, <code class="language-plaintext highlighter-rouge">TargetSummary</code>. For each top-level configured target, this event aggregates the results for building the configured target, tests run for that configured target (if any), and building all top-level aspects applied to that configured target. This flag will eventually default to enabled.</li>
+</ul>
+
+<h2 id="c--objective-c">C++ / Objective-C</h2>
+
+<ul>
+  <li>The Starlark method <code class="language-plaintext highlighter-rouge">generate_dsym</code> in <code class="language-plaintext highlighter-rouge">objc</code> fragment has been deleted.  Please use the equivalent <code class="language-plaintext highlighter-rouge">apple_generate_dsym</code> in <code class="language-plaintext highlighter-rouge">cpp</code> fragment instead.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--incompatible_objc_compile_info_migration</code>. (<a href="https://github.com/bazelbuild/bazel/issues/10854">#10854</a>)</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">--incompatible_objc_provider_remove_compile_info</code>. (<a href="https://github.com/bazelbuild/bazel/issues/11359">#11359</a>)</li>
+  <li>Made gcov optional in <code class="language-plaintext highlighter-rouge">cc_toolchain</code> tools.</li>
+  <li>Added a new flag, <code class="language-plaintext highlighter-rouge">--incompatible_enable_cc_test_feature</code> which switches from the use of build variables to the feature of the same name.</li>
+</ul>
+
+<h2 id="configurability">Configurability</h2>
+
+<ul>
+  <li>Added <code class="language-plaintext highlighter-rouge">--incompatible_enforce_config_setting_visibility</code> to make <code class="language-plaintext highlighter-rouge">config_setting</code> honor the <code class="language-plaintext highlighter-rouge">visibility</code> attribute (defaulting to <code class="language-plaintext highlighter-rouge">//visibility:public</code>) (<a href="https://github.com/bazelbuild/bazel/issues/12932">#12932</a>)</li>
+  <li>The flag <code class="language-plaintext highlighter-rouge">--toolchain_resolution_debug</code> now takes a regex argument, which is used to check which toolchain types or targets should have debug info printed. You may use <code class="language-plaintext highlighter-rouge">.*</code> as an argument to keep the current behavior of debugging every toolchain type / target.</li>
+</ul>
+
+<h2 id="coverage">Coverage</h2>
+
+<ul>
+  <li>All (instead of just C++) source files are now filtered for coverage output according to <code class="language-plaintext highlighter-rouge">--instrumentation_filter</code> and <code class="language-plaintext highlighter-rouge">--instrument_test_targets</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">genrule.srcs</code> is now considered a source attribute for coverage.</li>
+  <li>Forward coverage-instrumented files from non-tool dependencies by default.</li>
+  <li><code class="language-plaintext highlighter-rouge">label_keyed_string_dict</code> attributes are now considered when gathering instrumented files for coverage.</li>
+  <li>Java branch coverage now applies Jacoco’s coverage filters. (<a href="https://github.com/bazelbuild/bazel/issues/12696">#12696</a>)</li>
+</ul>
+
+<h2 id="java">Java</h2>
+
+<ul>
+  <li>Removed <code class="language-plaintext highlighter-rouge">javac_jar</code> from JavaToolchainInfo.</li>
+  <li>Flipped <code class="language-plaintext highlighter-rouge">--incompatible_disallow_resource_jars</code> to <code class="language-plaintext highlighter-rouge">true</code>, disabling <code class="language-plaintext highlighter-rouge">resouce_jars</code> attribute on <code class="language-plaintext highlighter-rouge">java_library</code>. (<a href="https://github.com/bazelbuild/bazel/issues/13221">#13221</a>)</li>
+  <li>Flipped <code class="language-plaintext highlighter-rouge">--incompatible_java_common_parameters</code> to <code class="language-plaintext highlighter-rouge">true</code>, removing <code class="language-plaintext highlighter-rouge">host_javabase</code> parameter from <code class="language-plaintext highlighter-rouge">java_common.compile</code>. (<a href="https://github.com/bazelbuild/bazel/issues/12373">#12373</a>)</li>
+  <li>Flipped <code class="language-plaintext highlighter-rouge">--incompatible_use_toolchain_resolution_for_java_rules</code> to <code class="language-plaintext highlighter-rouge">true</code>. Flags <code class="language-plaintext highlighter-rouge">--javabase</code> and <code class="language-plaintext highlighter-rouge">--java_toolchain</code> are now no-op. (<a href="https://github.com/bazelbuild/bazel/issues/7849">#7849</a>)</li>
+  <li>Only native libraries supported by C++ targets in <code class="language-plaintext highlighter-rouge">deps</code> and <code class="language-plaintext highlighter-rouge">runtime_deps</code> are collected. No longer collecting <code class="language-plaintext highlighter-rouge">.so</code> files (<a href="https://github.com/bazelbuild/bazel/issues/13043">#13043</a>) or libraries in the <code class="language-plaintext highlighter-rouge">data</code> attribute. (<a href="https://github.com/bazelbuild/bazel/issues/13550">#13550</a>)</li>
+  <li><code class="language-plaintext highlighter-rouge">JavaToolchainInfo.jvm_opt</code> returns a <code class="language-plaintext highlighter-rouge">depset</code> instead of a list.</li>
+  <li>Added a <code class="language-plaintext highlighter-rouge">_direct_source_jars</code> output group to Java related targets.</li>
+  <li>Added an <code class="language-plaintext highlighter-rouge">enable_annotation_processing</code> option to <code class="language-plaintext highlighter-rouge">java_common.compile</code>, which can be used to disable any annotation processors passed to <code class="language-plaintext highlighter-rouge">plugins</code> or in <code class="language-plaintext highlighter-rouge">exported_plugins</code> of <code class="language-plaintext highlighter-rouge">deps</code>.</li>
+  <li>Removed <code class="language-plaintext highlighter-rouge">java_lite_proto_library.strict_deps</code> attribute.</li>
+  <li>Bazel now uses the Starlark implementations of <code class="language-plaintext highlighter-rouge">java_library</code> and <code class="language-plaintext highlighter-rouge">java_plugin</code> instead of their native counterparts.</li>
+  <li><code class="language-plaintext highlighter-rouge">java_plugins</code> can now only be used in the <code class="language-plaintext highlighter-rouge">plugins</code> and <code class="language-plaintext highlighter-rouge">exported_plugins</code> attributes. (<a href="https://github.com/bazelbuild/bazel/issues/14012">#14012</a>)</li>
+  <li>Javac workers now support cancellation.</li>
+  <li>Javac workers now cache the bootclasspath classes.</li>
+</ul>
+
+<h2 id="packaging">Packaging</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pkg_deb</code> is no longer part of <code class="language-plaintext highlighter-rouge">@bazel_tools//build_defs/pkg:pkg.bzl</code>. Use <a href="https://github.com/bazelbuild/rules_pkg/tree/main/pkg">https://github.com/bazelbuild/rules_pkg/tree/main/pkg</a> instead.</li>
+  <li>Dropped fragile xz support from built in <code class="language-plaintext highlighter-rouge">pkg_tar</code>. Users requiring xz compression should switch to <code class="language-plaintext highlighter-rouge">[bazelbuild/rules_pkg](https://github.com/bazelbuild/rules_pkg)</code>.</li>
+</ul>
+
+<h2 id="persistent-workers">Persistent Workers</h2>
+
+<ul>
+  <li>Multiplex persistent workers can now use the JSON protocol <a href="https://github.com/bazelbuild/bazel/issues/7998">(#7998</a>).</li>
+  <li>Updated worker protocol to allow request cancellation, and added <code class="language-plaintext highlighter-rouge">--experimental_worker_cancellation</code> flag to turn on cancellation for workers that implement it (<a href="https://github.com/bazelbuild/bazel/issues/614">#614</a>).</li>
+</ul>
+
+<h2 id="python">Python</h2>
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">--incompatible_load_python_rules_from_bzl</code> flag is now a no-op.</li>
+  <li>Relax restriction for “-“ in the package name for Python sources. Now <code class="language-plaintext highlighter-rouge">py_binary</code> and <code class="language-plaintext highlighter-rouge">py_test</code> targets can have a main source file with “-“ in the path.</li>
+</ul>
+
+<h2 id="remote-execution">Remote Execution</h2>
+
+<ul>
+  <li>Disk cache can now be used in remote execution. (<a href="https://github.com/bazelbuild/bazel/pull/13852">#13852</a>)</li>
+  <li>Merkle tree calculation can be cached with <code class="language-plaintext highlighter-rouge">--experimental_remote_merkle_tree_cache</code>. The cache size is unlimited by default but can be controlled by <code class="language-plaintext highlighter-rouge">--experimental_remote_merkle_tree_cache_size</code>. (<a href="https://github.com/bazelbuild/bazel/pull/13879">#13879</a>)</li>
+  <li>File uploads are scheduled into background if <code class="language-plaintext highlighter-rouge">--experimental_remote_cache_async</code> is set. (<a href="https://github.com/bazelbuild/bazel/pull/13655">#13655</a>)</li>
+  <li><code class="language-plaintext highlighter-rouge">--remote_max_connections</code> applies to gRPC connections as well. (<a href="https://github.com/bazelbuild/bazel/pull/14202">#14202</a>)</li>
+  <li>Remote metadata is saved into action cache if <code class="language-plaintext highlighter-rouge">--exprimental_action_cache_store_output_metadata</code> is set. (<a href="https://github.com/bazelbuild/bazel/pull/13604">#13604</a>)</li>
+  <li>Data transfers between Bazel and remote server are compressed via zstd if <code class="language-plaintext highlighter-rouge">--experimental_remote_cache_compression</code> is set. (<a href="https://github.com/bazelbuild/bazel/pull/14041">#14041</a>)</li>
+  <li>Added support for tag <code class="language-plaintext highlighter-rouge">no-remote-cache-upload</code>. (<a href="https://github.com/bazelbuild/bazel/pull/14338">#14338</a>)</li>
+  <li>Bug fixes and UX improvements.</li>
+</ul>
+
+<h2 id="query">Query</h2>
+
+<ul>
+  <li>Query <code class="language-plaintext highlighter-rouge">output=xml/proto/location</code> for source files will now show the location of line 1 of the source file (as the new default) instead of its location in the BUILD file.</li>
+  <li>Query <code class="language-plaintext highlighter-rouge">--order_output=auto</code> will now sort lexicographically. However, when <code class="language-plaintext highlighter-rouge">somepath</code> is used as a top level function (e.g. <code class="language-plaintext highlighter-rouge">query 'somepath(a, b)'</code>), it will continue to output in dependency order. If you do not want the lexicographical output ordering, specify another <code class="language-plaintext highlighter-rouge">--order_output</code> value (<code class="language-plaintext highlighter-rouge">no</code>, <code class="language-plaintext highlighter-rouge">deps</code> or <code class="language-plaintext highlighter-rouge">full</code>) based on what ordering you require.</li>
+  <li>cquery <code class="language-plaintext highlighter-rouge">--noimplicit_deps</code> now correctly filters out resolved <code class="language-plaintext highlighter-rouge">cc_toolchain</code>s.</li>
+</ul>
+
+<h2 id="starlark--build-language">Starlark / Build Language</h2>
+
+<ul>
+  <li>Starlark now permits <code class="language-plaintext highlighter-rouge">def</code> statements to be nested (closures) and supports lambda expressions (anonymous functions). Recursion is still not permitted.</li>
+  <li><code class="language-plaintext highlighter-rouge">Args.add_all</code> and <code class="language-plaintext highlighter-rouge">Args.add_joined</code> can now accept closures in <code class="language-plaintext highlighter-rouge">map_each</code> if explicitly enabled via the <code class="language-plaintext highlighter-rouge">allow_closure</code> parameter. Beware that closures may retain large data structures into the execution phase.</li>
+  <li>dict.setdefault(key, …) now fails if dict is frozen, even if it already contains key. This is an incompatible API change. (<a href="https://github.com/bazelbuild/bazel/pull/12642">#12642</a>)</li>
+  <li>The deprecated <code class="language-plaintext highlighter-rouge">relative_to_caller_repository</code> parameter has been removed from the <code class="language-plaintext highlighter-rouge">Label</code> constructor.</li>
+  <li>The undocumented <code class="language-plaintext highlighter-rouge">ctx.expand</code> feature no longer exists.</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">runfiles.merge_all()</code> for merging a sequence of runfiles objects.</li>
+  <li><code class="language-plaintext highlighter-rouge">runfiles.merge()</code> and <code class="language-plaintext highlighter-rouge">merge_all()</code> now respect <code class="language-plaintext highlighter-rouge">--nested_set_depth_limit</code>. If you hit the depth limit because you were calling <code class="language-plaintext highlighter-rouge">merge()</code> in a loop, use <code class="language-plaintext highlighter-rouge">merge_all()</code> on a sequence of runfiles objects instead.</li>
+  <li><code class="language-plaintext highlighter-rouge">native.existing_rule</code> now returns select values in a form that is accepted by rule instantiation. This is a breaking API change, though the fallout is expected to be small.</li>
+  <li>Added <code class="language-plaintext highlighter-rouge">--incompatible_existing_rules_immutable_view</code> flag to make the <code class="language-plaintext highlighter-rouge">native.existing_rule</code> and <code class="language-plaintext highlighter-rouge">native.existing_rules</code> functions more efficient by returning immutable, lightweight dict-like view objects instead of mutable dicts.</li>
+  <li>Flipped <code class="language-plaintext highlighter-rouge">--incompatible_disable_depset_items</code> (<a href="https://github.com/bazelbuild/bazel/issues/9017">#9017</a>). The flag is now a no-op.</li>
+</ul>
+
+<h2 id="acknowledgments">Acknowledgments</h2>
+
+<p>This release contains contributions from many people at Google, as well as Adam Liddell, Alex Eagle, amberdixon, Andrew Katson, Anthony Pratti, Artem V. Navrotskiy, Austin Schuh, Benedek Thaler, Benjamin Lee, Benjamin Peterson, Brandon Jacklyn, Brentley Jones, bromano, Cameron Mulhern, Christopher Sauer, Cristian Hancila, Dan Bamikiya, Dan Fleming, Daniel McCarney, Daniel Wagner-Hall, Danny Wolf, Dave Nicponski, David Cummings, David Ostrovsky, Delwin9999, Denys Kurylenko, Dmitry Ivankov, dorranh, ecngtng, Ed Schouten, Eitan Adler, Elliotte Rusty Harold, Eric Cousineau, Ethan Steinberg, Fabian Meumertzheim, FaBrand, Felix Ehrenpfort, Finn Ball, frazze-jobb, Fredrik Medley, Garrett Holmstrom, Gautam Korlam, George Gensure, goodspark, Grzegorz Lukasik, hvadehra, Ikko Ashimine, Jesse Chan, Joe Lencioni, Johannes Abt, John Laxson, Jonathan Schear, Justus Tumacder, Keith Smiley, kekxv, Kevin Hogeland, Lauri Peltonen, Liu Liu, László Csomor, Marc Zych, Mark Karpov, Masoud Koleini, Mathieu Olivari, Matt Mackay, Mauricio Galindo, Max Liu, Menny Even Danan, Michael Chinen, Nathaniel Brough, Nick Korostelev, Niek Peeters, Nikolay Shelukhin, Noa Resare, odisseus, Oleh Stolyar, Olek Wojnar, Oliver Eikemeier, Olle Lundberg, Omar Zuniga, Paul Gschwendtner, Peter Kasting, Philipp Schrader, Pras Velagapudi, Qais Patankar, Rabi Shanker Guha, Rai, Ron Braunstein, Ryan Beasley, samhowes, Samuel Giddins, Sebastian Olsson, Sergey Tyurin, Steve Siano, steve-the-bayesian, Stiopa Koltsov, tatiana, Tetsuo Kiso, Thi Doãn, Thomas Carmet, ThomasCJY, Timothe Peignier, Timothy Klim, Tobi, Torgil Svensson, Trustin Lee, Ulf Adams, Ulrik Falklof, Uri Baghin, Vaidas Pilkauskas, Vertexwahn, wisechengyi, Wren Turkal, Xavier Bonaventura, Yannic Bonenberger, Yury Evtikhov, Yuval Kaplan, zqzzq.</p>
+
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exploring the IntelliJ Bazel Plugin's Sync Process - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2019/09/29/intellij-bazel-sync.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Exploring the IntelliJ Bazel Plugin's Sync Process">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Exploring the IntelliJ Bazel Plugin's Sync Process</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/jin">Jingwen Chen</a>
+  
+  
+
+
+on <span class="text-muted">29 September 2019</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>In this blogpost, we aim to understand IntelliJ with Bazel plugin’s sync process
+by exploring the plugin’s generated files and logs.</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>The sync process is central to the user experience of the Bazel <a href="https://ij.bazel.build">IntelliJ
+plugin</a>. Its purpose is to query Bazel for information
+and build up IntelliJ’s project structure to fit Bazel’s model.</p>
+
+<p>It runs automatically during a project import, and manually by either clicking
+on the sync icon in the menu bar or, partially syncing packages and individual
+files in contextual menus.</p>
+
+<p>Running a sync generates a <code class="language-plaintext highlighter-rouge">.ijwb</code> directory in the project root. While users
+don’t typically need to know about the contents of this directory, we will
+explore these files to learn how the plugin works.</p>
+
+<p>We will also explore the process logs, and connect the dots between them and the
+generated files to crystallize our understanding.</p>
+
+<p>Let’s dive in!</p>
+
+<h2 id="structure-of-ijwb">Structure of <code class="language-plaintext highlighter-rouge">.ijwb</code></h2>
+
+<p>Using a <a href="https://github.com/bazelbuild/rules_jvm_external/tree/master/examples/spring_boot">Spring Boot project
+example</a>,
+<a href="https://github.com/bazelbuild/intellij/blob/master/base/src/com/google/idea/blaze/base/sync/BlazeSyncManager.java">BlazeSyncManager</a>
+generates this directory on a project sync.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree -a .ijwb/
+.ijwb/
+├── .bazelproject
+├── .blaze
+│   ├── libraries
+│   ├── modules
+│   │   ├── .project-data-dir.iml
+│   │   └── .workspace.iml
+│   └── remoteOutputCache
+└── .idea
+    ├── .name
+    ├── codeStyles
+    │   └── codeStyleConfig.xml
+    ├── externalDependencies.xml
+    ├── libraries
+    │   ├── Runner_deploy_ijar_d8363141.xml
+    │   ├── hamcrest_library_1_3_c425095b.xml
+    │   ├── spring_beans_5_1_5_RELEASE_c7c017d3.xml
+    │   ├── spring_boot_2_1_3_RELEASE_f01f6f60.xml
+    │   ├── spring_boot_autoconfigure_2_1_3_RELEASE_77fee7ea.xml
+    │   ├── spring_boot_starter_web_2_1_3_RELEASE_968a1469.xml
+    │   ├── spring_boot_test_2_1_3_RELEASE_1631a67.xml
+    │   ├── spring_boot_test_autoconfigure_2_1_3_RELEASE_9cfb3ab1.xml
+    │   ├── spring_context_5_1_5_RELEASE_69b9cfff.xml
+    │   ├── spring_core_5_1_5_RELEASE_b1cbb181.xml
+    │   ├── spring_test_5_1_5_RELEASE_be462134.xml
+    │   └── spring_web_5_1_5_RELEASE_90feac64.xml
+    ├── misc.xml
+    ├── modules.xml
+    ├── runConfigurations.xml
+    ├── vcs.xml
+    └── workspace.xml
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">.ijwb</code> is known as the <strong>project directory</strong>. It contains metadata about the
+project that bridges Bazel and IntelliJ project models. For Android Studio and
+CLion, this directory is <code class="language-plaintext highlighter-rouge">.aswb</code> and <code class="language-plaintext highlighter-rouge">.clwb</code> respectively.</p>
+
+<p>Let’s investigate the components of this directory individually.</p>
+
+<h2 id="project-view-file">Project view file</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree -a
+.
+├── .bazelproject 
+</code></pre></div></div>
+
+<p>This is the IJwB <a href="https://ij.bazel.build/docs/project-views.html">project view file
+</a>. It contains project-wide
+settings, like targets to sync, Bazel flags, and enabled languages. Check this
+file into your project’s version control to share Bazel project settings.</p>
+
+<p>The default project view file looks like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>directories:
+  # Add the directories you want added as source here
+  # By default, we've added your entire workspace ('.')
+  .
+
+# Automatically includes all relevant targets under the 'directories' above
+derive_targets_from_directories: true
+
+targets:
+  # If source code isn't resolving, add additional targets that compile it here
+
+additional_languages:
+  # Uncomment any additional languages you want supported
+  # android
+  # dart
+  # kotlin
+  # python
+  # scala
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">derive_targets_from_directories</code> collects all build targets recursively from
+the <code class="language-plaintext highlighter-rouge">directories</code> list. You can also specify targets manually in the <code class="language-plaintext highlighter-rouge">targets</code>
+list.</p>
+
+<h2 id="bazel-data-subdirectory">Bazel data subdirectory</h2>
+
+<p><code class="language-plaintext highlighter-rouge">.ijwb/.blaze</code> is the Bazel data subdirectory, containing mostly IntelliJ module
+definitions.</p>
+
+<p>Most of the persisted serialized data is in this directory. For the rest of the
+persisted data, find their OS-specific cache locations in the <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544519-Directories-used-by-the-IDE-to-store-settings-caches-plugins-and-logs">IntelliJ
+documentation</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── .blaze 
+│   ├── libraries
+</code></pre></div></div>
+
+<p>This is the location of the plugin’s JAR cache. This helps provide a more robust
+code navigation experience, but with the possibility of missing changes made by
+Bazel outside of the IDE view.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│   ├── modules 
+</code></pre></div></div>
+
+<p>This directory contains <a href="https://www.jetbrains.org/intellij/sdk/docs/basics/project_structure.html#module">IntelliJ
+module</a>
+definition files.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│   │   ├── .project-data-dir.iml 
+</code></pre></div></div>
+
+<p>A module that includes just the user’s data directory. This enables editing the
+project view without IntelliJ complaining it’s outside the project.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│   │   └── .workspace.iml
+</code></pre></div></div>
+
+<p>Monolithic module for the Bazel workspace.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│   └── remoteOutputCache
+</code></pre></div></div>
+
+<p>A general-purpose local cache for output artifacts generated remotely. During a
+project sync, updated outputs of interest will be copied locally.</p>
+
+<p>The filenames in this directory contain a checksum suffix to ensure a deterministic map from the 
+cache entries sharing the same filename to the original artifact.</p>
+
+<h2 id="intellij-configuration-subdirectory">IntelliJ configuration subdirectory</h2>
+
+<p><code class="language-plaintext highlighter-rouge">.ijwb/.idea</code> contains project-specific settings files managed by IntelliJ.
+IntelliJ reads XML files in this directory to set up the <a href="https://www.jetbrains.org/intellij/sdk/docs/basics/project_structure.html">Project
+Structure</a>:
+project, modules, libraries, SDKs, facets.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>└── .idea
+    ├── .name
+</code></pre></div></div>
+
+<p>Name of the project.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── codeStyles
+    │   └── codeStyleConfig.xml
+</code></pre></div></div>
+
+<p>Settings for <a href="https://www.jetbrains.com/help/idea/configuring-code-style.html">code styles</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── externalDependencies.xml
+</code></pre></div></div>
+
+<p>Settings for IntelliJ’s external dependencies, which are typically plugins.
+Every Bazel IntelliJ project depends on the Bazel plugin:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">version=</span><span class="s">"4"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">"ExternalDependencies"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;plugin</span> <span class="na">id=</span><span class="s">"com.google.idea.bazel.ijwb"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/component&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── libraries
+</code></pre></div></div>
+
+<p>Settings for external libraries. Note that this does not map directly to Bazel’s
+concept of external repositories.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    │   ├── Runner_deploy_ijar_d8363141.xml
+    │   ├── hamcrest_library_1_3_922bb0fc.xml
+    │   ├── spring_beans_5_1_5_RELEASE_2e7c9dd2.xml
+    │   ├── spring_boot_2_1_3_RELEASE_f91adddf.xml
+    │   ├── spring_boot_autoconfigure_2_1_3_RELEASE_893b8c29.xml
+    │   ├── spring_boot_starter_web_2_1_3_RELEASE_9ed0bc68.xml
+    │   ├── spring_boot_test_2_1_3_RELEASE_eb13e348.xml
+    │   ├── spring_boot_test_autoconfigure_2_1_3_RELEASE_378665d2.xml
+    │   ├── spring_context_5_1_5_RELEASE_136cd23e.xml
+    │   ├── spring_core_5_1_5_RELEASE_2076efa2.xml
+    │   ├── spring_test_5_1_5_RELEASE_2cf15f55.xml
+    │   └── spring_web_5_1_5_RELEASE_9cd2a623.xml
+</code></pre></div></div>
+
+<p>In this example, each XML file maps to a single JAR file. Most of them are
+downloaded through
+<a href="https://github.com/bazelbuild/rules_jvm_external/tree/master/examples/spring_boot"><code class="language-plaintext highlighter-rouge">rules_jvm_external</code></a>
+into an external repository named <code class="language-plaintext highlighter-rouge">@maven</code>. For example,
+<code class="language-plaintext highlighter-rouge">.ijwb/.idea/libraries/hamcrest_library_1_3_922bb0fc.xml</code> contains:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">"libraryTable"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;library</span> <span class="na">name=</span><span class="s">"hamcrest-library-1.3_922bb0fc"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;CLASSES&gt;</span>
+      <span class="nt">&lt;root</span> <span class="na">url=</span><span class="s">"jar:///private/var/tmp/_bazel_jingwen/fb23c64ab599b03c55afa6d9c154aecf/execroot/__main__/bazel-out/darwin-fastbuild/bin/external/maven/v1/https/jcenter.bintray.com/org/hamcrest/hamcrest-library/1.3/hamcrest-library-1.3.jar!/"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/CLASSES&gt;</span>
+    <span class="nt">&lt;JAVADOC</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;SOURCES</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/library&gt;</span>
+<span class="nt">&lt;/component&gt;</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── misc.xml
+</code></pre></div></div>
+
+<p>Miscelleanous configuration.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── modules.xml
+</code></pre></div></div>
+
+<p>Configuration for project modules. In the previous section, we saw that the
+plugin generated two modules for project data and the workspace itself. We see
+their <code class="language-plaintext highlighter-rouge">.iml</code> files referenced here:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">version=</span><span class="s">"4"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;component</span> <span class="na">name=</span><span class="s">"ProjectModuleManager"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;modules&gt;</span>
+      <span class="nt">&lt;module</span> <span class="na">fileurl=</span><span class="s">"file://$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml"</span> <span class="na">filepath=</span><span class="s">"$PROJECT_DIR$/.blaze/modules/.project-data-dir.iml"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;module</span> <span class="na">fileurl=</span><span class="s">"file://$PROJECT_DIR$/.blaze/modules/.workspace.iml"</span> <span class="na">filepath=</span><span class="s">"$PROJECT_DIR$/.blaze/modules/.workspace.iml"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/modules&gt;</span>
+  <span class="nt">&lt;/component&gt;</span>
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── runConfigurations.xml
+</code></pre></div></div>
+
+<p>Settings for <a href="https://www.jetbrains.com/help/rider/Run_Debug_Configurations_dialog.html">run
+configurations</a>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ├── vcs.xml
+</code></pre></div></div>
+
+<p>Settings for version control.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    └── workspace.xml
+</code></pre></div></div>
+
+<p>This file contains the last known state of the user’s workflow in the IntelliJ
+application. Using these settings, IntelliJ can recreate the active tabs,
+settings, recently used run configurations, and VCS tab states after restarting
+the IDE.</p>
+
+<h2 id="portability-of-the-ijwb-directory">Portability of the <code class="language-plaintext highlighter-rouge">.ijwb</code> directory</h2>
+
+<p>The <code class="language-plaintext highlighter-rouge">.ijwb</code> directory is not completely portable. Files like <code class="language-plaintext highlighter-rouge">.bazelproject</code> and
+<code class="language-plaintext highlighter-rouge">codeStyleConfig.xml</code> can be shared project-wide, but <code class="language-plaintext highlighter-rouge">workspace.xml</code> and
+<code class="language-plaintext highlighter-rouge">.workspace.iml</code> should be user-specific.</p>
+
+<p>In general, extract <code class="language-plaintext highlighter-rouge">.bazelproject</code> file out of <code class="language-plaintext highlighter-rouge">.ijwb/</code> to version control it,
+and follow <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544839">JetBrains’ recommendations
+</a> on
+checking in specific files in the <code class="language-plaintext highlighter-rouge">.idea</code> directory.</p>
+
+<h2 id="plugin-cache">Plugin cache</h2>
+
+<p>There are more plugin-specific cached state in the <a href="https://intellij-support.jetbrains.com/hc/en-us/articles/206544519-Directories-used-by-the-IDE-to-store-settings-caches-plugins-and-logs">IDE installation
+directory</a>.
+On macOS, this is the <code class="language-plaintext highlighter-rouge">~/Library/Caches/IdeaIC2019.2/blaze/projects</code> directory.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree
+.
+└── projects
+</code></pre></div></div>
+
+<p>This is the global project persistent data and configuration cache directory.</p>
+
+<p>For every project opened using this IDE installation, there is an entry named
+after the project and the first 8 characters of a random UUID. The UUID is used
+to uniquely identify the project location.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    └── springboot-94bce85a
+        ├── cache.dat.gz
+</code></pre></div></div>
+
+<p>This is the <code class="language-plaintext highlighter-rouge">gzip</code> of the serialized
+<a href="https://github.com/bazelbuild/intellij/blob/master/proto/project_data.proto"><code class="language-plaintext highlighter-rouge">BlazeProjectData</code></a>
+protocol buffer. This is written to disk on sync, and read when reopening
+projects.</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">BlazeProjectData</span> <span class="p">{</span>
+  <span class="n">reserved</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">TargetMap</span> <span class="na">target_map</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">[</span><span class="na">deprecated</span> <span class="o">=</span> <span class="kc">true</span><span class="p">];</span>
+  <span class="n">BlazeInfo</span> <span class="na">blaze_info</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="n">BlazeVersionData</span> <span class="na">blaze_version_data</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="n">WorkspacePathResolver</span> <span class="na">workspace_path_resolver</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="n">WorkspaceLanguageSettings</span> <span class="na">workspace_language_settings</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+  <span class="n">SyncState</span> <span class="na">sync_state</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="n">TargetData</span> <span class="na">target_data</span> <span class="o">=</span> <span class="mi">8</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Most of the language specific data are in <code class="language-plaintext highlighter-rouge">TargetData</code>’s <code class="language-plaintext highlighter-rouge">TargetIdeInfo</code>,
+defined in
+<a href="https://github.com/bazelbuild/intellij/blob/master/proto/intellij_ide_info.proto"><code class="language-plaintext highlighter-rouge">intellij_ide_info.proto</code></a>.
+This is where the
+<a href="https://blog.bazel.build/2016/06/10/ide-support.html">aspect</a>-generated
+<code class="language-plaintext highlighter-rouge">intellij-info.txt</code> files come into play:</p>
+
+<div class="language-protobuf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">message</span> <span class="nc">TargetIdeInfo</span> <span class="p">{</span>
+  <span class="kt">string</span> <span class="na">kind_string</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">TargetKey</span> <span class="na">key</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="n">ArtifactLocation</span> <span class="na">build_file_artifact_location</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="n">Dependency</span> <span class="na">deps</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="kt">string</span> <span class="na">tags</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="k">repeated</span> <span class="kt">string</span> <span class="na">features</span> <span class="o">=</span> <span class="mi">6</span><span class="p">;</span>
+  <span class="n">TestInfo</span> <span class="na">test_info</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+
+  <span class="c1">// The time this target was most recently synced, in milliseconds since epoch.</span>
+  <span class="c1">// Not provided by the aspect directly; instead filled in by the plugin during</span>
+  <span class="c1">// sync.</span>
+  <span class="kt">int64</span> <span class="na">sync_time_millis</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+  <span class="n">JavaIdeInfo</span> <span class="na">java_ide_info</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+  <span class="n">JavaToolchainIdeInfo</span> <span class="na">java_toolchain_ide_info</span> <span class="o">=</span> <span class="mi">101</span><span class="p">;</span>
+
+  <span class="n">AndroidIdeInfo</span> <span class="na">android_ide_info</span> <span class="o">=</span> <span class="mi">110</span><span class="p">;</span>
+  <span class="n">AndroidAarIdeInfo</span> <span class="na">android_aar_ide_info</span> <span class="o">=</span> <span class="mi">111</span><span class="p">;</span>
+  <span class="n">AndroidSdkIdeInfo</span> <span class="na">android_sdk_ide_info</span> <span class="o">=</span> <span class="mi">112</span><span class="p">;</span>
+  <span class="n">AndroidInstrumentationInfo</span> <span class="na">android_instrumentation_info</span> <span class="o">=</span> <span class="mi">113</span><span class="p">;</span>
+
+  <span class="n">CIdeInfo</span> <span class="na">c_ide_info</span> <span class="o">=</span> <span class="mi">120</span><span class="p">;</span>
+  <span class="n">CToolchainIdeInfo</span> <span class="na">c_toolchain_ide_info</span> <span class="o">=</span> <span class="mi">121</span><span class="p">;</span>
+
+  <span class="n">PyIdeInfo</span> <span class="na">py_ide_info</span> <span class="o">=</span> <span class="mi">130</span><span class="p">;</span>
+  <span class="n">GoIdeInfo</span> <span class="na">go_ide_info</span> <span class="o">=</span> <span class="mi">140</span><span class="p">;</span>
+  <span class="n">JsIdeInfo</span> <span class="na">js_ide_info</span> <span class="o">=</span> <span class="mi">150</span><span class="p">;</span>
+  <span class="n">TsIdeInfo</span> <span class="na">ts_ide_info</span> <span class="o">=</span> <span class="mi">160</span><span class="p">;</span>
+  <span class="n">DartIdeInfo</span> <span class="na">dart_ide_info</span> <span class="o">=</span> <span class="mi">170</span><span class="p">;</span>
+  <span class="n">KotlinToolchainIdeInfo</span> <span class="na">kt_toolchain_ide_info</span> <span class="o">=</span> <span class="mi">180</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">TargetIdeInfo</code> is heart of the plugin’s multi-language support. During a sync,
+each Bazel target is associated with an <code class="language-plaintext highlighter-rouge">intellij-info.txt</code> file that contains a
+text representation of the <code class="language-plaintext highlighter-rouge">TargetIdeInfo</code> proto. Here’s an example for the main
+Spring Boot <code class="language-plaintext highlighter-rouge">java_binary</code> target:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">build_file_artifact_location</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">is_external:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+  </span><span class="err">is_new_external_version:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+  </span><span class="err">is_source:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+  </span><span class="err">relative_path:</span><span class="w"> </span><span class="s2">"src/main/java/hello/BUILD.bazel"</span><span class="w">
+  </span><span class="err">root_execution_path_fragment:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">deps</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">dependency_type:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="err">target</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">label:</span><span class="w"> </span><span class="s2">"@local_config_cc//:toolchain"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">deps</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">dependency_type:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+  </span><span class="err">target</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">label:</span><span class="w"> </span><span class="s2">"@bazel_tools//tools/jdk:current_java_toolchain"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">deps</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">dependency_type:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="err">target</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">label:</span><span class="w"> </span><span class="s2">"//src/main/java/hello:lib"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">java_ide_info</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">jars</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">jar</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="err">is_external:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">is_new_external_version:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+      </span><span class="err">is_source:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">relative_path:</span><span class="w"> </span><span class="s2">"src/main/java/hello/app.jar"</span><span class="w">
+      </span><span class="err">root_execution_path_fragment:</span><span class="w"> </span><span class="s2">"bazel-out/darwin-fastbuild/bin"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="err">source_jar</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="err">is_external:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">is_new_external_version:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+      </span><span class="err">is_source:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">relative_path:</span><span class="w"> </span><span class="s2">"src/main/java/hello/app-src.jar"</span><span class="w">
+      </span><span class="err">root_execution_path_fragment:</span><span class="w"> </span><span class="s2">"bazel-out/darwin-fastbuild/bin"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="err">source_jars</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="err">is_external:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">is_new_external_version:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+      </span><span class="err">is_source:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="err">relative_path:</span><span class="w"> </span><span class="s2">"src/main/java/hello/app-src.jar"</span><span class="w">
+      </span><span class="err">root_execution_path_fragment:</span><span class="w"> </span><span class="s2">"bazel-out/darwin-fastbuild/bin"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+  </span><span class="err">main_class:</span><span class="w"> </span><span class="s2">"hello.Application"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">key</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="err">label:</span><span class="w"> </span><span class="s2">"//src/main/java/hello:app"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span><span class="err">kind_string:</span><span class="w"> </span><span class="s2">"java_binary"</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This file contains all language-specific information IntelliJ needs to know
+about the target, which can be used to integrate with language plugins directly.
+It enables features such as semantic code browsing, autocomplete, refactoring,
+reference finding and go-to-definition.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        └── project.view.dat
+</code></pre></div></div>
+
+<p>Finally, this is the serialized form of the Bazel project view. This prevents
+the need for parsing the <code class="language-plaintext highlighter-rouge">.bazelproject</code> project view file every time we open
+the project.</p>
+
+<h2 id="connecting-the-dots-with-the-logs">Connecting the dots with the logs</h2>
+
+<p>Now that we understand what the generated files are and what they’re for, we can
+explore the sync process’ timeline through logs. Here’s a simplified form of
+what you’d see in the Bazel Console during a sync:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Syncing project: Sync (incremental)...
+
+&lt; ... &gt;
+
+Building Bazel targets...
+Command: bazel build \
+  --aspects=@intellij_aspect//:intellij_info_bundled.bzl%intellij_info_aspect \
+  --output_groups=intellij-info-generic,intellij-info-java,intellij-resolve-java \
+  &lt;other flags&gt; \
+  //src/main/java/hello:app
+</code></pre></div></div>
+
+<p>Here, the plugin invokes Bazel to apply the <a href="https://github.com/bazelbuild/intellij/tree/master/aspect">plugin
+aspect</a> over the
+transitive closure of the specified Bazel targets in the project view file.</p>
+
+<p>The <a href="https://docs.bazel.build/versions/master/skylark/rules.html#requesting-output-files">output
+groups</a>
+determine the set of requested files. In this Java project, the plugin requests
+for the <code class="language-plaintext highlighter-rouge">intellij-info-java</code> and <code class="language-plaintext highlighter-rouge">intellij-resolve-java</code> output groups by
+default, which instructs Bazel to run the actions that produces the respective
+<code class="language-plaintext highlighter-rouge">intellij-info.txt</code> and JAR files for the project view’s targets. This builds up
+the <code class="language-plaintext highlighter-rouge">TargetData</code> and <code class="language-plaintext highlighter-rouge">BlazeProjectData</code> structures, which the plugin serializes
+onto the disk for persistence.</p>
+
+<p>After the build completes, the plugin processes the earlier outputs to generate
+the internal project model, writes the necessary IDE metadata files, and commits
+the project structure:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Loading: 0 packages loaded
+Analyzing: 4 targets (2 packages loaded, 123 targets configured)
+
+&lt;...&gt;
+
+INFO: Build completed successfully, 49 total actions
+
+&lt;...&gt;
+
+Parsing build outputs...
+Total rules: 48, new/changed: 42, removed: 0
+Reading IDE info result...
+
+Updating target map
+Loaded 42 aspect files, total size 77kB
+Target map size: 48
+
+&lt;...&gt;
+
+Reading package manifests...
+
+Updating Jar Cache...
+Prefetching files...
+Refreshing files
+Computing directory structure...
+Committing project structure...
+Workspace has 12 libraries
+Workspace has 2 modules
+Updating in-memory state...
+
+Sync finished
+</code></pre></div></div>
+
+<h2 id="language-specific-sync-processes">Language-specific sync processes</h2>
+
+<p>After the plugin processes <code class="language-plaintext highlighter-rouge">TargetData</code> into a <code class="language-plaintext highlighter-rouge">TargetMap</code> of configured targets
+and aspects, it notifies language sync plugins to do further language-specific
+processing. See a list of <code class="language-plaintext highlighter-rouge">BlazeSyncPlugins</code>
+<a href="https://github.com/bazelbuild/intellij/search?q=filename%3ASyncPlugin&amp;unscoped_q=filename%3ASyncPlugin">here</a>.</p>
+
+<p>For example, the <a href="https://github.com/bazelbuild/intellij/blob/e40b6ce4e7552fbbbc63debe5bee769100744fe1/java/src/com/google/idea/blaze/java/sync/BlazeJavaSyncPlugin.java">Java sync
+plugin</a>
+further processes generated <code class="language-plaintext highlighter-rouge">jdeps</code> files from the <code class="language-plaintext highlighter-rouge">intellij-resolve-java</code>
+output group for dependency analysis, and also sets up the right JDK and source
+roots for the IntelliJ project structure.</p>
+
+<p>When all sync plugins complete, the main sync process finishes and the project
+is ready for development in IntelliJ.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

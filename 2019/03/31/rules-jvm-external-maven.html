@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A repository rule for calculating transitive Maven dependencies - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2019/03/31/rules-jvm-external-maven.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="A repository rule for calculating transitive Maven dependencies">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">A repository rule for calculating transitive Maven dependencies</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/jin">Jingwen Chen</a>
+  
+  
+    and
+  
+
+  
+  
+
+  
+    <a href="https://github.com/dkelmer">Danna Kelmer</a>
+  
+  
+
+
+on <span class="text-muted">31 March 2019</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>We’re excited to introduce the initial release of
+<a href="https://github.com/bazelbuild/rules_jvm_external"><code class="language-plaintext highlighter-rouge">rules_jvm_external</code></a>, a
+repository rule to resolve and fetch artifacts transitively in Maven
+repositories, like Maven Central and Google Maven. This project is officially
+maintained by the Bazel team.</p>
+
+<h2 id="background-and-motivation">Background and motivation</h2>
+
+<p>Maven integration in Bazel is a large space with many existing robust solutions
+from community members:</p>
+
+<ul>
+  <li><a href="https://github.com/johnynek/bazel-deps">https://github.com/johnynek/bazel-deps</a>
+    <ul>
+      <li>Tool to generate Bazel dependencies transitively for Maven artifacts, with
+Scala and Kotlin support</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/square/bazel_maven_repository">https://github.com/square/bazel_maven_repository</a>
+    <ul>
+      <li>Repository rule to create an idiomatic Bazel representation of a Maven
+repository using a pinned list of artifacts, with support for Kotlin and
+Android dependencies</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/menny/mabel">https://github.com/menny/mabel</a>
+    <ul>
+      <li>Tool to generate a Maven dependency graph as a lock file, with support for
+Kotlin and Android dependencies</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/bazelbuild/bazel/blob/15b70bb63e5495290900de9303cbebb0ff12210b/tools/build_defs/repo/java.bzl#L15"><code class="language-plaintext highlighter-rouge">java_import_external</code></a>
+and
+<a href="https://github.com/bazelbuild/bazel/blob/15b70bb63e5495290900de9303cbebb0ff12210b/tools/build_defs/repo/android.bzl#L14"><code class="language-plaintext highlighter-rouge">aar_import_external</code></a>
+    <ul>
+      <li>Part of a set of rules that allow you to wire up your dependencies manually</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Each project, including <code class="language-plaintext highlighter-rouge">rules_jvm_external</code>, approaches the problem slightly
+differently. Check out the projects above to see their full feature set and
+determine if one of those solutions work best for you. Keep reading to learn
+more about <code class="language-plaintext highlighter-rouge">rules_jvm_external</code>.</p>
+
+<h2 id="objectives-of-rules_jvm_external">Objectives of <code class="language-plaintext highlighter-rouge">rules_jvm_external</code></h2>
+
+<p>We wanted to fulfill two primary objectives:</p>
+
+<p>First, users should be able to run <code class="language-plaintext highlighter-rouge">bazel build //...</code>. This means that the
+calculation of the transitive dependencies and their fetching need to happen
+during repository rule execution time. This makes dependency fetching
+transparent to users and reduces onboarding friction to a Bazel-built project.</p>
+
+<p>Second, we wanted to provide an interface that is familiar to users with
+projects that depend on Maven repositories. The specification of artifacts in
+the repository rule resembles the specification in the <code class="language-plaintext highlighter-rouge">&lt;dependencies&gt;</code> tag in a
+Maven POM file or the <code class="language-plaintext highlighter-rouge">dependencies</code> closure in a Gradle build file. In
+particular, this means that users only need to specify their direct dependencies
+and the rule will handle the rest for them.</p>
+
+<h2 id="features-and-use-cases">Features and use cases</h2>
+
+<p>For the initial release, we are targeting support for Java and Android Java
+projects. The following features are supported:</p>
+
+<ul>
+  <li>Supported on Windows, macOS and Linux</li>
+  <li>JAR and AAR packaging types</li>
+  <li>In-band transitive closure resolution</li>
+  <li>Dependency specification directly in the WORKSPACE file</li>
+  <li>Custom Maven repositories</li>
+  <li>Maven repository authentication with HTTP Basic Authentication</li>
+  <li>Artifact version pinning and resolution</li>
+  <li>Multiple independent closures of versioned artifacts
+    <ul>
+      <li>Not forced to only have one version of an artifact per workspace, although
+different versions are namespaced by the repository name</li>
+    </ul>
+  </li>
+  <li>Source JAR support</li>
+  <li>Dependency exclusion</li>
+</ul>
+
+<p>As part of this, we will no longer be maintaining <code class="language-plaintext highlighter-rouge">generate_workspace</code>.
+<code class="language-plaintext highlighter-rouge">gmaven_rules</code>, which was designed to be an interim solution, will also be
+replaced by <code class="language-plaintext highlighter-rouge">rules_jvm_external</code>. We will be updating existing documentation to
+reflect this over the coming weeks.</p>
+
+<h2 id="how-to-use-rules_jvm_external-in-your-project">How to use <code class="language-plaintext highlighter-rouge">rules_jvm_external</code> in your project</h2>
+
+<p>To start using this feature in your Java or Android project, point to the
+repository rule in your WORKSPACE file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@bazel_tools//tools/build_defs/repo:http.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">http_archive</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">http_archive</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_jvm_external</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">strip_prefix</span> <span class="o">=</span> <span class="sh">"</span><span class="s">rules_jvm_external-1.2</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">e5c68b87f750309a79f59c2b69ead5c3221ffa54ff9496306937bfa1c9c8c86b</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://github.com/bazelbuild/rules_jvm_external/archive/1.2.zip</span><span class="sh">"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then, specify your direct dependencies using the <code class="language-plaintext highlighter-rouge">artifacts</code> attribute and
+indicate where those artifacts should come from using the <code class="language-plaintext highlighter-rouge">repositories</code>
+attribute:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">load</span><span class="p">(</span><span class="sh">"</span><span class="s">@rules_jvm_external//:defs.bzl</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">maven_install</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">maven_install</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">maven</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">artifacts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">androidx.test.espresso:espresso-core:3.1.1</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">com.google.guava:guava:27.0-android</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">repositories</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">https://maven.google.com</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">https://repo1.maven.org/maven2</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">fetch_sources</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>   <span class="c1"># Fetch source jars. Defaults to False.
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">maven_install</code> rule creates targets you can then depend on in your <code class="language-plaintext highlighter-rouge">BUILD</code>
+files. For example:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">android_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">foo</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">MyAndroidLib.java</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sh">"</span><span class="s">@maven//:androidx_test_espresso_espresso_core</span><span class="sh">"</span>
+        <span class="sh">"</span><span class="s">@maven//:com_google_guava_guava</span><span class="sh">"</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="how-it-works">How it works</h2>
+
+<p>This rule relies on existing tooling to calculate the transitive closure of
+dependencies. The magic underneath is the <a href="https://get-coursier.io/">Coursier</a>
+CLI. There is a thin Starlark wrapper that translates the input from the rule
+into a Coursier compatible command line. The CLI returns the calculated
+transitive closure of artifacts which the rule parses and uses it to generate
+BUILD targets.</p>
+
+<h2 id="next-steps">Next steps</h2>
+
+<p>We are continuing to iterate on this project. Some upcoming features include
+artifact checksumming and additional authentication mechanisms.</p>
+
+<p>If you have an issue or want to request for a feature, please <a href="https://github.com/bazelbuild/rules_jvm_external/">file an
+issue</a> on the repository.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Build without the Bytes is enabled by default in Bazel 7 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2023/10/06/bwob-in-bazel-7.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Build without the Bytes is enabled by default in Bazel 7">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Build without the Bytes is enabled by default in Bazel 7</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/coeuvre">Chi Wang</a>
+  
+  
+
+
+on <span class="text-muted">06 October 2023</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>After the many improvements made over past years, we have recently turned on Build without the Bytes by default - <strong>the first release to include this change will be the upcoming Bazel 7 LTS</strong>.</p>
+
+<h2 id="what-is-build-without-the-bytes">What is Build without the Bytes?</h2>
+
+<p>Remote execution and remote caching are two Bazel features that can be used to improve build performance.</p>
+
+<p>Remote execution allows Bazel to execute build and test actions on remote machines instead of locally. This can improve build performance by allowing multiple machines to work on different parts of the build at the same time.</p>
+
+<p>Remote caching allows Bazel to store the results of build and test actions on a remote server, to share the results of builds and tests across different machines.</p>
+
+<p>In the past, Bazel’s default behaviour was to download every output file of an action after it had executed the action remotely, or hit a remote cache. However, the sum of all output files in a large build will often be in the tens or even hundreds of gigabytes. The benefits of remote execution and caching may be outweighed by the costs of this download, especially if the network connection is poor.</p>
+
+<p>We know from experience that most of the time developers are only interested in a small subset of output files produced during a build, such as the final binary. In a CI build, for example, the output files are often irrelevant.</p>
+
+<p><strong>BwoB</strong> (Build without the Bytes) allows you to download only a subset of the output files, thus reducing the amount of data transferred between Bazel and the remote caching or execution system. You can enable BwoB by setting either <code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> or <code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code>.</p>
+
+<h2 id="what-has-been-improved">What has been improved?</h2>
+
+<p>BwoB was first introduced as an experimental feature in <a href="https://blog.bazel.build/2019/05/07/builds-without-bytes.html">Bazel 0.25</a>. You needed to set <code class="language-plaintext highlighter-rouge">--remote_download_outputs</code> along with other flags to enable BwoB. We saw over 2x speed up in build performance from the initial implementation, but we also had many <a href="https://blog.bazel.build/2019/05/07/builds-without-bytes.html#known-issues">known issues</a>.</p>
+
+<p>BwoB was then marked as a stable feature in Bazel 1.0 and we added flags <code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> and <code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code> which expanded to <code class="language-plaintext highlighter-rouge">--remote_download_outputs</code> and other required flags so that you only needed to set one of them.</p>
+
+<p>Since then, there were no significant improvements until Bazel 5, when we made BwoB work with Bazel’s persistent action cache. Remote actions could now hit the persistent action cache in incremental builds across server restarts. We also introduced the <code class="language-plaintext highlighter-rouge">--remote_download_regex</code> flag to allow Bazel to download additional output files whose path matches the regex.</p>
+
+<p>In Bazel 6, many improvements had landed, including:</p>
+
+<ul>
+  <li>We made <code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> more intelligent so it can download a reasonable subset of output files for other commands, such as, run, test, coverage, and more.</li>
+  <li>We made <code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code> work with aspects to support IDE integration.</li>
+  <li>We added support for remote cache eviction.</li>
+  <li>We added support for remote actions that produce symlinks.</li>
+</ul>
+
+<p>On top of that, we made a massive refactor in Bazel@HEAD to make BwoB more reliable for edge cases. The refactor included the following changes:</p>
+
+<ul>
+  <li>We unified the code paths between <code class="language-plaintext highlighter-rouge">all</code> and <code class="language-plaintext highlighter-rouge">toplevel</code>/<code class="language-plaintext highlighter-rouge">minimal</code>. That is, no matter whether you are building with, or without bytes, Bazel is always running the same code. The removal of this divergence not only improved the code health, but also allowed for faster iterations in the future.</li>
+  <li>As a result of this unification, <code class="language-plaintext highlighter-rouge">--remote_download_[minimal|toplevel]</code> no longer expanded to multiple flags since the codebase was now robust enough that flags that BwoB expanded to became orthogonal to each other. This allows you to easily switch between different output modes without invalidating Bazel’s internal cache.</li>
+  <li>We completely reworked the invalidation logic. BwoB could now correctly download “missing” files when you switched download modes, top level targets or regexes.</li>
+  <li>We also completely reworked the virtual file system used by BwoB. This allows BwoB to handle more edge cases that it couldn’t handle before, such as tree artifacts with both local and remote children, symlinks across virtual and local filesystems, and so on.</li>
+</ul>
+
+<h2 id="changes-in-bazel-7">Changes in Bazel 7</h2>
+
+<p>Starting from Bazel 7, the default download mode will be changed from <code class="language-plaintext highlighter-rouge">--remote_download_all</code> to <code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code>. That is, Bazel will no longer download intermediate outputs of remote actions into the local output base. In return, your remote builds will be faster.</p>
+
+<h3 id="decide-download-modes">Decide Download Modes</h3>
+
+<p><code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> only downloads “necessary” output files, which includes inputs to local actions. For <code class="language-plaintext highlighter-rouge">bazel run</code>, it also downloads required files for the binary to run locally. We highly recommend using <code class="language-plaintext highlighter-rouge">minimal</code> if you are only interested in build/test results, not the artifacts, such as in a CI build.</p>
+
+<p><code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code> will additionally download all outputs of top level targets, which includes outputs from output groups defined by aspects or requested by <code class="language-plaintext highlighter-rouge">--output_groups</code>. This will be the default mode. Use this mode if you are building interactively and need to consume the final build artifacts.</p>
+
+<p>Furthermore, you can use <code class="language-plaintext highlighter-rouge">--remote_download_regex</code> to request Bazel to download additional outputs whose path matches the regexes.</p>
+
+<p>If the above options don’t work for you, use <code class="language-plaintext highlighter-rouge">--remote_download_all</code> to force Bazel to download all outputs, as in Bazel 6 and earlier.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Flag</th>
+      <th style="text-align: center">Bazel 7 Default</th>
+      <th style="text-align: center">Necessary Outputs</th>
+      <th style="text-align: center">Toplevel outputs</th>
+      <th style="text-align: center">All outputs</th>
+      <th style="text-align: center">Example usage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">--remote_download_minimal</code></td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">☑</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">CI builds</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code></td>
+      <td style="text-align: center">☑</td>
+      <td style="text-align: center">☑</td>
+      <td style="text-align: center">☑</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">Interactive builds</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">--remote_download_all</code></td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">☑</td>
+      <td style="text-align: center">Fallback</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="handle-remote-cache-eviction">Handle Remote Cache Eviction</h3>
+
+<p>Remote cache usually has limited storage space so it might have to evict entries based on some strategies. Bazel may throw a <code class="language-plaintext highlighter-rouge">CacheNotFoundException</code> and exit with code 39 if it tries to download blobs that are already evicted. In this case, just retry the build. Bazel will be able to recover from the error and continue.</p>
+
+<p>You can retry the build manually, having a wrapper that detects the exit code 39 and retry, or setting flag <code class="language-plaintext highlighter-rouge">--experimental_remote_cache_eviction_retries</code> to let Bazel automatically retry.</p>
+
+<p>If your remote cache evicts blobs based on a fixed TTL, you can tell Bazel the value of TTL by setting <code class="language-plaintext highlighter-rouge">--experimental_remote_cache_ttl</code> to reduce the chance of remote cache eviction errors.</p>
+
+<p>If your remote cache uses an LRU strategy to evict blobs, you can set the <code class="language-plaintext highlighter-rouge">--experimental_remote_cache_lease_extension</code> flag to allow Bazel to periodically refresh the lease for blobs that are still referenced by Bazel to reduce the chance that these blobs are evicted.</p>
+
+<h3 id="no-more-flag-expansions">No More Flag Expansions</h3>
+
+<p>As mentioned above, <code class="language-plaintext highlighter-rouge">--remote_download_[minimal|toplevel]</code> no longer expand to multiple flags.</p>
+
+<p><code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code> was expanded to:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_inmemory_jdeps_files</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_inmemory_dotd_files</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_action_cache_store_output_metadata</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--remote_download_outputs=toplevel</code></li>
+</ul>
+
+<p>The first three flags have been flipped to true by default and we have also made BwoB work when they are false. So <code class="language-plaintext highlighter-rouge">--remote_download_toplevel</code> now is simply <code class="language-plaintext highlighter-rouge">--remote_download_outputs=toplevel</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> was expanded to:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--nobuild_runfile_links</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_inmemory_jdeps_files</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_inmemory_dotd_files</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--experimental_action_cache_store_output_metadata</code></li>
+  <li><code class="language-plaintext highlighter-rouge">--remote_download_outputs=minimal</code></li>
+</ul>
+
+<p>We <a href="https://github.com/bazelbuild/bazel/issues/18580#issuecomment-1701134147">decided</a> to not couple <code class="language-plaintext highlighter-rouge">--[no]build_runfile_links</code> with BwoB because it only affects local actions. In the future, we may make it <code class="language-plaintext highlighter-rouge">false</code> by default. Other flags are similar so <code class="language-plaintext highlighter-rouge">--remote_download_minimal</code> is now simply <code class="language-plaintext highlighter-rouge">--remote_download_outputs=minimal</code>.</p>
+
+<h2 id="help-us-test">Help us test!</h2>
+
+<p>These improvements are already landed in <a href="https://github.com/bazelbuild/bazelisk">last_green</a> or recent <a href="https://github.com/bazelbuild/bazel/releases">rolling releases</a>. Please test them with your projects and report back any issues you encounter. Your help is appreciated!</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

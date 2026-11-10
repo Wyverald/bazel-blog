@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Configurable Builds - Part 1 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2019/02/11/configurable-builds-part-1.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Configurable Builds - Part 1">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Configurable Builds - Part 1</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/gregestren">Greg Estren</a>
+  
+  
+
+
+on <span class="text-muted">11 February 2019</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>One of Bazel’s long-term goals is to make <code class="language-plaintext highlighter-rouge">$ bazel build //:all</code> “<em>just work</em>”
+so that every target builds “the right way”, for whatever platform(s) you care
+about, using only flags that are genuinely interesting to you. This two-part
+series discusses the challenges involved and steps we’re taking to get there.</p>
+
+<p>This is a deeper dive into themes covered in Bazel’s [configurability roadmap]
+(https://bazel.build/roadmaps/configuration.html).</p>
+
+<h2 id="motivation">Motivation</h2>
+
+<p>The larger your project gets, the more likely you are to have to build it
+different ways.</p>
+
+<p>Maybe you need Android, iOS, and desktop versions of your app. Maybe you build
+C++ for different platforms. Or maybe you maintain a popular JavaScript library
+that users only want specific modules from.</p>
+
+<p>These are examples of <em>configuration</em>: the process of building the same <em>code</em>
+with different <em>settings</em> to customize it for specific needs. In Bazel-speak,
+this means building a
+<a href="https://docs.bazel.build/versions/master/build-ref.html#targets">target</a> with
+a set of
+<a href="https://docs.bazel.build/versions/master/user-manual.html#flags-options">flags</a>:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bazel build //my:cc_binary <span class="nt">--cpu</span><span class="o">=</span>x86
+<span class="nv">$ </span>bazel build //my:cc_binary <span class="nt">--cpu</span><span class="o">=</span>arm
+<span class="nv">$ </span>bazel build //my:android_binary <span class="nt">--android_sdk</span><span class="o">=</span>@androidsdk//:sdk-28
+</code></pre></div></div>
+
+<p>Bazel’s <em>configurability work</em> is an ongoing effort to make these tasks simple,
+flexible, and powerful.</p>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>Bazel is a
+<a href="https://docs.bazel.build/versions/master/bazel-vision.html">powerful</a> build
+tool that’s especially suited for large codebases with
+<a href="https://blog.bazel.build/2018/12/05/multilanguage-build-system.html">multiple languages</a>.
+But it was originally created for Google engineers writing code for fleets of
+identical Linux servers with little need for customization. What customization
+was needed was achieved with
+<a href="https://source.bazel.build/bazel/+/144912e7b7a86b45e07f79e76f6fed20890acb36:src/main/java/com/google/devtools/build/lib/rules/cpp/CppOptions.java;l=258">ad hoc flags and logic</a>
+built straight into the tool.</p>
+
+<p>This is no longer true inside or outside of Google. Modern software runs on
+phones, cloud, servers, desktops, <a href="https://en.wikipedia.org/wiki/Smart_device">smart
+devices</a> and more, and must offer
+increasingly flexible support for any combination of these platforms.</p>
+
+<p>This means</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bazel build //my:binary
+</code></pre></div></div>
+
+<p>isn’t enough to describe what you want to do. What platforms are you
+targeting? What features do you want to include? What if you want to build a
+complex app with generated sources, client and server modules, native
+extensions, and test data?</p>
+
+<p>Bazel’s historical approach is to use ad hoc flags:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bazel build //my:binary --cpu=arm --crosstool_top=//my:custom_toolchain --define MYFEATURE=1
+</code></pre></div></div>
+
+<p>This approach has deep limitations:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">--cpu</code> only accepts values explicitly supported by C++ rules. Even if you’re
+not building C++.</li>
+  <li><code class="language-plaintext highlighter-rouge">--crosstool_top</code>, which specifies exactly what command line should compile
+your code, is even more tied to C++. Other languages may be organized
+completely differently.</li>
+  <li><code class="language-plaintext highlighter-rouge">--define</code> is completely unstructured and unreadable in Starlark.</li>
+  <li><code class="language-plaintext highlighter-rouge">$ bazel build //my:all</code> sets the same flags for all targets, even if
+different targets need different flags.</li>
+  <li><code class="language-plaintext highlighter-rouge">//my:binary</code>’s deps must use the same settings as their parent.</li>
+  <li>It might be hard to remember which flags are needed by which targets,
+especially across users and dev/test/prod machines. This makes it hard to
+be confident in the integrity of your builds.</li>
+</ol>
+
+<p>Our work is redesigning Bazel around a better approach: set flags directly in
+targets that need them, let rule writers design the flags that affect their
+rules, and provide standard APIs for cross-language concepts like <em>platform</em> and
+<em>cpu</em>. This lets developers configure projects on their own terms, using
+language consistent with how their projects are organized.</p>
+
+<h2 id="configuration-vs-attributes">Configuration vs. Attributes</h2>
+
+<p>Rules have always had <a href="https://docs.bazel.build/versions/master/skylark/rules.html#attributes">attributes</a>,
+which also affect how they build. So why do we even need configuration?</p>
+
+<p>The difference between configuration and attributes is attributes only affect
+the rule’s
+<a href="https://docs.bazel.build/versions/master/skylark/rules.html#implementation-function">direct build actions</a>.
+This means attributes <strong>cannot affect how a rule’s dependencies build</strong>.</p>
+
+<p>For example, C++ rules have an attribute named
+<a href="https://docs.bazel.build/versions/master/be/c-cpp.html#cc_binary.copts"><code class="language-plaintext highlighter-rouge">copts</code></a>
+that sets custom C++ compile options. <code class="language-plaintext highlighter-rouge">cc_binary(name = "mybinary", srcs =
+["mybinary.cc"], deps = [":mylibrary"], copts =
+["-DUSE_EXPERIMENTAL_FEATURES=1"])</code> might compile <code class="language-plaintext highlighter-rouge">mybinary.cc</code> with
+experimental features. But this won’t happen for <code class="language-plaintext highlighter-rouge">":mylibrary"</code> unless it sets
+its <code class="language-plaintext highlighter-rouge">copts</code> similarly. This makes attributes unsuitable for tasks like building
+a binary for a different CPU.</p>
+
+<p>If you imagine a build as a <a href="https://docs.bazel.build/versions/master/build-ref.html#dependencies">graph</a>
+with parents above their dependencies, attributes change behavior
+<a href="https://docs.bazel.build/versions/master/skylark/rules.html#providers"><em>up</em></a>
+the graph while configuration changes behavior <em>down</em> the graph.</p>
+
+<h2 id="platforms">Platforms</h2>
+
+<p>One of our team’s major goals is designing a principled API for defining
+<em>platforms</em> and <em>toolchains</em>.</p>
+
+<p>While there are many kinds of “ways” you might want to build your project, in
+practice most developers want the flexibility to target different devices,
+OSes, CPUs, and other machine properties. The general term for this is
+<em>platforms</em>. Being able to reason about how your code interacts with platforms
+is the basis of <a href="https://en.wikipedia.org/wiki/Cross-platform_software">multi-platform software</a>.</p>
+
+<p><em>Toolchains</em> are the set of programs that build your code. A C++ toolchain
+includes a compiler and linker and the flags that invoke them “correctly”.
+Different platforms require different toolchains. gcc might be the compiler of
+choice for Linux while Xcode is used on the Mac. Even the same platform might
+use different toolchains. For example, maybe you want to use an experimental
+compiler.</p>
+
+<p>Not only are these concepts cross-language, but it’s <em>important</em> that languages
+treat them consistently. Otherwise you get an uncoordinated mess of
+language-specific code that makes it hard to combine different languages in a
+single project.</p>
+
+<p>One of the reasons</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bazel build //my:binary --cpu=arm --crosstool_top=//my:custom_toolchain --define MYFEATURE=1
+</code></pre></div></div>
+
+<p>doesn’t work well is that <code class="language-plaintext highlighter-rouge">--cpu</code> and <code class="language-plaintext highlighter-rouge">--crosstool_top</code> are C++-specific. What
+if you want to build Java libraries with C++ dependencies for both Linux and
+Android? This impacts not just C++, but also the JDK and maybe even which
+support libraries you need.</p>
+
+<p>Not only are <code class="language-plaintext highlighter-rouge">--cpu</code> and <code class="language-plaintext highlighter-rouge">-crosstool_top</code> insufficiently expressive, but they
+might actively sabotage you. Consider the following use of
+<a href="https://docs.bazel.build/versions/master/configurable-attributes.html">select</a>:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">config_setting</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">android</span><span class="sh">"</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="sh">"</span><span class="s">cpu</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">arm</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">crosstool_top</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">//my:android_toolchain</span><span class="sh">"</span><span class="p">})</span>
+<span class="nf">java_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">supporting_library</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="nf">select</span><span class="p">({</span>
+        <span class="sh">"</span><span class="s">:android</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span><span class="sh">"</span><span class="s">:extra_required_android_deps</span><span class="sh">"</span><span class="p">],</span>
+        <span class="sh">"</span><span class="s">//conditions:default</span><span class="sh">"</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}))</span>
+</code></pre></div></div>
+
+<p>If you use <code class="language-plaintext highlighter-rouge">--cpu</code> and <code class="language-plaintext highlighter-rouge">crosstool_top</code> to define what <code class="language-plaintext highlighter-rouge">":android"</code> means, what
+happens when an app supports a new Android phone with a different CPU?
+<code class="language-plaintext highlighter-rouge">":android"</code> won’t trigger because <code class="language-plaintext highlighter-rouge">--cpu</code> no longer matches, the app won’t get
+required Android support libraries, and it will break.</p>
+
+<h3 id="a-better-way">A Better Way</h3>
+
+<p>The configurability’s team’s platform work, led by <a href="https://github.com/katre">@katre</a>,
+lets you declare exactly what you want in a way all rules understand. It
+doesn’t even matter if no one’s ever heard of your platform.</p>
+
+<p>With the new API, our example can be rewritten as:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span> <span class="n">cat</span> <span class="n">platforms</span><span class="o">/</span><span class="n">BUILD</span>
+<span class="nf">constraint_setting</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">os</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">constraint_value</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">android</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_setting</span> <span class="o">=</span> <span class="sh">"</span><span class="s">:os</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">constraint_value</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">linux</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_setting</span> <span class="o">=</span> <span class="sh">"</span><span class="s">:os</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">constraint_setting</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">device</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">constraint_value</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">phone</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_setting</span> <span class="o">=</span> <span class="sh">"</span><span class="s">:device</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">constraint_value</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">tablet</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_setting</span> <span class="o">=</span> <span class="sh">"</span><span class="s">:device</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">platform</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">pixel3</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_values</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:android</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">:phone</span><span class="sh">"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">$</span> <span class="n">cat</span> <span class="n">helpers</span><span class="o">/</span><span class="n">BUILD</span>
+<span class="nf">config_setting</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">android</span><span class="sh">"</span><span class="p">,</span> <span class="n">constraint_values</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">//platforms:android</span><span class="sh">"</span><span class="p">])</span>
+<span class="nf">java_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">supporting_library</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="nf">select</span><span class="p">({</span>
+        <span class="sh">"</span><span class="s">:android</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span><span class="sh">"</span><span class="s">:extra_required_android_deps</span><span class="sh">"</span><span class="p">],</span>
+        <span class="sh">"</span><span class="s">//conditions:default</span><span class="sh">"</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}))</span>
+</code></pre></div></div>
+
+<p>and built with:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bazel build //my:binary --platforms=//platforms:pixel3 --define MYFEATURE=1
+</code></pre></div></div>
+
+<p>This is a significant improvement from before. It’s more concise and you no
+longer have to care what the CPU is. <em>Any</em> platform with the <code class="language-plaintext highlighter-rouge">constraint_value</code>
+<code class="language-plaintext highlighter-rouge">":android"</code> is an Android platform. So it’s easy to express <em>exactly</em> what you
+want and have <code class="language-plaintext highlighter-rouge">select</code>, rules, and toolchains understand it the same way.
+<code class="language-plaintext highlighter-rouge">MYFEATURE=1</code>, which isn’t a platform property, remains as before.</p>
+
+<p>Rules understand <code class="language-plaintext highlighter-rouge">":android"</code> by declaring <a href="https://docs.bazel.build/versions/master/toolchains.html#writing-rules-that-use-toolchains">toolchain types</a>.
+For example, <code class="language-plaintext highlighter-rouge">java_binary</code> can be defined in Starlark as</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">java_binary</span> <span class="o">=</span> <span class="nf">rule</span><span class="p">(...,</span> <span class="n">toolchains</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">@bazel_tools//tools/jdk:toolchain_type</span><span class="sh">"</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p>This tells Bazel that <code class="language-plaintext highlighter-rouge">java_binary</code> understands toolchains that set
+<code class="language-plaintext highlighter-rouge">["@bazel_tools//tools/jdk:toolchain_type"]</code>. You can then write a Java
+toolchain for Android as:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">toolchain</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">android_jdk</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">toolchain_type</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">@bazel_tools//tools/jdk:toolchain_type</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">target_compatible_with</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">//platforms:android</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">toolchain</span> <span class="o">=</span> <span class="sh">"</span><span class="s">:android_jdk_provider_rule</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>where <code class="language-plaintext highlighter-rouge">android_jdk_provider_rule</code> is a Starlark rule that
+<a href="https://docs.bazel.build/versions/master/skylark/rules.html#providers">provides</a>
+ access to the actual JDK tools.</p>
+
+<p>This takes some infrastructure to set up, but the result is magic. Call your
+build with <code class="language-plaintext highlighter-rouge">--platforms=//platforms:pixel3</code> and <code class="language-plaintext highlighter-rouge">java_binary</code> automatically
+uses <code class="language-plaintext highlighter-rouge">":android_jdk"</code>. All rules can join in on this. The only obligations rule
+designers have are to write <a href="https://docs.bazel.build/versions/master/toolchains.html#defining-toolchains">Starlark rules</a>
+describing how their toolchains work and define toolchains for the platforms
+they support.</p>
+
+<p>This brings us closer to the goal of <code class="language-plaintext highlighter-rouge">$ bazel build //:all</code> <em>just working</em> by
+replacing ad hoc language-specific flags with a single flag that works everywhere.</p>
+
+<h3 id="status">Status</h3>
+
+<p>You can use Bazel’s new platform API today. The catch is that rules have to opt
+in support by including definitions of how their toolchains work. If you’re
+designing a new set of rules, you should <a href="https://docs.bazel.build/versions/master/toolchains.html">design</a>
+them for platforms. But most existing rules predate this work and still rely on
+legacy flags like
+<a href="https://source.bazel.build/bazel/+/0b84634f3be1118bdbd501f3d879382d6ae52307:src/main/java/com/google/devtools/build/lib/rules/java/JavaOptions.java;l=75"><code class="language-plaintext highlighter-rouge">--javabase</code></a>.</p>
+
+<p>As of this post, Bazel’s platform work is heavily focused on rules migration. 
+C++ rules are <a href="https://github.com/bazelbuild/bazel/issues/6516">almost ready</a>
+and due to be <a href="https://github.com/bazelbuild/bazel/issues/7260">officially integrated</a>
+mid-2019. <a href="https://github.com/bazelbuild/bazel/issues/6521">Java</a> and
+<a href="https://github.com/bazelbuild/bazel/issues/7375">Python</a> rules will follow soon
+after (follow the relevant tracking bugs for best estimates). These will be
+important milestones in demonstrating this work’s value and providing best
+practice examples for others.</p>
+
+<p><code class="language-plaintext highlighter-rouge">--cpu</code>, <code class="language-plaintext highlighter-rouge">--crosstool_top</code> and other legacy flags will eventually be removed
+from Bazel. Since rules are migrating on different timelines and projects
+still use these flags for
+<a href="https://docs.bazel.build/versions/master/configurable-attributes.html"><code class="language-plaintext highlighter-rouge">select</code></a> and command lines, an <a href="https://github.com/bazelbuild/bazel/issues/6426">interoperability
+phase</a> will keep them working as long as you need.</p>
+
+<p>For more details, see Bazel’s <a href="https://bazel.build/roadmaps/platforms.html">platforms roadmap</a>,
+<a href="https://bazel.build/roadmaps/configuration.html">configurability roadmap</a>,
+<a href="https://docs.bazel.build/versions/master/platforms.html">platform</a>
+and <a href="https://docs.bazel.build/versions/master/toolchains.html">toolchain</a>
+docs, and the original <a href="https://docs.google.com/document/d/1-G-VPRLEj9VyfC6VrQBiR8To-dZjnBSQS66Y4nargGM/edit?ts=57df9619#heading=h.al54v2ddwqzv">design doc</a>.
+Or contact the team at <a href="https://groups.google.com/forum/#!forum/bazel-discuss">bazel-discuss@googlegroups.com</a>.</p>
+
+<p>Special thanks to <a href="https://github.com/katre">@katre</a> for leading Bazel’s
+platform vision and <a href="https://github.com/hlopko">@hlopko</a> and
+<a href="https://github.com/lberki">@lberki</a> for important C++ contributions.</p>
+
+<h2 id="part-2">Part 2…</h2>
+
+<p>Stay tuned for <em>Configurable Builds - Part 2</em>, coming out soon. We’ll talk about
+building different targets with different settings through <em>transitions</em>. We’ll
+also discuss why you need to watch your build size when using these features.</p>
+
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

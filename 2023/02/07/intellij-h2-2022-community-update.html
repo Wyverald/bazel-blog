@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel Plugin for IntelliJ H2 2022 Community Update - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2023/02/07/intellij-h2-2022-community-update.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel Plugin for IntelliJ H2 2022 Community Update">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel Plugin for IntelliJ H2 2022 Community Update</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/keertk">Keerthana Kumar</a>
+  
+  
+
+
+on <span class="text-muted">07 February 2023</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p><em>A modified version of this blog was originally sent out to the IntelliJ Plugin distribution list on December 15, 2022.</em></p>
+
+<h2 id="welcome">Welcome!</h2>
+<p>Welcome to the inaugural edition of the Bazel Plugin for IntelliJ community update! We hope to build a stronger and more inclusive community, and encourage more participation by keeping you informed on what’s happening in this space.</p>
+
+<h2 id="product-highlights">Product highlights</h2>
+<p>In November 2022, several members of the Bazel community gathered together in New York for <a href="https://opensourcelive.withgoogle.com/events/bazelcon2022">BazelCon</a>, an annual event hosted by the Google Bazel Team. The following videos are available on-demand and provide a lot of valuable insights:</p>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=SiKov9W7QT4&amp;t=1s">Keynote</a>: Jeff Cox talks about short term and long term goals for Bazel for 2023, current and future OSS investments, and insights into the value both to Google and 3rd party developers globally.</li>
+  <li><a href="https://www.youtube.com/watch?v=6_RrNxuny6Y">State of the Union</a>: Radhika Advani, Sven Tiffe, and John Field share 2022 achievements, customer success stories, and 2023 plans. Learn about the Bazel roadmap, community contributions, and how you can participate in advancing the state of Bazel.</li>
+</ul>
+
+<p>One of the key topics discussed was the Bazel plugin for IntelliJ and efforts made in this area in 2022, as shown below.</p>
+
+<p><img src="/bazel-blog/assets/blog-intellij-h2-2022-maintenance-model.png" alt="Image" /></p>
+
+<p>In 2022, JetBrains* and others <a href="https://blog.bazel.build/2022/07/11/Bazel-IntelliJ-Update.html">joined as co-maintainers</a> of the <a href="https://github.com/bazelbuild/intellij">Bazel IntelliJ plugin repository</a> and are actively reviewing contributions, tracking overall repository health, and adding new capabilities to the Bazel IntelliJ Plugin. This new co-maintenance model  has ensured a seamless intake process and reduced the turnaround time for pull requests raised in this repository.</p>
+
+<p>At BazelCon, we also organized a Birds of a Feather session for the Bazel IntelliJ plugin where a few of our co-maintainers (<a href="https://github.com/mai93">Mai Hussien</a>, <a href="https://github.com/jastice">Justin Kaeser</a>, and <a href="https://github.com/abrams27">Marcin Abramowicz</a>) presented key updates and had fruitful discussions with the audience on existing features, challenges and pain points, as well as on the future of the Bazel IntelliJ plugin integration.</p>
+
+<p>We’re committed to making sure our community succeeds by driving contribution excellence – e.g. resolving pull requests and reviewing issues in a timely manner, as well as improving documentation, examples, and tutorials. We also have a monthly SIG meeting that you’re all invited to and encouraged to join! Feel free to bring any topics for discussion and hear from members of the community.</p>
+
+<p>We encourage you all to contribute to the IntelliJ plugin. This truly is a joint effort between the Google Bazel team, co-maintainers, partners, and community champions. Be on the look out for “good first issue” or “help wanted” labels on issues. We’re aiming to add these more consistently to make it easier for you to identify areas for contribution.</p>
+
+<p>Let us know if we can help in any way during the process - we’re just a <a href="https://slack.bazel.build">Slack</a> message away.</p>
+
+<p><img src="/bazel-blog/assets/blog-intellij-h2-2022-partner.png" alt="Image" /></p>
+
+<h2 id="issues">Issues</h2>
+<p>More focus has been directed to the issues reported by external Bazel plugin users. The issue fixes improved the plugin main functionalities, e.g. debugging and testing for more languages like Kotlin, Go, C++ and Scala on different IDEs. The following is a list of significant issues fixed in H2 2022. You can find the complete list of closed issues <a href="https://github.com/bazelbuild/intellij/issues?q=is%3Aissue+is%3Aclosed+closed%3A2022-07-01..2022-12-31">here</a>.</p>
+
+<ul>
+  <li>Maintain package structure in Go external libraries (<a href="https://github.com/bazelbuild/intellij/issues/1744">#1744</a> and <a href="https://github.com/bazelbuild/intellij/issues/2365">#2365</a>).</li>
+  <li>Android Studio Mobile-install run configuration failed (<a href="https://github.com/bazelbuild/intellij/pull/3793">#3793</a>, <a href="https://github.com/bazelbuild/intellij/issues/2328">#2328</a>, and <a href="https://github.com/bazelbuild/intellij/issues/2084">#2084</a>).</li>
+  <li>CLion debugging is broken MacOS (<a href="https://github.com/bazelbuild/intellij/issues/2101">#2101</a>).</li>
+  <li>Partial sync gives sponge2 link instead of error messages (<a href="https://github.com/bazelbuild/intellij/issues/3877">#3877</a>).</li>
+  <li>Java fast test compilation failure does not output a link with new Sync window (<a href="https://github.com/bazelbuild/intellij/issues/3919">#3919</a>)</li>
+  <li>Native Build Rules Point to 404’ing URL (<a href="https://github.com/bazelbuild/intellij/issues/3730">#3730</a>).</li>
+  <li>Support Kotlin coroutines debugging (<a href="https://github.com/bazelbuild/intellij/issues/2317">#2317</a>).</li>
+  <li>It is now possible to use Gateway with Bazel (<a href="https://github.com/bazelbuild/intellij/issues/3152">#3152</a>).</li>
+</ul>
+
+<h2 id="pull-requests">Pull requests</h2>
+<p>With the new maintenance model of the plugin and the collaboration between maintainers from different companies, we are reviewing and merging more pull requests than before. The merged PRs made improvements to different areas of the plugin such as supporting the latest IDE versions and fixing main functionalities for multiple languages. The following is a list of significant PRs we merged in H2 2022 and the complete list of merged PRs can be found <a href="https://github.com/bazelbuild/intellij/pulls?q=is%3Apr+closed%3A2022-07-01..2022-12-31+-author%3Aapp%2Fcopybara-service+is%3Aclosed">here</a>.</p>
+
+<ul>
+  <li>Add running Gazelle as a step in the sync process (<a href="https://github.com/bazelbuild/intellij/pull/3910">#3910</a>).</li>
+  <li>Automatically import projects from directories (to open Bazel projects with remote IntelliJ) (<a href="https://github.com/bazelbuild/intellij/pull/3601">#3601</a>).</li>
+  <li>Allow running single Scalatest tests in IntelliJ (<a href="https://github.com/bazelbuild/intellij/pull/3744">#3744</a>).</li>
+  <li>Support Starlark nested function definitions (<a href="https://github.com/bazelbuild/intellij/pull/4035">#4035</a>).</li>
+  <li>Fix main repo target parsing (<a href="https://github.com/bazelbuild/intellij/pull/4009">#4009</a>).</li>
+  <li>Enable the Autoscroll to console by default (<a href="https://github.com/bazelbuild/intellij/pull/4006">#4006</a>).</li>
+  <li>RemovedAction should delegate isDumbAware (<a href="https://github.com/bazelbuild/intellij/pull/3789">#3789</a>).</li>
+  <li>Include implicit dependencies from proto compilers (<a href="https://github.com/bazelbuild/intellij/pull/3248">#3248</a>).</li>
+  <li>fix(test-go): add test_env to output all test results (<a href="https://github.com/bazelbuild/intellij/pull/3028/files">#3028</a>).</li>
+  <li>Support IntelliJ and CLion 2022.3 (<a href="https://github.com/bazelbuild/intellij/pull/4019">#4019</a>).</li>
+  <li>Fix reported regressions on 2022.3 (<a href="https://github.com/bazelbuild/intellij/pull/4126">#4126</a>, <a href="https://github.com/bazelbuild/intellij/pull/4074">#4074</a>, <a href="https://github.com/bazelbuild/intellij/pull/4070">#4070</a>).</li>
+</ul>
+
+<h2 id="releases">Releases</h2>
+<p>New versions of the plugin are being released every 2 weeks for <a href="https://plugins.jetbrains.com/plugin/8609-bazel">IntelliJ</a>, <a href="https://plugins.jetbrains.com/plugin/9554-bazel">CLion</a>, and <a href="https://plugins.jetbrains.com/plugin/9185-bazel">Android Studio</a>. The new versions are first released to the <a href="https://github.com/bazelbuild/intellij#beta-versions">Beta channel</a> for users to experiment and report regressions that will be fixed before releasing to the Stable channel after 2 weeks.</p>
+
+<p><a href="https://github.com/bazelbuild/intellij/releases">Recent releases</a> have focused more on fixing issues reported by external users.</p>
+
+<p>We will continue to release plugin versions compatible with the new IDE releases (including EAPs) as early as possible. This  prevents blocking the users who want to upgrade their IDEs but cannot find Bazel support for the new versions.</p>
+
+<h2 id="developer-support">Developer support</h2>
+<p>Over 2022, we heard your feedback and made significant process improvements to drive developer support excellence and elevate the overall contributor experience. A few notable areas we worked on in the support sphere in H2 2022 include:</p>
+
+<p><strong>Template refreshes:</strong> To minimize contributor friction, we created <a href="https://github.com/bazelbuild/intellij/issues/new/choose">issue templates</a> for bugs and feature requests to capture the required information from developers before an issue is raised. This process minimizes redundant contributor and maintainer communication.</p>
+
+<p><strong>Better labels on GitHub:</strong> We added 3 labels to the GitHub repository to allow us to more accurately  track issue and PR status:</p>
+
+<ul>
+  <li>awaiting-user-response: awaiting a response from author in a PR (e.g. after maintainer asks a question or asks to make edits to the PR)</li>
+  <li>awaiting-review: awaiting review from maintainers in a PR (e.g. when PR is opened or after an author makes edits to the PR)</li>
+  <li>awaiting-maintainer: awaiting a response from maintainers in an issue (e.g. when an issue is opened or after an author asks a question)</li>
+</ul>
+
+<p><strong>Issue resolutions and triaging:</strong> Our support engineers are triaging issues and PRs promptly, and assigning the appropriate labels to many co-maintainers with the goal of improving developer experience and efficiency.</p>
+
+<p><strong>Automation:</strong> We’re working on a bot to automate the process of applying and removing labels on GitHub when certain actions are performed. This will save time and improve accuracy. Additionally, we plan to send out a short survey to contributors once an issue is resolved, to gather feedback on their experience.</p>
+
+<p><strong>Manual plugin testing:</strong> Manual testing of the plugin after a release to the beta channel is being done every other week, for Java, Kotlin, and GoLang.</p>
+
+<p><strong>Releases and announcements:</strong> Biweekly beta and stable releases for IntelliJ/CLion and Android Studio are part of our release cadence. We will send out emails to the community Google group(intellij-bazel-plugin@googlegroups.com) after every beta/stable release.</p>
+
+<p><strong>Backlog:</strong> Burning down open backlog issues in a timely manner is a top priority for us in 2023. Our prioritization process will involve reviewing and identifying issues that can be closed - if no longer relevant or beneficial to the community - so please look out for our comments on GitHub.</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><strong>GitHub Repository:</strong> <a href="https://github.com/bazelbuild/intellij">https://github.com/bazelbuild/intellij</a></li>
+  <li><strong>IntelliJ Plugin:</strong> <a href="https://plugins.jetbrains.com/plugin/8609-bazel">https://plugins.jetbrains.com/plugin/8609-bazel</a></li>
+  <li><strong>CLion Plugin:</strong> <a href="https://plugins.jetbrains.com/plugin/9554-bazel">https://plugins.jetbrains.com/plugin/9554-bazel</a></li>
+  <li><strong>Android Studio Plugin:</strong> <a href="https://plugins.jetbrains.com/plugin/9185-bazel">https://plugins.jetbrains.com/plugin/9185-bazel</a></li>
+  <li><strong>Release Notes:</strong> <a href="https://github.com/bazelbuild/intellij/releases">https://github.com/bazelbuild/intellij/releases</a></li>
+  <li><strong>Slack Channel:</strong> <a href="https://slack.bazel.build">https://slack.bazel.build</a></li>
+  <li><strong>Google Group:</strong> intellij-bazel-plugin@googlegroups.com</li>
+  <li><strong>SIG Meeting:</strong> Held on the 3rd Thursday of every month. Reach out to raoarun@google.com to be added to the invite.</li>
+</ul>
+
+<h2 id="ideas-feedback-and-submissions-are-welcome">Ideas, feedback, and submissions are welcome!</h2>
+<p>Thank you for reading this edition! Let us know if you’d like to see any new information or changes, or if you’d like to showcase your work in future community updates by reaching out to raoarun@google.com. We look forward to hearing from you!</p>
+
+<p>Thanks,</p>
+
+<p>Intellij Bazel Plugin Maintainers (intellij-bazel-plugin-maintainers@googlegroups.com)</p>
+
+<p>*Copyright © 2022 JetBrains s.r.o. JetBrains and IntelliJ are registered trademarks of JetBrains s.r.o.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

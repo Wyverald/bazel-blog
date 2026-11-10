@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel 0.20 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2018/12/14/Bazel-0.20.0.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel 0.20">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel 0.20</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/dslomov">Dmitry Lomov</a>
+  
+  
+
+
+on <span class="text-muted">14 December 2018</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>The Bazel team is happy to announce a new version of Bazel, <a href="https://github.com/bazelbuild/bazel/releases/tag/0.20.0">Bazel 0.20</a>.</p>
+
+<p>With this release, we communicate <a href="https://docs.google.com/document/d/1Dj5PBLmPVg9ZyApm4GobM3y-mDgY3mVaqpRVttOe-ZQ/">breaking changes</a>
+following our <a href="https://docs.google.com/document/d/1q5GGRxKrF_mnwtaPKI487P8OdDRh2nN7jX6U-FXnHL0/">communication policy</a>.</p>
+
+<p><a href="https://github.com/bazelbuild/bazel/issues?q=is%3Aissue+label%3Abreaking-change-0.20">Breaking changes in 0.20</a>:</p>
+
+<ul>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/6570"><code class="language-plaintext highlighter-rouge">--incompatible_remove_native_http_archive</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/6569"><code class="language-plaintext highlighter-rouge">--incompatible_remove_native_git_repository</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/6434"><code class="language-plaintext highlighter-rouge">--incompatible_disable_cc_toolchain_label_from_crosstool_proto</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/6384"><code class="language-plaintext highlighter-rouge">--incompatible_disable_depset_in_cc_user_flags</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/6381"><code class="language-plaintext highlighter-rouge">--incompatible_disable_cc_configuration_make_variables</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/5902"><code class="language-plaintext highlighter-rouge">--incompatible_disallow_conflicting_providers</code></a></li>
+  <li><a href="https://github.com/bazelbuild/bazel/issues/5264"><code class="language-plaintext highlighter-rouge">--incompatible_range_type</code></a></li>
+</ul>
+
+<p>Changes for which 0.20 is a migration window are marked with <a href="https://github.com/bazelbuild/bazel/issues?q=is%3Aissue+label%3Amigration-0.20">GitHub label ‘migration-0.20’</a></p>
+
+<p>Breaking changes in the next release (0.21) <a href="https://github.com/bazelbuild/bazel/issues?q=is%3Aissue+label%3Abreaking-change-0.21">are marked with GitHub label ‘breaking-change-0.21’</a></p>
+
+<h2 id="general-changes">General Changes</h2>
+
+<ul>
+  <li>(Linux only) Bazel now shuts down when idle for 5 minutes and the system
+is low on RAM.</li>
+  <li>We’re deprecating <code class="language-plaintext highlighter-rouge">--genrule_strategy=&lt;value&gt;</code> with the intent of removing it in early 2019; please use <code class="language-plaintext highlighter-rouge">--strategy=Genrule=&lt;value&gt;</code> instead
+(see <a href="https://github.com/bazelbuild/bazel/issues/6760">#6760</a>).</li>
+  <li>Bazel now queryies remote server Capabilities (per REAPI v2)</li>
+  <li>Use different server log files per Bazel server process; java.log
+is now a symlink to the latest log.</li>
+  <li>The code coverage report now includes the actual paths to header
+files instead of the ugly, Bazel generated, virtual includes path.</li>
+  <li>Bazel sorts remote Platform properties for remote execution.</li>
+</ul>
+
+<h2 id="c">C++</h2>
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">--experimental_no_dotd_scanning_with_modules</code> command line argument is not supported anymore.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">--prune_cpp_modules</code> command line option is not supported anymore.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">--experimental_prune_cpp_input_discovery</code> command line option is not supported anymore.</li>
+  <li>All <code class="language-plaintext highlighter-rouge">cc_toolchains</code> depended on from <code class="language-plaintext highlighter-rouge">cc_toolchain_suite.toolchains</code> are now analyzed when not using
+platforms in order to select the right <code class="language-plaintext highlighter-rouge">cc_toolchain</code>.</li>
+  <li>CROSSTOOL file is now read from the package of <code class="language-plaintext highlighter-rouge">cc_toolchain</code>, not from
+the package of <code class="language-plaintext highlighter-rouge">cc_toolchain_suite</code>. This is not expected to break anybody since
+<code class="language-plaintext highlighter-rouge">cc_toolchain_suite</code> and <code class="language-plaintext highlighter-rouge">cc_toolchain</code> are commonly in the same package.</li>
+  <li>All <code class="language-plaintext highlighter-rouge">cc_toolchains</code> dependent on from <code class="language-plaintext highlighter-rouge">cc_toolchain_suite.toolchains</code> are now analyzed when not using
+platforms in order to select the right <code class="language-plaintext highlighter-rouge">cc_toolchain</code>.</li>
+</ul>
+
+<h2 id="java">Java</h2>
+
+<ul>
+  <li>The<code class="language-plaintext highlighter-rouge">--explicit_jre_deps</code> flag is removed.</li>
+  <li>If the <code class="language-plaintext highlighter-rouge">--javabase</code> flag is unset, Bazel locates a JDK using the <code class="language-plaintext highlighter-rouge">JAVA_HOME</code> environment variable 
+and searching the PATH. If no JDK is found, <code class="language-plaintext highlighter-rouge">--javabase</code> is empty and builds targeting Java
+will not be supported. Previously Bazel would fall back to using the embedded  JDK as a <code class="language-plaintext highlighter-rouge">--javabase</code>,
+but this is no longer default behaviour. A JDK should be explicitly installed instead to enable Java development.</li>
+</ul>
+
+<h2 id="android">Android</h2>
+
+<ul>
+  <li>Added support for Android NDK r18.</li>
+  <li>Make legacy-test-support (<code class="language-plaintext highlighter-rouge">legacy_test-&lt;api-level&gt;</code>) from
+<code class="language-plaintext highlighter-rouge">android_sdk_repository</code> neverlink. The legacy test support libraries
+shouldn’t be built into test binaries. To make them available at runtime,
+<a href="https://developer.android.com/training/testing/set-up-project#android-test-base">developers should declare them via
+uses-library</a>.</li>
+</ul>
+
+<h2 id="starlark">Starlark</h2>
+
+<ul>
+  <li>All overrides of Starlark’s <code class="language-plaintext highlighter-rouge">ctx.new_file</code> function are now
+deprecated. Try the <code class="language-plaintext highlighter-rouge">--incompatible_new_actions_api</code> flag to ensure your
+code is forward-compatible.</li>
+  <li>The function <code class="language-plaintext highlighter-rouge">attr.license</code> is deprecated. It can be disabled now
+with <code class="language-plaintext highlighter-rouge">--incompatible_no_attr_license</code>.</li>
+  <li>The ‘default’ parameter of <code class="language-plaintext highlighter-rouge">attr.output</code> and <code class="language-plaintext highlighter-rouge">attr.output_list</code> has been removed. This is controlled by
+<code class="language-plaintext highlighter-rouge">--incompatible_no_output_attr_default</code></li>
+  <li>A number of platform-related Starlark APIs which were previously
+marked “experimental” are now disabled by default, and may be
+enabled via <code class="language-plaintext highlighter-rouge">--experimental_platforms_api</code></li>
+</ul>
+
+<h2 id="community">Community</h2>
+
+<ul>
+  <li>Jetbrains published a <a href="https://blog.jetbrains.com/teamcity/2018/11/bazel-plugin-for-teamcity/">Bazel plugin for the TeamCity CI system</a>.</li>
+  <li>Tony Aiuto talked about Bazel in a <a href="https://www.gcppodcast.com/post/episode-153-bazel-with-tony-aiuto/">Google Cloud Platform postcast</a>.</li>
+  <li>Martin Probst made a presentation of Bazel at AngularConnect 2018, called
+<a href="https://www.youtube.com/watch?v=Qb3tykleV_g">“Why you need a build system, and why it should be Bazel”</a>.</li>
+  <li>Minko Gechev wrote a blog post about <a href="https://blog.mgechev.com/2018/11/19/introduction-bazel-typescript-tutorial/">how to build TypeScript projects with Bazel</a>.</li>
+  <li>Torgeir Helgevold wrote about <a href="http://www.syntaxsuccess.com/viewarticle/remote-build-execution-with-bazel-and-svelte">Remote Build Execution With Bazel And Svelte</a>.</li>
+  <li>Matteo Di Lena started a new rule for <a href="https://github.com/mdilena/bazel-maya">building Maya plugins</a>.</li>
+</ul>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

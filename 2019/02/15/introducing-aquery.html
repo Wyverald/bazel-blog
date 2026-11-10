@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Introducing Bazel Aquery - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2019/02/15/introducing-aquery.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Introducing Bazel Aquery">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Introducing Bazel Aquery</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/joeleba">Joe Le-Ba</a>
+  
+  
+
+
+on <span class="text-muted">15 February 2019</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p><em>tl;dr: <a href="https://docs.bazel.build/versions/master/aquery.html"><code class="language-plaintext highlighter-rouge">bazel aquery</code></a> is a new bazel command that queries the action graph, and thus allows you to gain insights about the actions executed in a build (inputs, outputs, command line, …).
+<code class="language-plaintext highlighter-rouge">aquery</code>’s API is now stable and supported by the Bazel team.</em></p>
+
+<h2 id="why-bazel-aquery">Why <code class="language-plaintext highlighter-rouge">bazel aquery</code>?</h2>
+
+<p><em>When performing a <code class="language-plaintext highlighter-rouge">bazel build</code>, you may find yourself wondering about the under-the-hood details of the build process, particularly about the actions executed:</em></p>
+
+<p><em>“What was the exact command line that produced this file?”</em></p>
+
+<p><em>“Did the new change in my rule implementation affect the actions previously generated by the rule?”</em></p>
+
+<p><em>“Which actions have file X as an input?”</em></p>
+
+<p>Those are some of the questions which can be answered with <code class="language-plaintext highlighter-rouge">aquery</code>. The <code class="language-plaintext highlighter-rouge">aquery</code> command allows you to query for actions to be executed in your build. It operates on the post-analysis <em>action graph</em> and exposes information about <em>actions</em>, <em>artifacts</em> and their relationships.</p>
+
+<p>An example usage of <code class="language-plaintext highlighter-rouge">aquery</code> can be found in the Bazel issue <a href="https://github.com/bazelbuild/bazel/issues/6861">#6861</a>, where we are migrating legacy CROSSTOOL fields. In this case, Bazel users would run a migration tool, and then use <code class="language-plaintext highlighter-rouge">aquery</code> to verify that the migration tool works properly, in particular:</p>
+
+<ul>
+  <li>The actions generated while building the same target before &amp; after running the migration tool are the same.</li>
+  <li>The command lines run for each action are the same.</li>
+</ul>
+
+<p>The specific usage is implemented in <a href="https://github.com/bazelbuild/bazel/blob/master/tools/aquery_differ/aquery_differ.py"><code class="language-plaintext highlighter-rouge">aquery_differ</code> tool</a>. This also serves as an example of how tools can be built on top of <code class="language-plaintext highlighter-rouge">aquery</code>.</p>
+
+<h2 id="background--motivation">Background &amp; Motivation</h2>
+
+<p>Apart from providing the ability to build &amp; test your projects, Bazel also offers insights into how those processes happen with <a href="https://docs.bazel.build/versions/master/query-how-to.html"><code class="language-plaintext highlighter-rouge">query</code></a> and <a href="https://docs.bazel.build/versions/master/cquery.html"><code class="language-plaintext highlighter-rouge">cquery</code></a>. These existing tools have been very helpful with answering the questions about dependencies of targets in your Bazel project.</p>
+
+<p>The Bazel build process consists of 3 phases<sup><a href="#footnote1">1</a></sup>: <em>loading</em>, <em>analysis</em> and <em>execution</em>. <code class="language-plaintext highlighter-rouge">query</code> operates on the post-loading phase target graph, which makes it unaware of the configurations of these targets. <code class="language-plaintext highlighter-rouge">cquery</code> moves it further down the building process and queries the post-analysis <em>configured targets</em>, thus includes the actual configurations.</p>
+
+<p>The topology of the <em>configured target graph</em> closely resembles the dependency graph of targets established by the BUILD files. It offers information on the dependency between targets in a build, but not on the <em>actual build actions</em> that will be run to execute that build. To gain insights on the exact actions executed in a build, we have to go one level deeper, to the action graph.</p>
+
+<p>Enter <code class="language-plaintext highlighter-rouge">aquery</code>.</p>
+
+<p><img src="/bazel-blog/assets/bazel-queries.png" alt="bazel queries and phases" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">aquery</code> runs on the configured target graph and queries the <em>action graph</em>. The action graph<sup><a href="#footnote2">2</a></sup> is the result of the analysis phase. It is a bipartite graph with the following types of nodes:</p>
+
+<ul>
+  <li>Artifacts: either a source file or any output file produced by an action</li>
+  <li>Actions: the functional step that takes a list of artifacts as input and outputs a list of artifacts. Note that any (output) artifact is produced by exactly one action. The action graph conveys explicit step-by-step instructions on how the build would be executed.</li>
+</ul>
+
+<p>With <code class="language-plaintext highlighter-rouge">aquery</code>, it is now possible to tap into that knowledge.</p>
+
+<h2 id="how-to-use-bazel-aquery">How To Use <code class="language-plaintext highlighter-rouge">bazel aquery</code></h2>
+
+<p><code class="language-plaintext highlighter-rouge">aquery</code> is useful when we are interested in the properties of the actions/artifacts in the action graph. It uses the same query language as <code class="language-plaintext highlighter-rouge">query</code> and <code class="language-plaintext highlighter-rouge">cquery</code>, with some additional <a href="https://docs.bazel.build/versions/master/aquery.html#functions"><code class="language-plaintext highlighter-rouge">aquery</code>-specific functions</a>. The basic structure of <code class="language-plaintext highlighter-rouge">aquery</code> output is as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ bazel aquery '//some:label'
+action 'Writing file some_file_name'
+  Mnemonic: ...
+  Target: ...
+  Configuration: ...
+  ActionKey: ...
+  Inputs: [...]
+  Outputs: [...]
+...
+</code></pre></div></div>
+
+<p>Each action entry encapsulates all the information you need to know about how this action is to be executed: the actual commands run, the configuration in which the action is run, its input/output artifacts, and other attributes.</p>
+
+<p>Another nifty feature in <code class="language-plaintext highlighter-rouge">aquery</code> is the ability to filter the actions based on their <em>inputs</em>, <em>outputs</em> and <em>mnemonics</em>. This is useful to answer questions like: “Which action, from which target, is responsible for creating file foo.out”.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># List all actions generated while building all dependencies of //src/target_a
+$ bazel aquery 'deps(//src/target_a)'
+
+# List all actions generated while building all dependencies of //src/target_a
+# that have C++ files in their inputs.
+$ bazel aquery 'inputs(".*cc”, deps(//src/target_a))'
+
+# Which action generated `foo.out` after building all dependencies of target //src/target_a
+$ bazel aquery ‘outputs(“.*foo.out”, deps(//src/target_a))’
+</code></pre></div></div>
+
+<p>Apart from these basic features, <code class="language-plaintext highlighter-rouge">aquery</code> offers customizations for your specific use cases with its various flags and tools.</p>
+
+<h3 id="output-formats">Output Formats</h3>
+<p><code class="language-plaintext highlighter-rouge">aquery</code> supports 3 different output formats: <code class="language-plaintext highlighter-rouge">text</code> (default, human-readable with formatting), <code class="language-plaintext highlighter-rouge">proto</code> and <code class="language-plaintext highlighter-rouge">textproto</code> (a human-readable representation of the proto output).</p>
+
+<h3 id="--skyframe_state"><code class="language-plaintext highlighter-rouge">--skyframe_state</code></h3>
+<p>A common use case of <code class="language-plaintext highlighter-rouge">aquery</code> is to find the action responsible for generating a particular file <code class="language-plaintext highlighter-rouge">foo.out</code>. However, it is often the case that <em>multiple build commands</em> for <em>different targets</em> were run prior to the query. Imagine the following sequence:</p>
+
+<ol>
+  <li>Run <code class="language-plaintext highlighter-rouge">bazel build //target_a</code></li>
+  <li>Run <code class="language-plaintext highlighter-rouge">bazel build //target_b</code></li>
+  <li>File <code class="language-plaintext highlighter-rouge">foo.out</code> was generated.</li>
+</ol>
+
+<p>One could run <code class="language-plaintext highlighter-rouge">bazel aquery 'outputs("foo.out", //target_a)'</code> and <code class="language-plaintext highlighter-rouge">bazel aquery 'outputs("foo.out", //target_b)'</code> to figure out the action responsible for creating <code class="language-plaintext highlighter-rouge">foo.out</code>, and in turn the target. However, the number of different targets previously built can be larger than 2, which makes running multiple <code class="language-plaintext highlighter-rouge">aquery</code> commands a hassle.</p>
+
+<p>As an alternative, the <code class="language-plaintext highlighter-rouge">--skyframe_state</code> flag can be used:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Find all actions on skyframe that has “foo.out” as an output
+bazel aquery --skyframe_state --output=proto ‘outputs(“*.foo.out”)’
+</code></pre></div></div>
+
+<p>With <code class="language-plaintext highlighter-rouge">--skyframe_state</code> mode, aquery takes the content of the action graph that Skyframe<sup><a href="#footnote3">3</a></sup> keeps on the current instance of Bazel and (optionally) performs filtering on it and outputs the content, <em>without</em> re-running the analysis phase.</p>
+
+<p>Note that for <code class="language-plaintext highlighter-rouge">--skyframe_state</code>, the target label is omitted from the query expression. More details on this flag can be found <a href="https://docs.bazel.build/versions/master/aquery.html#skyframe-state">here</a>.</p>
+
+<h3 id="comparing-aquery-outputs-with-aquery_differ">Comparing Aquery Outputs With <code class="language-plaintext highlighter-rouge">aquery_differ</code></h3>
+
+<p>There are times when there’s a need to compare two different <code class="language-plaintext highlighter-rouge">aquery</code> outputs (for instance: when you make some changes to your rule definition and want to verify that the command lines being run is still the same). <a href="https://docs.bazel.build/versions/master/aquery.html#diff-tool"><code class="language-plaintext highlighter-rouge">aquery_differ</code></a> is the tool for that.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># The tool is available at https://github.com/bazelbuild/bazel/tree/master/tools/aquery_differ
+$ bazel run //tools/aquery_differ -- \
+--before=/path/to/before.proto \
+--after=/path/to/after.proto \
+--input_type=proto \
+--attrs=cmdline \
+--attrs=inputs
+</code></pre></div></div>
+
+<p>The above command returns the difference between the <code class="language-plaintext highlighter-rouge">before</code> and <code class="language-plaintext highlighter-rouge">after</code> <code class="language-plaintext highlighter-rouge">aquery</code> outputs (e.g. which actions were present in one but not the other, which actions have different command line/inputs in each <code class="language-plaintext highlighter-rouge">aquery</code> output, …).</p>
+
+<hr />
+
+<p>With this blog post, we declare <code class="language-plaintext highlighter-rouge">aquery</code> stable and supported by the Bazel team. Please give it a try and let us know what you think! For more details on <code class="language-plaintext highlighter-rouge">aquery</code>, check out the <a href="https://docs.bazel.build/versions/master/aquery.html">aquery documentation</a>.</p>
+
+<p><em><a name="footnote1">1</a>: In the actual implementation of Bazel, we interleave _loading &amp; analysis</em> phases. The “Target Graph” at the end of Loading phase is only materialized with <code class="language-plaintext highlighter-rouge">bazel query</code> and not in actual builds._</p>
+
+<p><em><a name="footnote2">2</a>: For a more detailed overview of the action graph, check out <a href="https://github.com/jin">Jin’s</a> <a href="https://jin.crypt.sg/articles/bazel-action-graph.html">blog post</a>.</em></p>
+
+<p><em><a name="footnote3">3</a>: <a href="https://bazel.build/designs/skyframe.html">Skyframe</a> is the evaluation and incrementality model of Bazel. On each instance of Bazel server, Skyframe stores the dependency graph constructed from the previous runs of the analysis phase.</em></p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

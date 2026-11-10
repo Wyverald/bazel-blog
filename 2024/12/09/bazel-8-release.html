@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel 8.0 LTS - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2024/12/09/bazel-8-release.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel 8.0 LTS">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel 8.0 LTS</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/Wyverald">Xudong Yang</a>
+  
+  
+    ,
+  
+
+  
+  
+
+  
+    <a href="https://github.com/fweikert">Florian Weikert</a>
+  
+  
+    and
+  
+
+  
+  
+
+  
+    <a href="https://github.com/keertk">Keerthana Kumar</a>
+  
+  
+
+
+on <span class="text-muted">09 December 2024</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>We’re pleased to announce the release of Bazel 8.0!</p>
+
+<p>This LTS release marks a significant step forward for Bazel, offering a more streamlined and efficient build experience. With Bzlmod as the default for dependency management and major rulesets fully migrated to Starlark, Bazel 8.0 empowers you to build with greater speed and flexibility.
+This release also includes a number of bug fixes, performance enhancements, and new features to improve your workflow.</p>
+
+<p>Read on to explore the key highlights of Bazel 8.0, and be sure to check out the <a href="https://github.com/bazelbuild/bazel/releases/tag/8.0.0">full release notes</a> for a complete overview of the changes.</p>
+
+<h2 id="bazel-8-key-highlights">Bazel 8 key highlights</h2>
+
+<h3 id="starlarkification-modularization-of-rules">Starlarkification: modularization of rules</h3>
+
+<p>A significant change in Bazel 8.0 is the ongoing effort to modularize rules using Starlark. Many rules previously bundled with Bazel are now split into their own modules. This includes rules for Android, C++, Java, Protobuf, and Shell.</p>
+
+<ul>
+  <li><strong>Android:</strong> All <code class="language-plaintext highlighter-rouge">android_*</code> build and repo rules have migrated to <a href="https://github.com/bazelbuild/rules_android">rules_android</a>. Android tools are no longer bundled within Bazel.</li>
+  <li><strong>C++:</strong> All C++ toolchain-related symbols have been moved to <a href="http://github.com/bazelbuild/rules_cc">rules_cc</a>. Other symbols, including the rules themselves, will be moved in a future release.</li>
+  <li><strong>Java:</strong> All <code class="language-plaintext highlighter-rouge">java_*</code> rules now reside in <a href="https://github.com/bazelbuild/rules_java">rules_java</a>.</li>
+  <li><strong>Protobuf:</strong> <code class="language-plaintext highlighter-rouge">*_proto_library</code> rules have been moved to <a href="https://github.com/protocolbuffers/protobuf">protobuf</a>.</li>
+  <li><strong>Python:</strong> All <code class="language-plaintext highlighter-rouge">py_*</code> rules and providers (like PyInfo) have been moved to <a href="http://github.com/bazelbuild/rules_python">rules_python</a>.</li>
+  <li><strong>Shell:</strong> All <code class="language-plaintext highlighter-rouge">sh_*</code> rules are now part of <a href="https://github.com/bazelbuild/rules_shell">rules_shell</a>.</li>
+</ul>
+
+<p>To ease this transition, Bazel 8.0 introduces the <code class="language-plaintext highlighter-rouge">--incompatible_autoload_externally</code> flag which automatically loads rules from their respective repositories, thus removing the need for an imminent migration. The migration to use load statements needs to happen in 2025 before Bazel 9 is released. Load statements are supported on Bazel versions 6, 7 and 8, so the migration is largely independent of the Bazel version.</p>
+
+<h3 id="bzlmod-the-new-default-for-dependency-management">Bzlmod: the new default for dependency management</h3>
+
+<p>Bzlmod was introduced in Bazel 5 in 2021 as an experimental feature, it became GA in Bazel 6 and turned on in Bazel 7. In Bazel 8, the new powerful external dependencies system works with the old WORKSPACE mechanism turned off by default. This shift means that Bazel no longer automatically reads the <code class="language-plaintext highlighter-rouge">WORKSPACE</code> and <code class="language-plaintext highlighter-rouge">WORKSPACE.bzlmod</code> files when building your project. These files were previously required for defining external repositories and dependencies, but Bzlmod offers a more modern and efficient approach.</p>
+
+<p>Since Bzlmod was launched, the <a href="https://registry.bazel.build/">Bazel Central Registry</a> growth has accelerated from Bazel release to Bazel release:</p>
+
+<p><img src="/bazel-blog/assets/bazel8.png" style="width:50%; height:50%;" /></p>
+
+<p>The BCR now hosts more than 500 Bazel modules with 2500+ different versions.</p>
+
+<p>We encourage all users to migrate to Bzlmod and take advantage of its benefits. Take a look at this <a href="https://bazel.build/external/migration">migration guide</a> for step-by-step instructions and best practices for moving from the traditional WORKSPACE setup to the streamlined Bzlmod system.</p>
+
+<p>We are aiming to remove all WORKSPACE functionalities in Bazel 9.</p>
+
+<h3 id="symbolic-macros">Symbolic macros</h3>
+
+<p>Symbolic macros offer a new way to write macros that are safer to use and that catch bugs sooner. For example, their arguments are typed like rule attributes, and the author decides which attributes permit select()s based on whether the macro needs to examine that value or pass it through. With Symbolic macros come several related features:</p>
+
+<ul>
+  <li>A new macro-aware visibility model, which protects a macro’s internal targets from being depended on by its caller</li>
+  <li>Rule Finalizers, which are macros that can call <code class="language-plaintext highlighter-rouge">native.existing_rules()</code> with less surprising behavior</li>
+  <li>A way for a macro to inherit the attribute schema of another rule or macro that it wraps.</li>
+</ul>
+
+<p>Check out the <a href="https://bazel.build/extending/macros">documentation on macros</a> for more details.</p>
+
+<h2 id="bazel-5-deprecation">Bazel 5 deprecation</h2>
+
+<p>With the launch of Bazel 8.0, we’re announcing the upcoming deprecation of Bazel 5.0. Starting January 2025, Bazel 5 will no longer receive critical bug fixes, security updates, or OS compatibility support.</p>
+
+<p>We strongly encourage you to upgrade to Bazel 8.0 to benefit from the latest features, performance improvements, and ongoing support. You can also opt for a rolling release to stay up-to-date with the newest developments at HEAD.</p>
+
+<p>Refer to our <a href="https://bazel.build/release">release model</a> for more details.</p>
+
+<h2 id="whats-next">What’s next?</h2>
+
+<p><strong>Try out Bazel 8.0!</strong> This is a significant release that brings a wealth of improvements. We encourage all Bazel users to explore the new features and migrate to Bazel 8.0 to take advantage of its enhancements. Questions? Want to discuss something specific? File an <a href="https://github.com/bazelbuild/bazel">issue</a> or start a <a href="https://github.com/bazelbuild/bazel/discussions">discussion</a> on GitHub so we can take a look.</p>
+
+<p><strong>Stay connected!</strong> To stay up-to-date on all things Bazel, read the Bazel <a href="https://blog.bazel.build/">blog</a>, join our <a href="https://slack.bazel.build">Slack</a>, follow <a href="http://twitter.com/bazelbuild">@bazelbuild</a> on X (Twitter), join the bazel-discuss@googlegroups.com mailing list, or reach out to product@bazel.build. We would love to hear any feedback you may have!</p>
+
+<p>In closing, we’d like to extend our sincere gratitude to the entire Bazel community. Every bug report, code contribution, ruleset improvement, and discussion played a role in shaping Bazel 8.0. Thank you for your continued support and dedication to making Bazel better with every release!</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

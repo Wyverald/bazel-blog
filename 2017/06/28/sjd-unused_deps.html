@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Strict Java Deps and `unused_deps` - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2017/06/28/sjd-unused_deps.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Strict Java Deps and `unused_deps`">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Strict Java Deps and `unused_deps`</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/cgrushko">Carmi Grushko</a>
+  
+  
+
+
+on <span class="text-muted">28 June 2017</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>This blog post describes how Bazel implements “strict deps” for Java compilations (“SJD”), and how it is leveraged in <a href="https://github.com/bazelbuild/buildtools/blob/799e530642bac55de7e76728fa0c3161484899f6/unused_deps/unused_deps.go"><code class="language-plaintext highlighter-rouge">unused_deps</code></a>, a tool to remove unused dependencies. It is my hope this knowledge will help write rules for similar JVM-based languages such as Scala and Kotlin.</p>
+
+<h2 id="whats-strict-deps">What’s “Strict Deps”?</h2>
+
+<p>By “strict deps”, we loosely mean that all directly used classes are loaded from jars provided by a rule’s direct dependencies. In other words, if a Java file mentions another class, then it must be reflected in the BUILD file.<br />
+(the concept is similar to Buck’s “first-order dependencies”)</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">A</span> <span class="o">{</span>
+  <span class="kt">void</span> <span class="nf">foo</span><span class="o">(</span><span class="no">B</span> <span class="n">b</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>  <span class="c1">// &lt;---- B is used, therefore we must depend on :B</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">java_library</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">A</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">srcs</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">A.java</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">deps</span> <span class="o">=</span> <span class="p">[</span><span class="sh">"</span><span class="s">:B</span><span class="sh">"</span><span class="p">],</span> <span class="c1"># &lt;--- this dependency is required
+</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Note that any dependencies of <code class="language-plaintext highlighter-rouge">B</code> itself are <em>not</em> listed in the <code class="language-plaintext highlighter-rouge">deps</code> of <code class="language-plaintext highlighter-rouge">A</code>.</p>
+
+<p>The initial motivation for SJD was the ability to remove unused dependencies.</p>
+
+<p>Consider a dependency chain <code class="language-plaintext highlighter-rouge">A -&gt; B -&gt; C</code> without strict deps. It’s impossible to know if <code class="language-plaintext highlighter-rouge">C</code> can be removed from <code class="language-plaintext highlighter-rouge">B</code>’s <code class="language-plaintext highlighter-rouge">deps</code> just by looking at it - all transitive users of <code class="language-plaintext highlighter-rouge">B</code> must be considered to make this decision.
+Strict deps mandates that if <code class="language-plaintext highlighter-rouge">A</code> also uses <code class="language-plaintext highlighter-rouge">C</code>, it must depend on it directly, therefore making it safe to remove <code class="language-plaintext highlighter-rouge">C</code> from <code class="language-plaintext highlighter-rouge">B</code>’s <code class="language-plaintext highlighter-rouge">deps</code>.</p>
+
+<h2 id="unused_deps"><code class="language-plaintext highlighter-rouge">unused_deps</code></h2>
+
+<p><a href="https://github.com/bazelbuild/buildtools/blob/799e530642bac55de7e76728fa0c3161484899f6/unused_deps/unused_deps.go"><code class="language-plaintext highlighter-rouge">unused_deps</code></a> is a tool to remove dependencies that aren’t needed from a <code class="language-plaintext highlighter-rouge">java_library</code> (and other Java rules).</p>
+
+<p>When Bazel builds a Java rule <code class="language-plaintext highlighter-rouge">:Foo</code> on the command line, it writes two files - <a href="https://github.com/bazelbuild/bazel/blob/3759d00356e7bf1dcf42e34cb83ad7bf3153a9c2/src/main/java/com/google/devtools/build/lib/rules/java/JavaCompileAction.java#L656"><code class="language-plaintext highlighter-rouge">Foo.jar-2.params</code></a> and <code class="language-plaintext highlighter-rouge">Foo.jdeps</code>. The former contains the command-line arguments to the Java compiler and the latter contains a serialized <a href="https://github.com/bazelbuild/bazel/blob/3759d00356e7bf1dcf42e34cb83ad7bf3153a9c2/src/main/protobuf/deps.proto">src/main/protobuf/deps.proto</a> which specifies which jars were loaded during compilation.</p>
+
+<p><a href="https://github.com/bazelbuild/buildtools/blob/799e530642bac55de7e76728fa0c3161484899f6/unused_deps/unused_deps.go"><code class="language-plaintext highlighter-rouge">unused_deps</code></a> loads the two files and figures out which rules aren’t needed in a rule’s <code class="language-plaintext highlighter-rouge">deps</code> attribute, and emits <a href="https://github.com/bazelbuild/buildtools/tree/799e530642bac55de7e76728fa0c3161484899f6/buildozer">Buildozer</a> commands to delete them.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>Bazel always passes the entire transitive classpath to <code class="language-plaintext highlighter-rouge">javac</code>, not only the direct classpath. This frees the user from having to aggregate their transitive dependencies manually. In other words, <code class="language-plaintext highlighter-rouge">javac</code> never fails because of a missing symbol, as long as every rule specifies its direct dependencies.
+This is done at <a href="https://github.com/bazelbuild/bazel/blob/3759d00356e7bf1dcf42e34cb83ad7bf3153a9c2/src/main/java/com/google/devtools/build/lib/rules/java/JavaCompileAction.java#L729">JavaCompileAction.java#L729</a>.</p>
+
+<p>SJD is enforced by a compiler plugin implemented in  <a href="https://github.com/bazelbuild/bazel/blob/3759d00356e7bf1dcf42e34cb83ad7bf3153a9c2/src/java_tools/buildjar/java/com/google/devtools/build/buildjar/javac/plugins/dependency/StrictJavaDepsPlugin.java">StrictJavaDepsPlugin.java</a>. When Bazel constructs the command-line to <code class="language-plaintext highlighter-rouge">javac</code>, it specifies <a href="https://github.com/bazelbuild/bazel/blob/3759d00356e7bf1dcf42e34cb83ad7bf3153a9c2/src/main/java/com/google/devtools/build/lib/rules/java/JavaCompileAction.java#L377">which jars come from indirect dependencies</a> using the <code class="language-plaintext highlighter-rouge">--indirect_dependency</code> flag. The plugin then walks the <code class="language-plaintext highlighter-rouge">.java</code> sources and reports any symbols that come from indirect jars. <br />
+(A sketch of how it works: The compiler stores the name of the jar from which a symbol was loaded. The plugin walks the AST after the type annotation phase, and stops at each ‘type expression’, then checks whether the originating jar is an <code class="language-plaintext highlighter-rouge">--indirect_dependency</code>. If it is the plugin generates an error message. The message includes the missing direct dependency to add.)</p>
+
+<p>This approach has the advantage that violations are easy to fix - Bazel tells the user exactly what to do.</p>
+
+<h2 id="summary">Summary</h2>
+
+<ul>
+  <li>Bazel passes all jars from the <strong>transitive</strong> dependencies of a rule.</li>
+  <li>Bazel notifies the SJD compiler plugin which jars are indirect.</li>
+  <li>During compilation, the compiler plugin reports any symbol mentioned in the Java file that is loaded from an indirect jar.</li>
+</ul>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel for Embedded: Pigweed SDK Launches with Native Bazel Support - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2024/08/08/bazel-for-embedded.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel for Embedded: Pigweed SDK Launches with Native Bazel Support">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel for Embedded: Pigweed SDK Launches with Native Bazel Support</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="">Ted Pudlik, Armando Montanez, Keir Mierle (Pigweed team), John Cater, Greg Estren, Yun Peng (Bazel team)</a>
+  
+  
+
+
+on <span class="text-muted">08 August 2024</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p><a href="https://pigweed.dev/">Pigweed</a> is an open-source collection of libraries from Google that enables fast and reliable development for embedded systems. Last September, Pigweed decided to <a href="https://pigweed.dev/seed/0111-build-systems.html">migrate from GN to Bazel</a> as their primary build system based on <a href="https://pigweed.dev/seed/0111-build-systems.html#appendix-why-bazel-is-great">the belief</a> that Bazel has great potential to improve embedded developers’ productivity and mental wellbeing. Since then, the Pigweed team collaborated closely with the Bazel team on many improvements to make Bazel a more powerful build system not just for Pigweed developers, but also the general Bazel ecosystem.</p>
+
+<p>Today, we’re excited to announce the <a href="https://opensource.googleblog.com/2024/08/introducing-pigweed-sdk.html">launch</a> of the Pigweed SDK (preview) with native Bazel support. Additionally, Raspberry Pi is launching their new <a href="https://www.raspberrypi.com/news/raspberry-pi-pico-2-our-new-5-microcontroller-board-on-sale-now">RP2350 microcontroller</a> with native Bazel support in their official Raspberry Pi <a href="https://registry.bazel.build/modules/pico-sdk">Pico SDK</a>—contributed by Pigweed with help from the Bazel team. We believe this is <em>the world’s first microchip launch with public Bazel support on launch day</em>!</p>
+
+<h2 id="why-bazel-for-embedded">Why Bazel for embedded?</h2>
+
+<p>Pigweed believes Bazel has the potential to be a great build system for embedded developers and we’d like to tell you why. Nothing is perfect, however. We’ll also discuss why Bazel may not be the optimal choice for your project. First, Bazel offers the following benefits:</p>
+
+<ul>
+  <li><strong>Easy automatic developer setup</strong> - Embedded projects are infamous for requiring manual, error-prone installation of custom build tooling and compilers. In contrast, <a href="https://bazel.build/external/overview">Bazel natively supports downloading and configuring the tooling</a> needed to build your firmware project, including C++ and Rust compilers, Go runtimes, Python, and more. Bazel also selects the appropriate tools for the development platform– be it Linux, Mac, or Windows. This significantly reduces the time to onboard new engineers, who merely clone a repo, run Bazel, and are ready to go.</li>
+  <li><strong>Fundamentally reliable builds</strong> - Embedded developers may be familiar with needing to clean their build environment to fix mysterious local build failures. In contrast, Bazel’s incremental builds and tests are always correct by design, eliminating the need to clean the build in nearly all cases.** **This is because Bazel automatically downloads correct toolchains and dependencies, and stages builds in <a href="https://bazel.build/docs/sandboxing">a sandbox</a> to prevent the local environment from influencing results. This means builds are reliably reproducible no matter where and when they run.</li>
+  <li><strong>Ultra-fast builds</strong> - Large embedded projects have large builds, especially when they involve multiple architectures and devices. Bazel, owing to its Google-scale heritage compiling <a href="https://research.google/pubs/why-google-stores-billions-of-lines-of-code-in-a-single-repository/">billion-line</a> codebases, is built for this. In addition to fast local builds, Bazel’s fundamentally reliable design natively supports <a href="https://bazel.build/remote/caching">remote caching</a> and <a href="https://bazel.build/remote/rbe">remote builds</a>.</li>
+  <li><strong>Seamless multi-platform, multi-architecture builds</strong> - Large embedded projects can have multiple firmware images across different architectures (Cortex-M, Xtensa DSP, RISC-V, etc) in the same product. Bazel natively supports modeling multi-platform builds and compiling with the right toolchains at the right times, including dependencies between build outputs for different platforms. Pigweed (and projects built on Pigweed) leverages this plus features like <a href="https://bazel.build/extending/config#user-defined-transitions">transitions</a>, <a href="https://bazel.build/extending/config#label-typed-build-settings">label flags</a>, and modular C++ toolchains to make embedded builds clean, correct, and ergonomic.</li>
+  <li><strong>Batteries-included multi-language support</strong> - Large embedded projects typically have code in multiple languages: firmware in C, C++, or Rust; and host-side tooling in Python, Go, Java, or TypeScript. Pigweed, for example, uses all of these languages. Bazel unifies all these languages with high-quality build rules maintained by the vibrant Bazel community. This reduces the investment Pigweed developers must make to maintain correct language support and enables cross-language dependencies and build flows. For example, Python-based factory tooling can seamlessly depend on C++ and Rust firmware images.</li>
+  <li><strong>Easily compose Bazel-based projects</strong> - Large embedded projects often have dependencies that have their own repository and build. Bazel’s new <a href="https://bazel.build/external/module">Bzlmod dependency management system</a> lets projects depend on other Bazel projects. Bzlmod keeps track of transitive dependencies and their versions, attempts to <a href="https://bazel.build/external/module#version-selection">automatically resolve them</a>, notifies you of conflicts, and provides <a href="https://bazel.build/external/mod-command">tools for analyzing the dependency graph</a>. This dramatically simplifies managing dependencies on large external codebases like protobuf or Pigweed. Adding a build-level dependency on a multi-language project becomes as simple as depending on another PyPI or maven package. Here’s a <a href="http://pwrev.dev/226632">real-life example</a> of how it simplified declaring dependencies in one of Pigweed’s sample repos.</li>
+  <li><strong>Container-free development</strong> - Large embedded projects commonly bundle their dependencies in containers for repeatability. One challenge with this approach is the difficulty of communicating with devices over USB. Another challenge: Windows-only embedded vendor tooling that needs to operate on files inside the container. Bazel’s automatic hermetic environment setup eliminates the need for containers and the associated toil on embedded projects.</li>
+</ul>
+
+<p>Other examples include a <a href="https://bazel.build/query/guide">query system</a> to interrogate the build graph, a system for custom processing the build graph (<a href="https://bazel.build/extending/aspects">aspects</a>), and more you can read about in the <a href="https://bazel.build/">documentation</a>. Try Pigweed’s new <a href="https://pigweed.dev/docs/showcases/sense/">Sense</a> tutorial to see many of the above features in action.</p>
+
+<h2 id="bazel-wasnt-always-good-for-embedded-what-changed">Bazel wasn’t always good for embedded; what changed?</h2>
+
+<p>Bazel was originally designed to build applications that run on Google’s server fleet. At the time, the fleet was x86 Linux machines, so Bazel made many simplifying assumptions about platform uniformity. Those assumptions made Bazel challenging to use for embedded development. While some teams figured out ways to twist and bend Bazel’s machinery for embedded builds, it wasn’t a natural fit. Since then, software has become more multi-platform for nearly all developers, and Bazel evolved accordingly—growing a set of APIs that better suit embedded development. These include:</p>
+
+<ul>
+  <li><a href="https://bazel.build/extending/platforms">Platforms</a>, which enable modeling both the machines you want to target and the machines that cross-compile and run tests.</li>
+  <li><a href="https://bazel.build/extending/config#user-defined-transitions">Transitions</a>, which enable declaring which build units target which devices. For example: a test runner built for Linux uploads a binary to an embedded device. Transitions can also adjust compiler settings or any other configuration.</li>
+  <li><a href="https://bazel.build/docs/configurable-attributes">Arch-specific dependencies</a>, which enable declaring custom dependencies based on what machine the build targets.</li>
+  <li><a href="https://bazel.build/extending/config#label-typed-build-settings">Label flags</a>, which enable injecting project specific code that frameworks like Pigweed can seamlessly integrate.</li>
+</ul>
+
+<p>Pigweed recognized the potential of these features and started a close collaboration with the Bazel team to stitch them into an elegant end-to-end developer experience. This includes new features like <a href="https://github.com/bazelbuild/proposals/blob/main/designs/2023-06-08-platform-based-flags.md">platform-based flags</a>—which automatically sets machine-specific configuration so you don’t have to—and <a href="https://github.com/bazelbuild/proposals/blob/main/designs/2023-06-08-platform-based-flags.md">platform_data</a> which makes switching architectures within a build easy.</p>
+
+<p>Pigweed also pushed forward Bazel’s C++ ecosystem by designing and upstreaming <a href="https://github.com/bazelbuild/rules_cc/tree/main/cc/toolchains#writing-a-custom-rule_based-c-toolchain-with-rule-based-definition">new toolchain configuration rules</a> for better composability and modularity. This helps Pigweed (or any embedded team) rapidly build C++ toolchains for several devices from a common set of building blocks. Stay tuned for a future blog post that unpacks the story of these new toolchain rules in more detail.</p>
+
+<h2 id="why-not-bazel-for-embedded">Why not Bazel for embedded?</h2>
+
+<p>While we’re excited about the potential of Bazel in the embedded space, today it’s best suited for larger teams willing to make the upfront investment in infrastructure and education, or for smaller teams who are already familiar with Bazel and its tradeoffs. The additional workflows Bazel enables add complexity beyond a simple Make build that isn’t for everyone. Furthermore, the onboarding experience for embedded projects isn’t yet as smooth or documented as we want it to be (but this will improve over time); for example, toolchain setup, while hugely improved through the Pigweed and Bazel collaboration, is not mature yet.</p>
+
+<p>If you’re interested in Bazel for your embedded project, but have questions or concerns, please drop by the <a href="https://discord.gg/M9NSeTA">Pigweed Chat</a> (for embedded-specific questions) or <a href="https://slack.bazel.build/">Bazel Chat</a> (for general Bazel questions).</p>
+
+<h2 id="looking-forward">Looking forward</h2>
+
+<p>Both the Bazel and Pigweed teams believe Bazel can become widely recognized as a great choice for developing embedded software, at all scales from hobbyists to manufacturers shipping millions of units. The work described here provides the foundation for this. Stay tuned as Bazel and Pigweed build more in the future!</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

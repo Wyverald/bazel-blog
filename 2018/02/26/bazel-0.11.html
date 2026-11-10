@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="https://schema.org/WebPage">
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bazel 0.11 - Bazel</title>
+
+    <link rel="canonical" href="/bazel-blog/2018/02/26/bazel-0.11.html">
+    <link rel="alternate" type="application/rss+xml" title="Bazel Blog" href="/bazel-blog/feed.xml">
+
+    <!-- Webfont (Inter & JetBrains Mono, matching bazel.build) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/bazel-blog/images/favicon-16x16.png" sizes="16x16">
+
+    <!-- Bootstrap -->
+    <link href="/bazel-blog/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/bazel-blog/assets/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" type="text/css" href="/bazel-blog/css/main.css">
+
+    <!-- metadata -->
+    <meta name="og:title" content="Bazel 0.11">
+    <meta name="og:image" content="https://bazel.build/images/bazel-og-image.png">
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" value="summary" />
+  </head>
+
+  <body>
+        <nav id="common-nav" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/bazel-blog/">
+            <img class="navbar-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+            <span class="navbar-brand-title">Blog</span>
+          </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://github.com/bazelbuild/bazel-blog" target="_blank" rel="noopener noreferrer">
+                <span class="hidden-sm">GitHub</span>
+                <span class="nav-icon visible-sm"><i class="fa fa-github"></i></span>
+              </a>
+            </li>
+          </ul>
+          <form class="navbar-form navbar-right" action="/bazel-blog/search.html" id="cse-search-box">
+            <div class="form-group">
+              <input type="hidden" name="cx" value="012346921571893344015:xv_nfgpzbu4">
+              <input type="hidden" name="cof" value="FORID:10">
+              <input type="hidden" name="ie" value="UTF-8">
+              <input type="search" name="q" class="form-control input-sm" placeholder="Search blog...">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="https://bazel.build">Documentation</a>
+            </li>
+            <li>
+              <a href="https://registry.bazel.build" target="_blank" rel="noopener noreferrer">Module Registry</a>
+            </li>
+            <li>
+              <a href="/bazel-blog/archive.html">Post Archive</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav>
+
+
+    <div class="container vpad">
+      <div class="row">
+        <div class="col-lg-12">
+          <article class="blog-post blog-post-single">
+            <a href="/bazel-blog/" class="blog-eyebrow">&larr; Bazel Blog</a>
+            <h1 class="blog-post-title">Bazel 0.11</h1>
+            <div class="blog-post-meta">
+              
+
+By
+
+
+
+  
+  
+
+  
+    <a href="https://github.com/jin">Jingwen Chen</a>
+  
+  
+
+
+on <span class="text-muted">26 February 2018</span>
+
+            </div>
+            <div class="blog-post-content">
+              <p>The Bazel team is happy to announce the release of <a href="https://github.com/bazelbuild/bazel/releases/tag/0.11.0">version 0.11.0</a>.</p>
+
+<h2 id="notable-changes">Notable Changes</h2>
+
+<ul>
+  <li><a href="https://docs.bazel.build/versions/master/be/android.html#android_binary">android_binary</a> targets built with ProGuard can now enjoy the <a href="https://blog.bazel.build/2018/02/28/incremental-dexing.html">benefits of incremental dexing</a> by specifying the attribute <code class="language-plaintext highlighter-rouge">incremental_dexing = 1</code>.</li>
+  <li><a href="https://docs.bazel.build/versions/master/be/android.html#aar_import">aar_import</a> rules now <a href="https://github.com/bazelbuild/bazel/issues/4439">support importing assets</a> from the <code class="language-plaintext highlighter-rouge">assets/</code> subdirectory of the AAR being imported.</li>
+  <li>Remote caching <a href="https://github.com/bazelbuild/bazel/commit/cf3f81aef7c32019d70cbce218a64a03276268f0">now supports HTTP Basic Authentication</a>.</li>
+  <li>You can now depend on <code class="language-plaintext highlighter-rouge">@bazel_tools//tools/runfiles:java-runfiles</code> to get a platform-independent runfiles library for Java. See JavaDoc of <a href="https://github.com/bazelbuild/bazel/blob/master/src/tools/runfiles/java/com/google/devtools/build/runfiles/Runfiles.java">Runfiles.java</a> for usage information.</li>
+</ul>
+
+<h2 id="community-updates">Community Updates</h2>
+
+<p>Here are some updates on what happened in the Bazel community over the past month.</p>
+
+<h3 id="languages--rules">Languages &amp; Rules</h3>
+
+<ul>
+  <li>You can use Bazel to build Rust with <a href="https://github.com/bazelbuild/rules_rust">rules_rust</a> for the Rust compiler toolchain and <a href="https://github.com/google/cargo-raze">cargo_raze</a> to resolve Cargo.toml dependencies into WORKSPACE rules. See <a href="https://github.com/acmcarther/cargo-raze-crater">cargo_raze_crater</a> for an
+example.</li>
+  <li>Marcel Hlopko published <a href="https://docs.google.com/document/d/1K3Dq1JDDWjGtvTyFcIwy_-Crm7ZuD9FzSxjDawDhJRA/edit#heading=h.feujy6f2j7mi">the C++ rules roadmap</a>, which is open for comments.</li>
+  <li>Jay Conrod <a href="https://github.com/bazelbuild/rules_go/blob/master/roadmap.rst">published a roadmap</a> for the Go rules and Gazelle. If you are interested in contributing or have a question, head over to the <a href="https://groups.google.com/forum/#!forum/bazel-go-discuss">bazel-go-discuss</a> mailing list.</li>
+  <li>VSCO released the <a href="https://github.com/vsco/bazel-toolchains">latest version of their C++ CROSSTOOL</a> using Chromium’s LLVM toolchain.</li>
+  <li>The Android build process involves many moving parts and can be complex.  Alex Steinberg wrote here a detailed walkthrough on <a href="https://blog.bazel.build/2018/02/14/how-android-builds-work-in-bazel.html">How Android Builds Work in Bazel</a>.</li>
+</ul>
+
+<h3 id="tools">Tools</h3>
+
+<ul>
+  <li>Justine Tunney made an experiment about <a href="https://gist.github.com/jart/082b1078a065b79949508bbe1b7d8ef0">turning a Bazel BUILD file into a Makefile</a> using the results of <a href="https://docs.bazel.build/versions/master/query-how-to.html">bazel query</a>.</li>
+</ul>
+
+<h3 id="community">Community</h3>
+
+<ul>
+  <li>Nick Santos wrote a blog post on whether you should adopt Bazel for Go projects: <a href="https://medium.com/windmill-engineering/bazel-is-the-worst-build-system-except-for-all-the-others-b369396a9e26">Bazel is the Worst Build System, Except for All the Others</a></li>
+  <li>Filip Nikolovski wrote an article about how InPlayer is <a href="https://filipnikolovski.com/managing-go-monorepo-with-bazel/">Managing a Go monorepo with Bazel</a>.</li>
+  <li>Alex Eagle of the Angular core team did <a href="https://www.youtube.com/watch?v=z9Q_2N9oaG8">a 2-hour long deep dive of Angular’s Buildtools Convergence</a> (ABC).</li>
+  <li>Kyle Cordes also <a href="https://www.youtube.com/watch?v=KmaE6z_ECRg">gave a demo</a> on building Angular applications with Bazel at Angular Lunch.</li>
+</ul>
+
+<p>Did we miss anything? <a href="https://docs.google.com/forms/d/e/1FAIpQLSde7NGMKA1xK2RZnOLk8XKm3A-Y09guJAFrkX35RCJxn3RB4w/viewform?usp=sf_link">Fill the form</a> to suggest content for a next blog post.</p>
+
+<p>Discuss on <a href="https://news.ycombinator.com/item?id=16468244">Hacker News</a> or <a href="https://www.reddit.com/r/bazel/comments/80focy/bazel_011/">Reddit</a>.</p>
+
+            </div>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+        <footer class="footer">
+      <div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 footer-brand">
+      <a href="https://bazel.build/">
+        <img class="footer-logo" src="/bazel-blog/images/bazel-logo.svg" alt="Bazel">
+      </a>
+      <div class="footer-socials">
+        <a href="https://x.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://github.com/bazelbuild" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <i class="fa fa-github"></i>
+        </a>
+        <a href="https://reddit.com/r/bazel" target="_blank" rel="noopener noreferrer" aria-label="Reddit">
+          <i class="fa fa-reddit"></i>
+        </a>
+        <a href="/bazel-blog/feed.xml" aria-label="RSS Feed">
+          <i class="fa fa-rss"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">About</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/community/users">Who's using Bazel</a></li>
+        <li><a href="https://bazel.build/contribute">Contribute</a></li>
+        <li><a href="https://bazel.build/contribute/policy">Governance model</a></li>
+        <li><a href="https://bazel.build/release">Release model</a></li>
+        <li><a href="https://bazel.build/brand">Brand guidelines</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Stay Connected</p>
+      <ul class="list-unstyled">
+        <li><a href="https://blog.bazel.build">Blog</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel">GitHub</a></li>
+        <li><a href="https://x.com/bazelbuild">Twitter / X</a></li>
+        <li><a href="https://youtube.com/user/googleOSPO">YouTube</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Support</p>
+      <ul class="list-unstyled">
+        <li><a href="https://bazel.build/help">Support</a></li>
+        <li><a href="https://github.com/bazelbuild/bazel/issues">Issue tracker</a></li>
+        <li><a href="https://slack.bazel.build/">Slack</a></li>
+        <li><a href="https://stackoverflow.com/questions/tagged/bazel">Stack Overflow</a></li>
+      </ul>
+    </div>
+    <div class="col-xs-6 col-sm-3 col-md-2">
+      <p class="footer-heading">Legal</p>
+      <ul class="list-unstyled">
+        <li><a href="https://policies.google.com/privacy">Privacy Policy</a></li>
+        <li><a href="https://policies.google.com/terms">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="text-muted">&copy; 2026 Google</p>
+    </div>
+  </div>
+</div>
+
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/bazel-blog/assets/js/bootstrap.min.js"></script>
+
+    <script>
+      var shiftWindow = function() {
+        if (location.hash.length !== 0) {
+          window.scrollBy(0, -50);
+        }
+      };
+      window.addEventListener("hashchange", shiftWindow);
+
+      var highlightCurrentSidebarNav = function() {
+        var href = location.pathname;
+        var item = $('#sidebar-nav [href$="' + href + '"]');
+        if (item) {
+          var li = item.parent();
+          li.addClass("active");
+
+          if (li.parent() && li.parent().is("ul")) {
+            do {
+              var ul = li.parent();
+              if (ul.hasClass("collapse")) {
+                ul.collapse("show");
+              }
+              li = ul.parent();
+            } while (li && li.is("li"));
+          }
+        }
+      };
+
+      $(document).ready(function() {
+        // Scroll to anchor of location hash, adjusted for fixed navbar.
+        window.setTimeout(function() {
+          shiftWindow();
+        }, 1);
+
+        // Flip the caret when submenu toggles are clicked.
+        $(".sidebar-submenu").on("show.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.addClass("dropup");
+          }
+        });
+        $(".sidebar-submenu").on("hide.bs.collapse", function() {
+          var toggle = $('[href$="#' + $(this).attr('id') + '"]');
+          if (toggle) {
+            toggle.removeClass("dropup");
+          }
+        });
+
+        // Highlight the current page on the sidebar nav.
+        highlightCurrentSidebarNav();
+      });
+    </script>
+
+    <!-- Google Analytics tracking code -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-61082125-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
+
+    <!-- Anchor JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    <script>
+      // Automatically add anchors and links to all header elements that don't already have them.
+      anchors.add('.blog-post-content h2, .blog-post-content h3, .blog-post-content h4');
+    </script>
+  </body>
+</html>

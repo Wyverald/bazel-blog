@@ -1,0 +1,1402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+<channel>
+  <title>Bazel Blog</title>
+  <link>http://blog.bazel.build</link>
+  <description>Fast, correct builds.</description>
+  
+    <item>
+      <title>BazelCon 2026 Recap: Recordings and Notes</title>
+      <link>/2026/11/10/bazel-q4-2026-bazelcon-recap.html</link>
+      <description>&lt;p&gt;Another edition of BazelCon has come to a close. We gathered to discuss what matters most in the world of Bazel, learn, network and spend some quality time with like-minded folks. If you couldn’t make it to the event or want a quick refresher on the key takeaways, we’ve put together a brief summary of the highlights.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;TL;DR&lt;/strong&gt; - &lt;a href=&quot;https://youtube.com/playlist?list=PLH0fMKiAG8uQ&amp;amp;si=3PxGzJxJeKHTvowL&quot;&gt;Recordings playlist&lt;/a&gt;, &lt;a href=&quot;https://www.flickr.com/photos/linuxfoundation/albums/72177720335643475/&quot;&gt;photo album&lt;/a&gt;, &lt;a href=&quot;https://bazel.build/survey&quot;&gt;user survey&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;acknowledgments&quot;&gt;Acknowledgments&lt;/h3&gt;
+
+&lt;p&gt;The success of this year’s event is entirely due to our incredible community.&lt;/p&gt;
+
+&lt;p&gt;A huge thank you to our &lt;strong&gt;sponsors&lt;/strong&gt;, whose support made it possible to host an event of this scale free of charge.&lt;/p&gt;
+
+&lt;p&gt;Thank you to our &lt;strong&gt;speakers&lt;/strong&gt; and &lt;strong&gt;trainers&lt;/strong&gt; for delivering insightful presentations packed with knowledge that sparked many conversations throughout the week.&lt;/p&gt;
+
+&lt;p&gt;And to our &lt;strong&gt;attendees&lt;/strong&gt; - both in-person and online - for your questions, hallway discussions, and engagement that truly shape the spirit of BazelCon each year. We gathered a record number of &lt;strong&gt;455&lt;/strong&gt; people, exceeding our expectations and giving us much to consider for next events.&lt;/p&gt;
+
+&lt;h3 id=&quot;build-foundation&quot;&gt;BUILD Foundation&lt;/h3&gt;
+
+&lt;p&gt;Kicking off Day 1 during the Keynote, Helen Altshuler and Chuck Grindel announced the launch of the BUILD Foundation. Governed by the Linux Foundation with initial members ASML, Canva, Datadog, EngFlow, Figma, and Spotify, the Foundation gives the Bazel ecosystem the leadership and sustained investment needed to take on challenges no single organization can solve alone.&lt;/p&gt;
+
+&lt;p&gt;Key priorities for the initiative include improving technical documentation, funding maintainers for bazel-contrib repositories, launching developer training and certification, and enhancing software supply chain security.&lt;/p&gt;
+
+&lt;p&gt;By formalizing this shared investment, the community aims to keep build times fast and dependable as engineering teams and codebases continue to scale.&lt;/p&gt;
+
+&lt;p&gt;To discover more about the launch, explore the initial member perspectives, and find out how your organization can get involved, read the rest of the &lt;a href=&quot;https://www.linuxfoundation.org/press/linux-foundation-launches-build-foundation-to-sustain-large-scale-multi-language-build-and-test-systems&quot;&gt;Linux Foundation press release&lt;/a&gt; and watch the &lt;a href=&quot;https://www.youtube.com/watch?v=FjHWY0AgBI4&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=1&amp;amp;t=2s&amp;amp;pp=iAQB&quot;&gt;Keynote&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;bazel-community-survey-2026&quot;&gt;Bazel Community Survey 2026&lt;/h3&gt;
+
+&lt;p&gt;To understand our users and their experiences, as well as to better guide the roadmap, the BUILD Foundation launched a survey to gather your feedback.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://bazel.build/survey&quot;&gt;Take the 2026 Survey&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;more-recaps-and-coverage&quot;&gt;More Recaps and Coverage&lt;/h3&gt;
+
+&lt;p&gt;Want to see the event through the eyes of the attendees? Check out these write-ups from other members of the community:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://adincebic.com/2026/10/18/bazelcon-my-notes-and-observations.html&quot;&gt;BazelCon 2026: My Notes and Observations&lt;/a&gt; - by Adin Ćebić&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blogsystem5.substack.com/p/bazelcon-2026-recap&quot;&gt;BazelCon 2026 recap&lt;/a&gt; - by Julio Merino&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sluongng.substack.com/p/a-bazel-bard&quot;&gt;A Bazel Bard - a summary of the BazelCon 2026 Hallway Track&lt;/a&gt; - by Son Luong Ngoc&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;recordings&quot;&gt;&lt;a href=&quot;https://youtube.com/playlist?list=PLH0fMKiAG8uQ&amp;amp;si=3PxGzJxJeKHTvowL&quot;&gt;Recordings&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;[Training Day] Tuesday, October 13th&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=-GzMe2CaeeQ&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=40&amp;amp;t=72s&amp;amp;pp=iAQB&quot;&gt;Bazel Bootcamp&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=hyGuaoYkAFA&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=42&amp;amp;t=150s&amp;amp;pp=iAQB&quot;&gt;Advanced Bazel: Rules Authoring, Performance Tuning and Remote Execution&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=ONzi9vTvZTY&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=44&amp;amp;pp=iAQB&quot;&gt;rules_{js|ts}: JavaScript &amp;amp; TypeScript with Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=o5QOjatDTnk&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=45&amp;amp;pp=iAQB&quot;&gt;Writing Bazel Rules&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=7JiVpJt6xjE&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=33&amp;amp;pp=iAQB&quot;&gt;Build File Generation Using AXL&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=g-SD0LnrnVw&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=43&amp;amp;t=15s&amp;amp;pp=iAQB&quot;&gt;How Fast Should/Can My Build Be? A Journey to Understand Build Optimization&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=GZjlNNy9eWI&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=41&amp;amp;pp=iAQB&quot;&gt;rules_py: Python Builds with Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;[Day 1] Wednesday, October 14th&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=FjHWY0AgBI4&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=1&amp;amp;t=2s&amp;amp;pp=iAQB&quot;&gt;Keynote: Bazel Community Update&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=yKmm2VLfySk&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=2&amp;amp;t=1s&amp;amp;pp=iAQB&quot;&gt;State of the Union&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=1xdngpi764c&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=3&amp;amp;pp=iAQB&quot;&gt;No Token Budget: Why Agentic Software Factories Need Bazel to Maintain Entropy&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=-eM85uVSkfU&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=4&amp;amp;t=17s&amp;amp;pp=iAQB&quot;&gt;One Content-Addressed Store, Zero Full Clones: Backing Bazel’s Cache and Remote Execution with Lore&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=w_5F1SPuuYs&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=5&amp;amp;t=7s&amp;amp;pp=iAQB&quot;&gt;Content-Defined Chunking for Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=qq0MRkHsiZY&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=6&amp;amp;t=16s&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;Static types in Starlark&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=l-T_H7at0Mc&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=7&amp;amp;t=5s&amp;amp;pp=iAQB&quot;&gt;Horapha: Your Personal Warm Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=VFfSdTDNIlA&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=8&amp;amp;t=1s&amp;amp;pp=iAQB&quot;&gt;actiond: The quest for a better sandbox&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=TfXXGKrZmJQ&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=9&amp;amp;t=75s&amp;amp;pp=iAQB&quot;&gt;Type-checking Starlark without waiting for Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=aT0zcUfvoZE&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=10&amp;amp;pp=iAQB&quot;&gt;Taming Configurations Explosion 💥&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=dxmv82wHZXc&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=11&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;Persistent Test Runners&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=vfDLfzQt2lY&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=12&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;Where Bazel Clusters Break at Scale: Field Notes from Plaid and the EngFlow Fleet&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=TZBRa5mS_HI&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=13&amp;amp;t=26s&amp;amp;pp=iAQB&quot;&gt;Taking Humans Out of the Build Loop&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=yV2LZIvz3rQ&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=14&amp;amp;pp=iAQB&quot;&gt;bviz: Seeing What Your Bazel Build Is Actually Doing&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=tI297rjQ4PQ&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=15&amp;amp;pp=iAQB&quot;&gt;One Graph to Rule Them All: Scaling Incremental Target Graph Calculations in Monorepos&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=IcROGa7VfxE&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=16&amp;amp;pp=iAQB&quot;&gt;More expressive platforms with platforms_contrib&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=7K8G5YjV6jM&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=17&amp;amp;t=3s&amp;amp;pp=iAQB&quot;&gt;Stop Delivering Your Whole Fleet&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=JqRr_-6YSZY&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=18&amp;amp;t=28s&amp;amp;pp=iAQB&quot;&gt;How Canva Runs Millions of Jest Tests with Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=00u_4EjfLNI&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=19&amp;amp;t=10s&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;RunfilesGroupInfo: Turning *_binary Runfiles into Optimal Container Layers&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;[Day 2] Thursday, October 15th&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=ImJWsZehdaU&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=20&amp;amp;pp=iAQB&quot;&gt;Lessons learned building a zero-sysroot fully hermetic LLVM toolchain for Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=AGb_ZZKn8i0&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=21&amp;amp;pp=iAQB&quot;&gt;rules_rs: {Fast, Hermetic, Ergonomic} - Pick 3&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=uzeKH0zEs6U&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=22&amp;amp;t=33s&amp;amp;pp=iAQB&quot;&gt;The Sandbox Is a Filesystem: Content-Addressed Bazel Builds on macOS with FSKit&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=hDU8YCzBdMk&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=23&amp;amp;pp=iAQB&quot;&gt;Proving Equivalence in any2bazel Build System Migrations&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=0L9y06obTK0&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=24&amp;amp;pp=iAQB&quot;&gt;AI development: Challenges and early learnings for Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=uflDmuwo7ws&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=25&amp;amp;pp=iAQB&quot;&gt;Discovering and eliminating 20% of redundant build actions by tracing file system operations&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=qOqsqLNNz4g&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=26&amp;amp;t=32s&amp;amp;pp=iAQB&quot;&gt;Diffing Millions of Screenshots a Day, Hermetically&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=3H072ihyFTc&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=27&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;Zig Package Manager Integration, Hermetically&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=LPWXpFUjNQc&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=28&amp;amp;pp=iAQB&quot;&gt;No bytes left untracked - Bazel Supply Chain Security&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=nAwOw0iKgGE&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=29&amp;amp;pp=iAQB&quot;&gt;Pretty Python Packaging&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=jB-PwyzWTa4&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=30&amp;amp;t=2s&amp;amp;pp=iAQB&quot;&gt;One Build, Many Configurations: Comparing Configuration Features in Bazel and Buck2&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Xdld_bTXo8s&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=31&amp;amp;pp=iAQB&quot;&gt;Building Uber’s Automated Migration Machine on Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=irTpI3aLsZs&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=32&amp;amp;pp=iAQB&quot;&gt;Generate build files for new rule sets with Gazelle v2&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Q6Gv2U2mC2M&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=34&amp;amp;pp=iAQB&quot;&gt;Distributed hermetic CUDA Clang compilation using Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=oGjV6K5uvEc&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=35&amp;amp;pp=iAQB&quot;&gt;What Changed? - A Better Watch Protocol for Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=5tEyfpRqsP8&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=36&amp;amp;pp=iAQB&quot;&gt;Extend Gazelle in Starlark, not Go&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=-HCcaP6tA_0&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=37&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;A py_binary Should Be Enough: Fast, Simple Python Images with Bazel&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=aQ_jyCYCxUg&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=38&amp;amp;pp=iAQB0gcJCSsMAYcqIYzv&quot;&gt;Flexibility Is a Trap: How We Sealed Our Bazel Platform at Adobe Scale&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=CBaV4Qmhc40&amp;amp;list=PLH0fMKiAG8uQ&amp;amp;index=39&amp;amp;pp=iAQB&quot;&gt;Closing Remarks&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;BoF notes&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1BS5AyYDJVTDN5NJfpOvE7FuAqDMtc568XSYqGUgFyww/edit?usp=sharing&quot;&gt;Remote Execution&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1u1LVPRMp-8zMXcklkH-UWra6AsduAw9QtQx_BMGDVXw/edit?tab=t.0#heading=h.heuaz6bjd1zm&quot;&gt;C++&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Z6nt_XtRel2u57KRetRAxK9YguZ6jmtlJhLU52LnQWg/edit?pli=1&amp;amp;tab=t.0#heading=h.aepktivsinl&quot;&gt;Android&lt;/a&gt; + &lt;a href=&quot;https://docs.google.com/presentation/d/1AqkQn7jOBZv0v_VwATZxt68tN3WUPtHTGo95dOoEo7w/edit?slide=id.g3a0df42696a_0_0#slide=id.g3a0df42696a_0_0&quot;&gt;Android slides&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1EMi3obaLjXv0G3S07Nl7pHy16aYCpFaO0YRsZlDU-GU/edit?usp=sharing&quot;&gt;Bazel + IDEs&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1PoK-bK2Se3bIFyY-DNAgh8JWZXVl-OoZ0dh27p_t5pY/edit?usp=sharing&quot;&gt;Bzlmod&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1imJqm5Kz-ZmnY9G6GT-7KmgfvxcyPKvOTftcJnAytCA/edit?usp=sharing&quot;&gt;Supply-Chain&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1OjrssK9uA3BmDXesaKjoCHwC_QiNOfdVzax2l-lTIz4/edit?tab=t.0&quot;&gt;Apple&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Unconference notes:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://gist.github.com/oquenchil/1da2b1993a68501d37a2bade6f4be8e5&quot;&gt;SkyCache&lt;/a&gt; (Remote Analysis Caching) + &lt;a href=&quot;https://gist.github.com/jin/e66f7496ba84f4f8d7f6f047aad64f3d&quot;&gt;SkyCache deck&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Config Explosion Mitigation &lt;a href=&quot;https://docs.google.com/document/d/1-4ithTb66RwqZpYTkMWtXZvsefRcgWoC_HlCJFUIVBY/edit?usp=sharing&quot;&gt;Notes 1&lt;/a&gt; &amp;amp; &lt;a href=&quot;https://docs.google.com/document/d/1trEaf456aBcNVVeQSy3uywInc_lfN4xydCWg7W4hfIs/edit?usp=sharing&quot;&gt;Notes 2&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1KHthgnP7_bI-B9sbUYLG13d9Spc3LlwnSUbW51Tgyvg/edit?usp=sharing&quot;&gt;E2E/SystemsTesting&lt;/a&gt; (Tests against hermetic environments)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/179dT_QDyADCfCgkjIRW5vnQP7rzMROmmocyhk8jW2nE/edit?usp=sharing&quot;&gt;The Psychology of Migration&lt;/a&gt; (Organizational struggles &amp;amp; solutions)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Z_SiguwchMu_z750Vf4Yi-89Tl-CEyedN3zXAE_On4I/edit?usp=sharing&quot;&gt;Agent Mode&lt;/a&gt; (How to improve Bazel for Agentic usage)&lt;/p&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;GitHub repository: &lt;a href=&quot;https://github.com/bazelbuild/bazel&quot;&gt;https://github.com/bazelbuild/bazel&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Releases: &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases&quot;&gt;https://github.com/bazelbuild/bazel/releases&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Slack chat: &lt;a href=&quot;https://slack.bazel.build&quot;&gt;https://slack.bazel.build&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Google group: bazel-discuss@googlegroups.com&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Special Interest Groups (SIG):&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reach out the email(s) listed below if you’d like to be added to the SIG calendar invites.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;strong&gt;SIG&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Meeting frequency&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Point of contact&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/rules-authors&quot;&gt;Rules authors&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Every two weeks&lt;/td&gt;
+      &lt;td&gt;bazel-contrib@googlegroups.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Sv227BguEekx5Q3lwSdPEQqpkHAng6J6gNCNZqJLbtw/edit?resourcekey=0-GK_iaQRAEAu3aYslzlrEfQ&amp;amp;tab=t.0#heading=h.dzj8kjjzgp3s&quot;&gt;Android app development&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;ahumesky@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/bazel-intellij&quot;&gt;Bazel plugin for IntelliJ&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;en@jetbrains.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1EtQMTn-7sKFMTxIMlb0oDGpvGCMAuzphVcfx58GWuEM/edit?tab=t.0#heading=h.ol6wthckmbcw&quot;&gt;Remote execution API working group&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;chiwang@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1WhScaOLERet4Fxi4fa2Lpke2MgJZGvEE4EXeq6yb0LU/edit?usp=sharing&quot;&gt;Supply chain security / SBOM&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Weekly&lt;/td&gt;
+      &lt;td&gt;fwe@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Interested in learning about SIGs or starting a new one? Find more information on our &lt;a href=&quot;https://bazel.build/community/sig&quot;&gt;website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Want to get your SIG listed? Please add it to the &lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs&quot;&gt;Community repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;ideas-feedback-and-submissions-are-welcome&quot;&gt;Ideas, feedback, and submissions are welcome!&lt;/h2&gt;
+
+&lt;p&gt;Thank you for reading this edition! Let us know if you’d like to see any new information or changes in future community updates by reaching out to product@bazel.build. We look forward to hearing from you.&lt;/p&gt;
+
+&lt;p&gt;Thanks,&lt;/p&gt;
+
+&lt;p&gt;Google Bazel team&lt;/p&gt;
+</description>
+      <pubDate>Tue, 10 Nov 2026 00:00:00 -0500</pubDate>
+    </item>
+  
+    <item>
+      <title>Bazel releases addressing the eMudhra CA compromise</title>
+      <link>/2026/10/23/emudhra-ca-compromise.html</link>
+      <description>&lt;p&gt;The Bazel team has published new releases of Bazel and Bazelisk to address the recent disclosure of the &lt;a href=&quot;https://emudhra.we-have-a-problem.com/&quot;&gt;eMudhra intermediate CA private key compromise&lt;/a&gt;. The following Bazel releases remove the distrusted eMudhra and Sectigo AAA root CA certificates from the bundled JDK:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/7.7.2&quot;&gt;7.7.2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.8.2&quot;&gt;8.8.2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.3.1&quot;&gt;9.3.1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/10.0.0rc2&quot;&gt;10.0.0rc2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you cannot immediately upgrade to one of the patched releases above (or are using an older, unsupported Bazel release), you can work around the issue by passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--host_jvm_args=-Djavax.net.ssl.trustStore=&amp;lt;path&amp;gt;&lt;/code&gt; to point Bazel’s JVM at an updated trust store that excludes the distrusted roots.&lt;/p&gt;
+
+&lt;p&gt;We have also released &lt;a href=&quot;https://github.com/bazelbuild/bazelisk/releases/tag/v1.30.0&quot;&gt;Bazelisk v1.30.0&lt;/a&gt;, built with Go 1.27.3 to address &lt;a href=&quot;https://go.dev/issue/82345&quot;&gt;CVE-2026-111943&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Thanks to community member James Sharpe for bringing this issue to our attention.&lt;/p&gt;
+</description>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 -0400</pubDate>
+    </item>
+  
+    <item>
+      <title>Bazel Q3 2026 Community Update</title>
+      <link>/2026/10/02/bazel-q3-2026-community-update.html</link>
+      <description>&lt;h2 id=&quot;announcements&quot;&gt;Announcements&lt;/h2&gt;
+
+&lt;h3 id=&quot;bazelcon-2026&quot;&gt;BazelCon 2026&lt;/h3&gt;
+
+&lt;p&gt;With BazelCon fast approaching, we are excited to bring you a sneak peek of what’s to come, along with a few event announcements.&lt;/p&gt;
+
+&lt;p&gt;Join the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CDAGD8TGR&quot;&gt;#bazelcon&lt;/a&gt; channel on Bazel Slack for real-time news and details.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A Special Thanks to Our Sponsors&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;To all our partners - both returning champions and brand-new supporters - thank you for consistently supporting our global community and making this event a reality. We are proud to have you on board!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/BazelCon 2026 thank you post Q3 Community Update.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;After-Hours Socializing &amp;amp; Networking&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;No BazelCon is complete without post-session festivities! Unwind and connect with fellow engineers across a variety of social mixers, game nights, hackathons, and receptions.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Tuesday, October 13th:&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;(10 AM – 4 PM) &lt;a href=&quot;https://luma.com/x08mgk41&quot;&gt;BuildBarn Meetup&lt;/a&gt; hosted at DataDog&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(6 PM – 9 PM) &lt;a href=&quot;https://luma.com/z2il5tv1&quot;&gt;Kickoff Event&lt;/a&gt; at the Postillion Convention Centre&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Wednesday, October 14th:&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;(5:30 PM – 6:30 PM) BazelCon Attendee Reception at the Postillion Convention Centre&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(6 PM – 11 PM) &lt;a href=&quot;https://meetup.build/bazelcon-2026&quot;&gt;Extreme Scale Party&lt;/a&gt; at Social Impact Factory&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(6:30 PM) &lt;a href=&quot;https://docs.google.com/forms/d/e/1FAIpQLScf1zZSPL3SEnhLFgRMMh7ocLMCRrhCSBNIcsWPCe4FvjFyTg/viewform&quot;&gt;BuildBuddy &amp;amp; Google Cloud Happy Hour&lt;/a&gt; at Ventuno Skylounge&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;em&gt;Friday, October 16th:&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;(9 AM – 1 PM) &lt;a href=&quot;https://luma.com/9dm41b1h&quot;&gt;Bazel Hackathon&lt;/a&gt; hosted at DataDog&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Remember to double check if you need to register via the link for the event of your choosing.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;BazelCon Training Day&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;We are thrilled by the enthusiasm for the technical workshops led by our sponsors this year!&lt;/p&gt;
+
+&lt;p&gt;A handful of seats remain across select tracks, so be sure to secure your preferred sessions on the schedule soon.&lt;/p&gt;
+
+&lt;p&gt;If your schedule changes and you can no longer join us, please release your reservation to accommodate others on the waitlist.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Important Note on Registration &amp;amp; Capacity&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Please keep in mind that venue space is limited. If you can no longer attend in person, kindly cancel your pass to make room for community members on the waitlist.&lt;/p&gt;
+
+&lt;p&gt;Passes are also fully transferable to colleagues if you wish to reassign your spot.&lt;/p&gt;
+
+&lt;p&gt;Simply locate your original confirmation email and select “Modify Registration” to manage your ticket.&lt;/p&gt;
+
+&lt;h3 id=&quot;new-bazelbuild-docsite&quot;&gt;New bazel.build docsite&lt;/h3&gt;
+
+&lt;p&gt;This quarter the new &lt;a href=&quot;http://bazel.build&quot;&gt;bazel.build&lt;/a&gt; docsite has finally launched - a shared community success! Big thank you to all contributors for your time and effort put in making this idea a reality.&lt;/p&gt;
+
+&lt;p&gt;We are continuously rolling out improvements and still rely on your help to catch remaining issues:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;- Report bugs:&lt;/strong&gt; Check the &lt;a href=&quot;https://github.com/orgs/bazelbuild/projects/26/views/1&quot;&gt;Post-Migration tracker&lt;/a&gt; for known issues. If your bug isn’t listed yet, please drop a comment &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/30598&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;- Contribute:&lt;/strong&gt; Want to help improve the docs? You can find the guidelines at &lt;a href=&quot;https://bazel.build/contribute/docs&quot;&gt;bazel.build/contribute/docs&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;- Discuss:&lt;/strong&gt; Join the conversation in the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CRH3QF91B&quot;&gt;#documentation&lt;/a&gt; Slack channel.&lt;/p&gt;
+
+&lt;h2 id=&quot;product-updates&quot;&gt;Product Updates&lt;/h2&gt;
+
+&lt;h3 id=&quot;upcoming-bazel-releases&quot;&gt;Upcoming Bazel releases&lt;/h3&gt;
+
+&lt;p&gt;Bazel &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/30247&quot;&gt;9.3.0&lt;/a&gt; is expected to release on 2026-10-05.&lt;/p&gt;
+
+&lt;h3 id=&quot;q3-releases&quot;&gt;Q3 releases&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.2.0&quot;&gt;9.2.0&lt;/a&gt; was released in July ‘26.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.8.0&quot;&gt;8.8.0&lt;/a&gt; was released in September ‘26, followed by patch &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.8.1&quot;&gt;8.8.1&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;community-corner&quot;&gt;Community Corner&lt;/h2&gt;
+
+&lt;h3 id=&quot;updates-from-the-jetbrains-team&quot;&gt;Updates from the JetBrains* team:&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Bazel for CLion plugin updates&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;2026.3 support is available on &lt;a href=&quot;https://plugins.jetbrains.com/plugin/9554-bazel-for-clion&quot;&gt;JetBrains Marketplace&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;New documentation for the plugin is &lt;a href=&quot;https://www.jetbrains.com/help/clion/bazel.html&quot;&gt;published&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;You can now re-run individual tests directly from the IDE for our GoogleTest and Catch2 integrations.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;webazeldev&quot;&gt;&lt;a href=&quot;http://webazel.dev&quot;&gt;WeBazel.dev&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Bazel community member, Son Luong Ngoc, has launched a sleek new directory showcasing organizations using Bazel. The site offers intuitive filtering to explore verified adopters across the ecosystem.&lt;/p&gt;
+
+&lt;p&gt;Each listing includes a specific confidence rating based on publicly available documentation, allowing you to inspect the underlying reference data directly.&lt;/p&gt;
+
+&lt;p&gt;Love seeing cool community-led projects like this - huge thanks to Son for building such a valuable resource!&lt;/p&gt;
+
+&lt;h3 id=&quot;meetupbuild-events&quot;&gt;Meetup.build events&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.engflow.com/2026/08/18/four-war-stories-and-a-demo-seattle-build-meetup-2026--engflow/&quot;&gt;Four War Stories and a Demo: Seattle Build Meetup 2026&lt;/a&gt; - in July, Uber and EngFlow co-hosted a Build meetup in Seattle.&lt;/p&gt;
+
+&lt;p&gt;Missed it? Click the link and watch all five talk recordings.&lt;/p&gt;
+
+&lt;p&gt;Keep an eye on &lt;a href=&quot;http://meetup.build&quot;&gt;meetup.build&lt;/a&gt; for next meetup announcements.&lt;/p&gt;
+
+&lt;h3 id=&quot;community-created-content&quot;&gt;Community created content&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Articles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://medium.com/@mkemalgokce/bazel-for-ios-in-2026-what-it-fixes-and-what-it-breaks-507eb0af41b3&quot;&gt;Bazel for iOS in 2026: What It Fixes and What It Breaks&lt;/a&gt; - by Mustafa Kemal Gökçe&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://blog.engflow.com/2026/08/05/say-hello-to-the-new-bazelbuild-website/&quot;&gt;Say hello to the new bazel.build website&lt;/a&gt; - by Armando Montanez and Nikki Vijaybhaskar @EngFlow&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://blogsystem5.substack.com/p/ad-hoc-shell-templates&quot;&gt;Autoconf’s revenge: ad-hoc shell templates&lt;/a&gt; - by Julio Merino&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.modular.com/blog/mojo-open-source?utm_source=x&amp;amp;utm_campaign=modcon&quot;&gt;Mojo is now open source!&lt;/a&gt; - by Modular&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://lnkd.in/p/dBPmHuxp&quot;&gt;Wallapop migrates to Bazel&lt;/a&gt; - by Mostfa Essam&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://aspect.build/blog/bazel-facts-api&quot;&gt;A matter of Facts, and why you should check in your MODULE.bazel.lock&lt;/a&gt; - by Jason Bedard&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://fzakaria.com/2026/08/01/a-c++-toolchain-from-357-bytes-in-bazel&quot;&gt;A C++ toolchain from 357 bytes, in Bazel&lt;/a&gt; - by Farid Zakaria&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Videos&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=agAbiQydcOQ&quot;&gt;Lightning Talk: Bazelizing a C++ Project&lt;/a&gt; - by Paulo Chiliguano&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=W6mIaahob0A&quot;&gt;Using Slang to answer ‘what should we verify’?&lt;/a&gt; - by Clara Hollowood&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=YyqgNpNQJwQ&quot;&gt;Titus Winters on Code Review, Builds, and Testing at 10x Commit Volume&lt;/a&gt; - by EngFlow&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=oJmidhu0AIA&quot;&gt;Parallel merge queues for Bazel monorepos&lt;/a&gt; - by Mergify&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;GitHub repository: &lt;a href=&quot;https://github.com/bazelbuild/bazel&quot;&gt;https://github.com/bazelbuild/bazel&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Releases: &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases&quot;&gt;https://github.com/bazelbuild/bazel/releases&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Slack chat: &lt;a href=&quot;https://slack.bazel.build&quot;&gt;https://slack.bazel.build&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Google group: bazel-discuss@googlegroups.com&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Special Interest Groups (SIG):&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reach out the email(s) listed below if you’d like to be added to the SIG calendar invites.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;strong&gt;SIG&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Meeting frequency&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Point of contact&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/rules-authors&quot;&gt;Rules authors&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Every two weeks&lt;/td&gt;
+      &lt;td&gt;bazel-contrib@googlegroups.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Sv227BguEekx5Q3lwSdPEQqpkHAng6J6gNCNZqJLbtw/edit?resourcekey=0-GK_iaQRAEAu3aYslzlrEfQ&amp;amp;tab=t.0#heading=h.dzj8kjjzgp3s&quot;&gt;Android app development&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;ahumesky@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/bazel-intellij&quot;&gt;Bazel plugin for IntelliJ&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;en@jetbrains.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1EtQMTn-7sKFMTxIMlb0oDGpvGCMAuzphVcfx58GWuEM/edit?tab=t.0#heading=h.ol6wthckmbcw&quot;&gt;Remote execution API working group&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;chiwang@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1WhScaOLERet4Fxi4fa2Lpke2MgJZGvEE4EXeq6yb0LU/edit?usp=sharing&quot;&gt;Supply chain security / SBOM&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Weekly&lt;/td&gt;
+      &lt;td&gt;fwe@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Interested in learning about SIGs or starting a new one? Find more information on our &lt;a href=&quot;https://bazel.build/community/sig&quot;&gt;website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Want to get your SIG listed? Please add it to the &lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs&quot;&gt;Community repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;ideas-feedback-and-submissions-are-welcome&quot;&gt;Ideas, feedback, and submissions are welcome!&lt;/h2&gt;
+
+&lt;p&gt;Thank you for reading this edition! Let us know if you’d like to see any new information or changes in future community updates by reaching out to product@bazel.build. We look forward to hearing from you.&lt;/p&gt;
+
+&lt;p&gt;Thanks,&lt;/p&gt;
+
+&lt;p&gt;Google Bazel team&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;*Copyright © 2026 JetBrains s.r.o. JetBrains and IntelliJ are registered trademarks of JetBrains s.r.o.&lt;/em&gt;&lt;/p&gt;
+</description>
+      <pubDate>Fri, 02 Oct 2026 00:00:00 -0400</pubDate>
+    </item>
+  
+    <item>
+      <title>New bazel.build websites incoming!</title>
+      <link>/2026/08/05/new-websites-incoming.html</link>
+      <description>&lt;p&gt;We’re happy to announce the launch of the new bazel.build documentation site and the new web UI for the Bazel Central Registry!&lt;/p&gt;
+
+&lt;h2 id=&quot;new-documentation-site&quot;&gt;New documentation site&lt;/h2&gt;
+
+&lt;p&gt;Last year, Alan Mond wrote a viral &lt;a href=&quot;https://alanmond.com/posts/bazel-documentation-improvements/&quot;&gt;blog post&lt;/a&gt; that highlighted the issues with Bazel’s documentation site. This led to his &lt;a href=&quot;https://docs.google.com/document/d/1R-02--2NQuu2TR7covDTqNMExMhjHfPS-YHoqOweaqk/edit?usp=sharing&quot;&gt;Let’s Build the Future of Bazel Documentation&lt;/a&gt; birds-of-a-feather session at BazelCon 2025, where we decided to overhaul the documentation completely.&lt;/p&gt;
+
+&lt;p&gt;Alan and a group of volunteers from the community and Google have now completed the first and most significant milestone by migrating &lt;a href=&quot;https://bazel.build&quot;&gt;https://bazel.build&lt;/a&gt; from a proprietary Google hosting site to &lt;a href=&quot;https://www.mintlify.com/&quot;&gt;Mintlify&lt;/a&gt;. This step improves the experience for contributors and readers alike:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It’s easier to make (significant) changes to the docs since we now use the &lt;a href=&quot;https://mdxjs.com/docs/&quot;&gt;well-documented&lt;/a&gt; .mdx format.&lt;/li&gt;
+  &lt;li&gt;Moreover, contributors can now generate a preview of their changes either locally or by using the new automated PR preview feature (&lt;a href=&quot;https://github.com/bazelbuild/bazel/pull/30344#issuecomment-5169190960&quot;&gt;example&lt;/a&gt;).&lt;/li&gt;
+  &lt;li&gt;For readers, Mintlify offers AI features such as an embedded assistant that allows them to prompt the docs directly.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Documentation content continues to live in the &lt;a href=&quot;https://github.com/bazelbuild/bazel&quot;&gt;bazelbuild/bazel&lt;/a&gt; GitHub repository next to the Bazel source code. The new &lt;a href=&quot;https://github.com/bazel-contrib/bazel-docs&quot;&gt;bazel-contrib/bazel-docs&lt;/a&gt; repository contains the documentation pipeline and the navigation.&lt;/p&gt;
+
+&lt;p&gt;There are still some rough edges that we plan to address in the near future. Known issues are being tracked &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/30598&quot;&gt;here&lt;/a&gt; - please post a comment when you encounter a bug.&lt;/p&gt;
+
+&lt;p&gt;We hope that the new website makes it easier for external developers to contribute to the documentation, especially when it comes to significant changes like revamping the structure or adding new pages such as codelabs and tutorials. Consequently, we welcome anyone to contribute to these efforts - please check &lt;a href=&quot;https://bazel.build/contribute/docs&quot;&gt;https://bazel.build/contribute/docs&lt;/a&gt; for instructions, or visit us in the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CRH3QF91B&quot;&gt;#documentation Slack channel&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;new-bcr-ui&quot;&gt;New BCR UI&lt;/h2&gt;
+
+&lt;p&gt;Community member &lt;a href=&quot;https://github.com/pcj&quot;&gt;Paul Johnston&lt;/a&gt; has built an entirely new web UI for the Bazel Central Registry at &lt;a href=&quot;https://registry.bazel.build/&quot;&gt;https://registry.bazel.build/&lt;/a&gt;. The new site brings several improvements over the previous one:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Detailed overview&lt;/strong&gt;: The new site features a denser display of key information about the module, including its dependencies, maintainers, and other versions. It also puts the prose documentation of the module front and center, pulled directly from the README.md file of the corresponding GitHub repo.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Smarter information retrieval&lt;/strong&gt;: Beside pulling README files, the new site has quite a few new tricks up its sleeve. It tries to surface official API documentation from the module, and if it’s missing, it runs Stardoc on the .bzl files automatically and surfaces the result. It also presents the attestations and presubmit configs associated with each module version.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Powerful search and indexes&lt;/strong&gt;: Beyond searching for modules by their names, you can also search by symbols - try searching for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;go_library&lt;/code&gt;. You can also view the list of available modules filtered by their primary language or maintainers.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Faster UI update times&lt;/strong&gt;: Module authors should expect quicker updates to the BCR UI. When new commits land in the BCR GitHub repo, a repository dispatch triggers a new BCR UI build that takes on average less than 5 minutes.  The new static assets are deployed to GitHub Pages in another 1-2 minutes.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Other tidbits&lt;/strong&gt;: The new site has many other corners to explore. One of them is the &lt;a href=&quot;https://registry.bazel.build/bazel/flags&quot;&gt;Bazel flags page&lt;/a&gt;, which lists all the command-line flags present in the past few Bazel LTS releases. For each individual flag, it also tells you which Bazel versions it is present in, and which Bazel subcommands it applies to.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Please take it for a drive, and file issues and send PRs to &lt;a href=&quot;https://github.com/bazel-contrib/bcr-frontend&quot;&gt;https://github.com/bazel-contrib/bcr-frontend&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;Finally, a huge thank you again to all community members who contributed to these efforts, especially Kayce Basques, Alex Eagle, Paul Johnston, Alan Mond, Armando Montanez, Anthony Pratti, Nikki Vijaybhaskar and Kapunahele Wong - they wouldn’t have been possible without you!&lt;/p&gt;
+</description>
+      <pubDate>Wed, 05 Aug 2026 00:00:00 -0400</pubDate>
+    </item>
+  
+    <item>
+      <title>Bazel Q2 2026 Community Update</title>
+      <link>/2026/07/07/bazel-q2-2026-community-update.html</link>
+      <description>&lt;h2 id=&quot;announcements&quot;&gt;Announcements&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/BazelCon 2026 banner.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;bazelcon-2026---details&quot;&gt;BazelCon 2026 - details&lt;/h3&gt;
+
+&lt;p&gt;The Details at a Glance:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;What:&lt;/em&gt; BazelCon 2026&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Where:&lt;/em&gt; Postillion Hotel &amp;amp; Convention Centre Amsterdam, Netherlands&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;When:&lt;/em&gt; October 13–15, 2026&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;October 13th - Training Day&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;October 14th &amp;amp; 15th - 2 Conference days filled with technical sessions, Birds of a Feather and networking with the best in the field.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Get your ticket and find all the details via the &lt;a href=&quot;https://events.linuxfoundation.org/bazelcon/&quot;&gt;BazelCon website&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;For the most up to date BazelCon news and updates, follow the &lt;a href=&quot;https://x.com/bazelbuild&quot;&gt;Bazel X account&lt;/a&gt; and the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CDAGD8TGR&quot;&gt;#bazelcon&lt;/a&gt; Bazel Slack channel.&lt;/p&gt;
+
+&lt;h3 id=&quot;call-for-proposals&quot;&gt;Call for Proposals&lt;/h3&gt;
+
+&lt;p&gt;This year, we received a tremendous 170 talk submissions!&lt;/p&gt;
+
+&lt;p&gt;A huge thank you to everyone who took the time to submit a proposal. The Review Committee is already diligently reviewing them to curate the 2026 schedule.&lt;/p&gt;
+
+&lt;p&gt;Speaker confirmations will be sent out on July 20th, and we will announce the schedule a few days later. If your submission isn’t selected this year, we highly encourage you to apply again next time - and we sincerely applaud your willingness to share your stories with the community!&lt;/p&gt;
+
+&lt;h3 id=&quot;bazelcon-training-day&quot;&gt;BazelCon Training Day&lt;/h3&gt;
+
+&lt;p&gt;Following last year’s success, we are bringing back Training Day right before the main conference.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://events.linuxfoundation.org/bazelcon/features/training-day/&quot;&gt;The schedule&lt;/a&gt; features two parallel tracks with four sessions each, allowing you to choose one session per time slot. You can select your sessions when you secure your BazelCon ticket on the website.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Already registered?&lt;/em&gt; You can easily edit your existing registration to secure a spot in the trainings of your choice.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Please Note:&lt;/strong&gt; Seats are limited. If your plans change and you can no longer attend, please free up your spot so someone on the waitlist can take your place.&lt;/p&gt;
+
+&lt;h2 id=&quot;product-updates&quot;&gt;Product Updates&lt;/h2&gt;
+
+&lt;h3 id=&quot;upcoming-bazel-releases&quot;&gt;Upcoming Bazel releases&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/29355&quot;&gt;Bazel 9.2.0&lt;/a&gt; is expected to release on 2026-07-09. &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.2.0rc1&quot;&gt;RC1&lt;/a&gt; was released on 2026-06-25.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/29489&quot;&gt;Bazel 8.8.0&lt;/a&gt; is expected to release on 2026-07-15. Please send cherry-pick PRs against the &lt;a href=&quot;https://github.com/bazelbuild/bazel/tree/release-8.8.0&quot;&gt;release-8.8.0&lt;/a&gt; branch before the RC1 cutoff on 2026-07-08.&lt;/p&gt;
+
+&lt;h3 id=&quot;q2-releases&quot;&gt;Q2 releases&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.1.0&quot;&gt;9.1.0&lt;/a&gt; was released in April ‘26, followed by patch &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.1.1&quot;&gt;9.1.1&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.7.0&quot;&gt;8.7.0&lt;/a&gt; was released in May ‘26.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;community-corner&quot;&gt;Community Corner&lt;/h2&gt;
+
+&lt;h3 id=&quot;updates-from-the-jetbrains-team&quot;&gt;Updates from the JetBrains* team:&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Bazel for CLion plugin updates&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Debug flags are no longer injected automatically by debug run configurations. If your build already includes debug symbols, this change shouldn’t impact you; otherwise, check the details here: &lt;a href=&quot;https://jb.gg/clwb-debug-docs&quot;&gt;https://jb.gg/clwb-debug-docs&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;You can now switch configurations if the current source file is built under multiple configurations in your project. Additionally, when you start debugging, we’ll automatically select the correct configuration to keep your code insight and debug session in sync.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Developments in the Bazel plugin by JetBrains for IntelliJ IDEA, PyCharm and GoLand in 2026.1&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Improved stability and less freezes: all known freezes caused by the Bazel plugin have been fixed.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Sync performance improved, with overhead removed. Less spurious analysis cache invalidations.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Better hot swap in JVM applications.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Graceful cancellation for Bazel run and build.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Bazel 9 compatibility.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;More readable build and sync progress in IDE output.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Find more details on the plugin “What’s New” page.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the upcoming 2026.2 version, the team is focusing on improved support for Bazel projects with Python and Go, in particular when opened in PyCharm and GoLand.&lt;/p&gt;
+
+&lt;h3 id=&quot;meetupbuild-events&quot;&gt;Meetup.build events&lt;/h3&gt;
+
+&lt;p&gt;Check out the recaps of the latest Build meetups organised by EngFlow!&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.engflow.com/2026/04/14/engflow-x-uber-amsterdam-build-meetup-2026-scaling-builds/&quot;&gt;EngFlow x Uber Amsterdam Build Meetup 2026: Scaling Builds&lt;/a&gt; - hosted in the Uber office, the attendees got to enjoy 6 talks on all things Build.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.engflow.com/2026/06/17/munich-bazel-build-meetup-2026---tackling-supply-chain-security-and-monorepo-scalability/#how-i-tried-to-produce-otel-traces-out-of-bep&quot;&gt;Munich Bazel Build Meetup 2026: Tackling Supply Chain Security and Monorepo Scalability&lt;/a&gt; - the community met in the Salesforce offices for more great talks and knowledge sharing. Recordings of talks will soon be available to watch online.&lt;/p&gt;
+
+&lt;p&gt;Keep an eye on &lt;a href=&quot;http://meetup.build&quot;&gt;meetup.build&lt;/a&gt; for next meetup announcements.&lt;/p&gt;
+
+&lt;h3 id=&quot;community-created-content&quot;&gt;Community created content&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Articles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.buildbuddy.io/blog/content-defined-chunking/&quot;&gt;Remote Cache CDC: Reusing Bytes&lt;/a&gt; - by Tyler French @BuildBuddy&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2026-04-02-making-bazel-builds-more-reliable/&quot;&gt;Accessing external resources reliably with Bazel&lt;/a&gt; - by Alexey Tereshenkov @Tweag&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developers.redhat.com/articles/2026/06/10/building-and-running-bazel-applications-autosd#&quot;&gt;Building and running Bazel applications on AutoSD: Toolchains, containers, and recommended practices&lt;/a&gt; - by Bilal Elmoussaoui&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://dev.to/mbarzeev/mastering-your-frontend-build-with-bazel-testing-mlg&quot;&gt;Mastering Your Frontend Build with Bazel: Testing&lt;/a&gt; - by Matti Bar-Zeev&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://dev.to/mbarzeev/mastering-your-frontend-build-with-bazel-consolidating-tests-26nl&quot;&gt;Mastering Your Frontend Build with Bazel: Consolidating Tests&lt;/a&gt; - by Matti Bar-Zeev&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://adincebic.com/2026/05/10/a-practical-introduction-to-bazel.html&quot;&gt;A Practical Introduction to Bazel Persistent Workers&lt;/a&gt; - by Adin Ćebić&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://adincebic.com/2026/06/07/cleaning-up-old-bazel-patterns.html&quot;&gt;Cleaning up old Bazel patterns&lt;/a&gt; - by Adin Ćebić&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://medium.com/@somaktukai/micro-benchmarking-java-with-jmh-and-bazel-cdf74dc714f6&quot;&gt;Micro-Benchmarking Java with JMH and Bazel&lt;/a&gt; - by Somak Dutta&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://thecodinggopher.substack.com/p/why-bazel-is-the-endgame-for-build&quot;&gt;Why Bazel is the Endgame for Build Systems&lt;/a&gt; - by The Coding Gopher&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Videos&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=GMx6YwdELl4&quot;&gt;Introduction to the Bazel build system&lt;/a&gt; - by Florent Castelli, presented during Sweden Cpp&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=uSKCNDWuXjc&quot;&gt;Bazel for SONiC: What We’ve Learned and Contributed&lt;/a&gt; - by Borja Lorente @Aspect Build&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=glJek6y-iQg&quot;&gt;Bazel and Rust at OpenAI with David Zbarsky&lt;/a&gt; - by Aspect Build&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;GitHub repository: &lt;a href=&quot;https://github.com/bazelbuild/bazel&quot;&gt;https://github.com/bazelbuild/bazel&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Releases: &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases&quot;&gt;https://github.com/bazelbuild/bazel/releases&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Slack chat: &lt;a href=&quot;https://slack.bazel.build&quot;&gt;https://slack.bazel.build&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Google group: bazel-discuss@googlegroups.com&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Special Interest Groups (SIG):&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reach out the email(s) listed below if you’d like to be added to the SIG calendar invites.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;strong&gt;SIG&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Meeting frequency&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Point of contact&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/rules-authors&quot;&gt;Rules authors&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Every two weeks&lt;/td&gt;
+      &lt;td&gt;bazel-contrib@googlegroups.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Sv227BguEekx5Q3lwSdPEQqpkHAng6J6gNCNZqJLbtw/edit?resourcekey=0-GK_iaQRAEAu3aYslzlrEfQ&amp;amp;tab=t.0#heading=h.dzj8kjjzgp3s&quot;&gt;Android app development&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;ahumesky@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/bazel-intellij&quot;&gt;Bazel plugin for IntelliJ&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;en@jetbrains.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1EtQMTn-7sKFMTxIMlb0oDGpvGCMAuzphVcfx58GWuEM/edit?tab=t.0#heading=h.ol6wthckmbcw&quot;&gt;Remote execution API working group&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;chiwang@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1WhScaOLERet4Fxi4fa2Lpke2MgJZGvEE4EXeq6yb0LU/edit?usp=sharing&quot;&gt;Supply chain security / SBOM&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Weekly&lt;/td&gt;
+      &lt;td&gt;fwe@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Interested in learning about SIGs or starting a new one? Find more information on our &lt;a href=&quot;https://bazel.build/community/sig&quot;&gt;website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Want to get your SIG listed? Please add it to the &lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs&quot;&gt;Community repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;ideas-feedback-and-submissions-are-welcome&quot;&gt;Ideas, feedback, and submissions are welcome!&lt;/h2&gt;
+
+&lt;p&gt;Thank you for reading this edition! Let us know if you’d like to see any new information or changes in future community updates by reaching out to product@bazel.build. We look forward to hearing from you.&lt;/p&gt;
+
+&lt;p&gt;Thanks,&lt;/p&gt;
+
+&lt;p&gt;Google Bazel team&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;*Copyright © 2026 JetBrains s.r.o. JetBrains and IntelliJ are registered trademarks of JetBrains s.r.o.&lt;/em&gt;&lt;/p&gt;
+</description>
+      <pubDate>Tue, 07 Jul 2026 00:00:00 -0400</pubDate>
+    </item>
+  
+    <item>
+      <title>Bazel Q1 2026 Community Update</title>
+      <link>/2026/04/08/bazel-q1-2026-community-update.html</link>
+      <description>&lt;h2 id=&quot;announcements&quot;&gt;Announcements&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/BazelCon 2026 banner.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;mark-your-calendars-bazelcon-2026-is-heading-to-amsterdam&quot;&gt;Mark Your Calendars: BazelCon 2026 is Heading to Amsterdam!&lt;/h3&gt;
+
+&lt;p&gt;Get ready to build at scale in the heart of Europe. We are thrilled to announce that &lt;strong&gt;BazelCon 2026&lt;/strong&gt; will be taking place in the vibrant city of &lt;strong&gt;Amsterdam from October 13th–15th&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Whether you’re a seasoned build engineer or just starting your journey with monorepos and hermeticity, this is the place to be. Expect three days of deep-dive technical sessions, hands-on workshops, and the chance to connect with the global community of maintainers and power users.&lt;/p&gt;
+
+&lt;p&gt;The Details at a Glance:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;What:&lt;/em&gt; BazelCon 2026&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;Where:&lt;/em&gt; Postillion Hotel &amp;amp; Convention Centre Amsterdam, Netherlands&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;When:&lt;/em&gt; October 13–15, 2026&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;October 13th - Training Day&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;October 14th &amp;amp; 15th - 2 Conference days filled with technical sessions, Birds of a Feather and networking with the best in the field.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Registration opens April 22nd - register via the &lt;a href=&quot;https://events.linuxfoundation.org/bazelcon/&quot;&gt;BazelCon website&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;For the most up to date BazelCon news and updates, follow the &lt;a href=&quot;https://x.com/bazelbuild&quot;&gt;Bazel X account&lt;/a&gt; and the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CDAGD8TGR&quot;&gt;#bazelcon&lt;/a&gt; Bazel Slack channel.&lt;/p&gt;
+
+&lt;h3 id=&quot;call-for-proposals&quot;&gt;Call for Proposals&lt;/h3&gt;
+
+&lt;p&gt;Do you have a Bazel story to tell? We want to hear how you’re using Bazel to solve complex problems, whether you’re optimizing massive monorepos or building custom rules for your team. Sharing your real-world wins and lessons learned helps the entire community grow, so don’t hesitate to submit a proposal regardless of your experience level.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;CFP Opens: April 22&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;CFP Closes: June 21&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Review Period: June 22 – July 8&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Speaker Notifications: July 20&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Schedule Announcement: July 22&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The CfP submission form will be available via the &lt;a href=&quot;https://events.linuxfoundation.org/bazelcon/&quot;&gt;BazelCon website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;want-to-become-a-sponsor-of-bazelcon-2026&quot;&gt;Want to become a Sponsor of BazelCon 2026?&lt;/h3&gt;
+
+&lt;p&gt;Hosted by the Bazel Community in partnership with The Linux Foundation, BazelCon is the premier annual event for build enthusiasts, maintainers, and contributors to connect in an inclusive environment.&lt;/p&gt;
+
+&lt;p&gt;Sponsoring BazelCon 2026 puts your company right in front of the best build and platform engineers in the business. It is a great way to show your support for the community, meet key decision-makers, and find top talent to join your team. By becoming a partner, you help make the event possible while making sure the smartest people in tech know exactly who you are.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://events.linuxfoundation.org/bazelcon/sponsor/&quot;&gt;Download the 2026 Sponsorship Prospectus Here.&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Email us at bazelcon-planning@bazel.build to reserve your sponsorship, ask questions, or talk about different options.&lt;/p&gt;
+
+&lt;h2 id=&quot;product-updates&quot;&gt;Product Updates&lt;/h2&gt;
+
+&lt;h3 id=&quot;upcoming-bazel-releases&quot;&gt;Upcoming Bazel releases&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28365&quot;&gt;Bazel 9.1.0&lt;/a&gt; is expected to release on on 2026-04-16. Please send cherry-pick PRs against the &lt;a href=&quot;https://github.com/bazelbuild/bazel/tree/release-9.1.0&quot;&gt;release-9.1.0&lt;/a&gt; branch before the RC1 cutoff on 2026-04-09.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28821&quot;&gt;Bazel 8.7.0&lt;/a&gt; is expected to release on 2026-05-04. Please send cherry-pick PRs against the &lt;a href=&quot;https://github.com/bazelbuild/bazel/tree/release-8.7.0&quot;&gt;release-8.7.0&lt;/a&gt; branch before the RC1 cutoff on 2026-04-27.&lt;/p&gt;
+
+&lt;h3 id=&quot;q4--q1-releases&quot;&gt;Q4 &amp;amp; Q1 releases&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.0.0&quot;&gt;9.0.0&lt;/a&gt; has been released in January ‘26, followed by patch &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.0.1&quot;&gt;9.0.1&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.6.0&quot;&gt;8.6.0&lt;/a&gt; has been released in February ‘26.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.5.0&quot;&gt;8.5.0&lt;/a&gt; has been released in December ‘25, followed by patch &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/8.5.1&quot;&gt;8.5.1&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/7.7.0&quot;&gt;7.7.0&lt;/a&gt; has been released in October ‘25, followed by patch &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/7.7.1&quot;&gt;7.7.1&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/6.6.0&quot;&gt;6.6.0&lt;/a&gt; has been released in January ‘26. This release has also marked the end of support for Bazel 6.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;community-corner&quot;&gt;Community Corner&lt;/h2&gt;
+
+&lt;h3 id=&quot;bazel-for-clion-plugin-updates&quot;&gt;Bazel for CLion plugin updates&lt;/h3&gt;
+
+&lt;p&gt;A few updates from the JetBrains* team:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Plugin supports Bazel 9 and comes now with Starlark REPL.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;C++ code insight under transitions is being rolled out. CLion Classic lets the user select resolve configuration for such files if more than one configuration is available, CLion Nova support for configuration switching is on the way.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;GoogleTest TEST_P macro is supported for individual test runs.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Code insight takes into account conlyopts and cxxopts attributes.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;New PTY capable view is enabled by default for all outputs.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;build-foundation&quot;&gt;BUILD Foundation&lt;/h3&gt;
+
+&lt;p&gt;Announced at BazelCon 2025, the BUILD Foundation has been established as a Linux Foundation Directed Fund to accelerate the community roadmap for Bazel and related build technologies. While Google maintains governance of the core Bazel “kernel,” the new fiscal entity provides a formal structure to fund improved documentation, rulesets, and open-source infrastructure.&lt;/p&gt;
+
+&lt;p&gt;The BUILD Foundation is now enrolling founding members.&lt;/p&gt;
+
+&lt;p&gt;Read the &lt;a href=&quot;https://docs.google.com/presentation/d/14Yjm4gghabys0WrHgTNPlsaUmEWrgrSS_IEe2FJTzQ4/preview&quot;&gt;Prospectus and Membership Entitlements&lt;/a&gt; to learn more about the values of becoming a member.&lt;/p&gt;
+
+&lt;h3 id=&quot;web-updates-previews-for-the-bcr-and-bazelbuild&quot;&gt;Web Updates: Previews for the BCR and Bazel.build&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;A New Look for the BCR:&lt;/strong&gt; The community is working together on a more modern way to explore the Registry. Head over to &lt;a href=&quot;https://bcr.stack.build/&quot;&gt;bcr.stack.build&lt;/a&gt; to see the new UI in action and see how the ecosystem is evolving.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Evolving Bazel.build:&lt;/strong&gt; Thanks to a collaborative effort, the next version of our homepage is taking shape. Visit &lt;a href=&quot;https://preview.bazel.build/&quot;&gt;preview.bazel.build&lt;/a&gt; to see how we’re making documentation and resources easier for everyone to navigate.&lt;/p&gt;
+
+&lt;h3 id=&quot;upcoming-meetupbuild-events&quot;&gt;Upcoming Meetup.build events&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://meetup.build/munich-2026&quot;&gt;Build Meetup Munich&lt;/a&gt; - May 11, 2026&lt;/p&gt;
+
+&lt;h3 id=&quot;community-created-content&quot;&gt;Community created content&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Articles&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://plaid.com/blog/hello-bazel/&quot;&gt;Goodbye Dockerfile, Hello Bazel: Doubling Our CI Speed &lt;/a&gt; - by Nikita Chepanov and Oleg Dashevskii at Plaid&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://plaid.com/blog/merge-queue/&quot;&gt;Build less, merge faster: avoiding diamond merges with a merge queue &lt;/a&gt; - by Nikita Chepanov and Oleg Dashevskii at Plaid&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://pratikmahalle.medium.com/bazel-9-migration-how-to-get-faster-builds-before-the-bzlmod-refactor-d9591cd4f0fb&quot;&gt;Bazel 9 Migration: How to Get Faster Builds Before the Bzlmod Refactor&lt;/a&gt; - by Pratik Mahalle&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.aspect.build/bazel-for-sonic&quot;&gt;Bazel for SONiC: What We’ve Learned and Contributed&lt;/a&gt; - by Şahin Yort&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://adincebic.com/2026/03/08/managing-bazel-flags-in-monorepos.html&quot;&gt;Managing Bazel Flags in Monorepos with Flagsets (PROJECT.scl) &lt;/a&gt; - by Adin Ćebić&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://adincebic.com/2026/03/01/composing-bazel-rules-with-subrules.html&quot;&gt;Composing Bazel rules with subrules&lt;/a&gt; - by Adin Ćebić&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.engflow.com/2025/11/25/lightning-fast-build-file-generation-with-gazelle-lazy-indexing/&quot;&gt;Lightning-fast BUILD file generation with Gazelle lazy indexing&lt;/a&gt; - by Jay Conrod @EngFlow&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.smileykeith.com/2025/10/31/bazel-rule-extensions/&quot;&gt;Bazel rule extensions&lt;/a&gt; - by Keith Smiley&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://deepinthebuild.github.io/changed-targets-tricks&quot;&gt;Build Snippets #1 - Affected Target Analysis with Bazel&lt;/a&gt; - by Chris McDonald&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.tweag.io/blog/2025-11-20-migrating-bazel-symbolic-macros/&quot;&gt;Migrating to Bazel symbolic macros &lt;/a&gt; - by Alexey Tereshenkov @Tweag&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Videos&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=QJUTeD43QlE&quot;&gt;Bazel 9 is here! &lt;/a&gt; - by Aspect Build&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=NaeXpna0avo&quot;&gt;Tutorial: Set up Gazelle to automatically create your Bazel BUILD files &lt;/a&gt; - &amp;amp; other beginner friendly videos by Jon Block &lt;a href=&quot;https://www.youtube.com/playlist?list=PLIb3cp7HaQiRqGI4P85X9Oko5uQNfNkVS&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=glJek6y-iQg&quot;&gt;Bazel and Rust at OpenAI with David Zbarsky&lt;/a&gt; - by Aspect Build&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://fosdem.org/2026/schedule/event/F8SDAA-zero-sysroot_hermetic_llvm_cross-compilation_using_bazel/&quot;&gt;Zero-sysroot hermetic LLVM cross-compilation using Bazel&lt;/a&gt; - FOSDEM talk by David Zbarsky and Corentin Kerisit&lt;/p&gt;
+
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;GitHub repository: &lt;a href=&quot;https://github.com/bazelbuild/bazel&quot;&gt;https://github.com/bazelbuild/bazel&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Releases: &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases&quot;&gt;https://github.com/bazelbuild/bazel/releases&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Slack chat: &lt;a href=&quot;https://slack.bazel.build&quot;&gt;https://slack.bazel.build&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Google group: bazel-discuss@googlegroups.com&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Special Interest Groups (SIG):&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reach out the email(s) listed below if you’d like to be added to the SIG calendar invites.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;&lt;strong&gt;SIG&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Meeting frequency&lt;/strong&gt;&lt;/th&gt;
+      &lt;th&gt;&lt;strong&gt;Point of contact&lt;/strong&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/rules-authors&quot;&gt;Rules authors&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Every two weeks&lt;/td&gt;
+      &lt;td&gt;bazel-contrib@googlegroups.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1Sv227BguEekx5Q3lwSdPEQqpkHAng6J6gNCNZqJLbtw/edit?resourcekey=0-GK_iaQRAEAu3aYslzlrEfQ&amp;amp;tab=t.0#heading=h.dzj8kjjzgp3s&quot;&gt;Android app development&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;ahumesky@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs/bazel-intellij&quot;&gt;Bazel plugin for IntelliJ&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;en@jetbrains.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1EtQMTn-7sKFMTxIMlb0oDGpvGCMAuzphVcfx58GWuEM/edit?tab=t.0#heading=h.ol6wthckmbcw&quot;&gt;Remote execution API working group&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Monthly&lt;/td&gt;
+      &lt;td&gt;chiwang@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://docs.google.com/document/d/1WhScaOLERet4Fxi4fa2Lpke2MgJZGvEE4EXeq6yb0LU/edit?usp=sharing&quot;&gt;Supply chain security / SBOM&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Weekly&lt;/td&gt;
+      &lt;td&gt;fwe@google.com&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Interested in learning about SIGs or starting a new one? Find more information on our &lt;a href=&quot;https://bazel.build/community/sig&quot;&gt;website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Want to get your SIG listed? Please add it to the &lt;a href=&quot;https://github.com/bazelbuild/community/tree/main/sigs&quot;&gt;Community repository&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;ideas-feedback-and-submissions-are-welcome&quot;&gt;Ideas, feedback, and submissions are welcome!&lt;/h2&gt;
+
+&lt;p&gt;Thank you for reading this edition! Let us know if you’d like to see any new information or changes in future community updates by reaching out to product@bazel.build. We look forward to hearing from you.&lt;/p&gt;
+
+&lt;p&gt;Thanks,&lt;/p&gt;
+
+&lt;p&gt;Google Bazel team&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;*Copyright © 2026 JetBrains s.r.o. JetBrains and IntelliJ are registered trademarks of JetBrains s.r.o.&lt;/em&gt;&lt;/p&gt;
+</description>
+      <pubDate>Wed, 08 Apr 2026 00:00:00 -0400</pubDate>
+    </item>
+  
+    <item>
+      <title>Dependabot Now Supports Bazel Version Updates</title>
+      <link>/2026/02/20/dependabot.html</link>
+      <description>&lt;p&gt;We’re thrilled to announce Bazel support in Dependabot Version Updates! 🎉 Through a collaboration between the Bazel and Dependabot teams, along with feedback from both communities, Dependabot now handles both Bzlmod and WORKSPACE dependencies with proper lockfile generation.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-journey-to-bazel-support&quot;&gt;The Journey to Bazel Support&lt;/h2&gt;
+
+&lt;p&gt;Since 2019, the community has been asking for Bazel support in Dependabot (&lt;a href=&quot;https://github.com/dependabot/dependabot-core/issues/2196&quot;&gt;issue #2196&lt;/a&gt;). When the Dependabot team began building this, they reached out to the Bazel community in &lt;a href=&quot;https://github.com/bazelbuild/bazel/discussions/27142&quot;&gt;discussion #27142&lt;/a&gt; to understand what mattered most. The feedback was clear: proper lockfile generation is critical, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.MODULE.bazel&lt;/code&gt; support is needed, and many teams are still on WORKSPACE. Even though WORKSPACE is approaching end-of-life, supporting it was the right call because that’s where many users still are today.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-bazel-support-is-challenging&quot;&gt;Why Bazel Support Is Challenging&lt;/h2&gt;
+
+&lt;p&gt;Bazel presents unique challenges that make dependency management more complex than other ecosystems:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Two Dependency Systems:&lt;/strong&gt; Bazel has both the modern Bzlmod system (using MODULE.bazel files) and the legacy WORKSPACE system. Each works differently, and teams are at various stages of migration between them. Even though WORKSPACE is being phased out, community feedback showed many teams still rely on it. Support for both systems was essential.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Non-Trivial Lockfile Generation:&lt;/strong&gt; Bazel’s MODULE.bazel.lock files capture complex transitive dependency graphs including module extensions and repository rules, which goes beyond typical package manager lockfiles. Getting lockfile generation wrong breaks reproducible builds, so Dependabot worked closely with the Bazel community to ensure we got this right.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Community Migration in Progress:&lt;/strong&gt; While Bzlmod is the future (enabled by default in Bazel 8), a significant number of users still rely on WORKSPACE. Supporting both ensures users are met where they are.&lt;/p&gt;
+
+&lt;h2 id=&quot;built-in-partnership-with-bazel&quot;&gt;Built in Partnership with Bazel&lt;/h2&gt;
+
+&lt;p&gt;This feature came together through close collaboration between the Dependabot and Bazel teams and community:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Lockfile semantics:&lt;/strong&gt; Fabian Meumertzheim worked closely with the Dependabot team to ensure their lockfile generation matches Bazel’s behavior exactly&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Registry integration:&lt;/strong&gt; Understanding how to properly query and use the Bazel Central Registry&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Migration patterns:&lt;/strong&gt; The Bazel team shared insights into how real teams are moving from WORKSPACE to Bzlmod&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Testing and validation:&lt;/strong&gt; Yun Peng provided invaluable support and data to validate Dependabot’s implementation&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;File naming conventions:&lt;/strong&gt; Alex Eagle helped clarify the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.MODULE.bazel&lt;/code&gt; pattern and other edge cases&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A big thank you to everyone in both communities who tested this and provided feedback. This wasn’t just us building a feature; it was a true partnership from start to finish.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-it-works&quot;&gt;How It Works&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Dependency Detection:&lt;/strong&gt; Dependabot scans your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE.bazel&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.MODULE.bazel&lt;/code&gt; files (or WORKSPACE) for dependencies and checks the Bazel Central Registry for updates.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Lock File Management:&lt;/strong&gt; When updating dependencies, Dependabot properly regenerates lock files to maintain reproducible builds, the most critical piece to get right.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Pull Requests:&lt;/strong&gt; Dependabot opens PRs with updated dependency declarations, regenerated lock files, release notes, and compatibility information.&lt;/p&gt;
+
+&lt;h2 id=&quot;getting-started&quot;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;To enable Dependabot for your Bazel project, you’ll need:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Bazel Version:&lt;/strong&gt; Your project must be using Bazel 7, 8, or 9, as these are the supported versions.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Project Configuration:&lt;/strong&gt; A MODULE.bazel or WORKSPACE file is required at the root of your repository.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Dependabot Integration:&lt;/strong&gt; Add the Dependabot configuration by creating a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.github/dependabot.yml&lt;/code&gt; file and including the necessary YAML configuration.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;updates&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;package-ecosystem&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;bazel&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;directory&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;/&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;schedule&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;interval&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;weekly&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Customization (Optional):&lt;/strong&gt; All standard Dependabot configuration options are available, including custom schedules, grouped updates, and dependency ignores. See the &lt;a href=&quot;https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference&quot;&gt;Dependabot options reference&lt;/a&gt; for details.&lt;/p&gt;
+
+&lt;p&gt;Once configured, Dependabot will start watching your Bazel dependencies and opening PRs when updates are available.&lt;/p&gt;
+
+&lt;h2 id=&quot;try-it-out&quot;&gt;Try It Out&lt;/h2&gt;
+
+&lt;p&gt;Bazel support is now generally available to all Dependabot and Bazel users. Check out the &lt;a href=&quot;https://github.blog/changelog/2025-12-16-dependabot-version-updates-now-support-bazel/&quot;&gt;changelog&lt;/a&gt; on Github and &lt;a href=&quot;https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/dependabot-quickstart-guide&quot;&gt;Dependabot’s documentation for getting started&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We’re excited to see how this helps the Bazel community keep their dependencies secure and up-to-date. Open source is a team sport, and this feature is proof of what’s possible when teams work together across projects.&lt;/p&gt;
+</description>
+      <pubDate>Fri, 20 Feb 2026 00:00:00 -0500</pubDate>
+    </item>
+  
+    <item>
+      <title>Bazel 9 LTS</title>
+      <link>/2026/01/20/bazel-9.html</link>
+      <description>&lt;p&gt;We’re pleased to announce the release of Bazel 9.0! This LTS release is the culmination of some multi-year efforts to lay the groundwork for a healthier Bazel ecosystem, and we’re excited to see these efforts finally land. Read the &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.0.0&quot;&gt;full release notes for Bazel 9.0&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;highlights&quot;&gt;Highlights&lt;/h2&gt;
+
+&lt;h3 id=&quot;bzlmod-fully-replaces-workspace&quot;&gt;Bzlmod fully replaces WORKSPACE&lt;/h3&gt;
+
+&lt;p&gt;Back in 2021, we introduced Bzlmod, a package manager for Bazel intended to replace the WORKSPACE system. In the past few years, Bzlmod has gained a lot of traction in the community, and has become the default external dependency management system in Bazel.&lt;/p&gt;
+
+&lt;p&gt;In Bazel 8.0, we disabled the legacy WORKSPACE system by default; and in 9.0, we’ve completely removed the code supporting WORKSPACE. This enabled us to clear out age-old tech debt and implement some shiny new features with much greater ease, including a &lt;a href=&quot;https://bazel.build/versions/9.0.0/reference/command-line-reference#common_options-flag--repo_contents_cache&quot;&gt;local repo contents cache&lt;/a&gt; and an experimental &lt;a href=&quot;https://bazel.build/versions/9.0.0/reference/command-line-reference#startup_options-flag--experimental_remote_repo_contents_cache&quot;&gt;remote repo contents cache&lt;/a&gt; (thanks to Fabian Meumertzheim!).&lt;/p&gt;
+
+&lt;p&gt;But we know the work isn’t over; migration is hard, and many users are still on the old WORKSPACE system. To help with migration, we’ve developed a &lt;a href=&quot;https://bazel.build/external/migration_tool&quot;&gt;Bzlmod migration tool&lt;/a&gt; and an &lt;a href=&quot;https://github.com/bazelbuild/bazel-central-registry/tree/main/tools/code-agent&quot;&gt;agent-driven migration setup&lt;/a&gt;. They won’t magically complete the migration for you, but will hopefully help you get started and continue to iterate.&lt;/p&gt;
+
+&lt;h3 id=&quot;starlarkification-has-landed&quot;&gt;Starlarkification has landed&lt;/h3&gt;
+
+&lt;p&gt;Bazel started out with many language rulesets built in. These rules were written in Java and used private APIs, whereas custom rulesets were written in Starlark and used a more limited set of public APIs. To remove this inconsistency, further enable custom rulesets with more powerful APIs, and ease maintenance of the various rulesets, we started the Starlarkification effort, with the goal of moving built-in rulesets out of Bazel into their own modules written in Starlark.&lt;/p&gt;
+
+&lt;p&gt;In Bazel 8.0, we moved most built-in rules into their own modules; and in 9.0, we’ve completed the migration with the removal of built-in C++ rules into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules_cc&lt;/code&gt;. Bazel now ships with a lean core with rich APIs, and all previously built-in language-specific rulesets are now shipped separately and can be updated independently from a Bazel release. (A small number of language-specific flags, actions, and toolchain types remain in Bazel for now.)&lt;/p&gt;
+
+&lt;p&gt;In 8.0, we introduced the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--incompatible_autoload_externally&lt;/code&gt; flag to ease migration. With this flag, previously built-in rulesets that are now external modules could still be used as if they were built-in. In 9.0, this flag is empty by default, which means that all rulesets have to be explicitly loaded from external modules. We will remove this flag in 10.0.&lt;/p&gt;
+
+&lt;h3 id=&quot;prebuilt-protobuf-compiler&quot;&gt;Prebuilt protobuf compiler&lt;/h3&gt;
+
+&lt;p&gt;A long-standing &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/7095&quot;&gt;complaint&lt;/a&gt; among Bazel users is the need to frequently rebuild the protobuf compiler for seemingly no reason. In Bazel 9, the version of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;protobuf&lt;/code&gt; used by all Bazel builds will be upgraded to at least version 33.4, which includes support for a prebuilt protobuf compiler. In most cases, users can simply set the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--@protobuf//bazel/toolchains:prefer_prebuilt_protoc&lt;/code&gt; flag to avoid having to build &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;protoc&lt;/code&gt; themselves.&lt;/p&gt;
+
+&lt;p&gt;For more information, see the &lt;a href=&quot;https://protobuf.dev/news/2026-01-16/&quot;&gt;announcement&lt;/a&gt; on Protobuf News.&lt;/p&gt;
+
+&lt;h2 id=&quot;adopting-bazel-9&quot;&gt;Adopting Bazel 9&lt;/h2&gt;
+
+&lt;p&gt;As with every major release, Bazel 9 introduces incompatible changes. Most of these have been included in our &lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/9.0.0&quot;&gt;release notes&lt;/a&gt;. However, if you run into any difficulties while upgrading, we encourage you to visit the &lt;a href=&quot;https://github.com/bazelbuild/bazel/discussions/28344&quot;&gt;Bazel 9 migration&lt;/a&gt; GitHub discussion to ask for help or contribute your own fixes.&lt;/p&gt;
+
+&lt;h2 id=&quot;bazel-6-deprecation&quot;&gt;Bazel 6 deprecation&lt;/h2&gt;
+
+&lt;p&gt;With the launch of Bazel 9, we’ll deprecate Bazel 6 according to our &lt;a href=&quot;https://bazel.build/release&quot;&gt;release model&lt;/a&gt;. We’ll no longer be backporting fixes for security and OS compatibility issues to 6.x.&lt;/p&gt;
+
+&lt;p&gt;Thanks to community member Mike Bland, however, we were able to publish one last minor release (&lt;a href=&quot;https://github.com/bazelbuild/bazel/releases/tag/6.6.0&quot;&gt;6.6.0&lt;/a&gt;) to fix incompatibilities with macOS Tahoe. Thank you, Mike!&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-next&quot;&gt;What’s next?&lt;/h2&gt;
+
+&lt;p&gt;There’s plenty to look out for on the horizon:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;A new Bazel documentation site&lt;/strong&gt;: Community members Alan Mond and Alex Eagle have been working with the Bazel team to set up a new documentation site powered by Mintlify, following Alan’s amazing essay, &lt;em&gt;&lt;a href=&quot;https://alanmond.com/posts/bazel-documentation-improvements/&quot;&gt;Bazel Docs: Why It Might Be Time For A Refresh&lt;/a&gt;&lt;/em&gt;. The site is currently in preview mode at &lt;a href=&quot;https://preview.bazel.build/&quot;&gt;preview.bazel.build&lt;/a&gt;; we plan to eventually switch &lt;a href=&quot;https://bazel.build/&quot;&gt;bazel.build&lt;/a&gt; to this new website.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;A new web UI for Bazel Central Registry&lt;/strong&gt;: Community member Paul Johnston has developed a new web UI for the Bazel Central Registry, with a more powerful search, views of modules filtered by language and maintainers, and more. The site is currently in preview mode at &lt;a href=&quot;https://bcr.stack.build&quot;&gt;bcr.stack.build&lt;/a&gt;; we plan to eventually switch &lt;a href=&quot;https://registry.bazel.build&quot;&gt;registry.bazel.build&lt;/a&gt; to this new website. A special shoutout to community member Max Goisser, who created the original web UI for the BCR!&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Starlark typing&lt;/strong&gt;: Following feedback from the community, we have been designing and implementing a typing system for Starlark, aiming to help ruleset developers manage the growing complexity of Starlark code. We plan to ship this in Bazel 10.0. Follow the progress at &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/27370&quot;&gt;#27370&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And finally, a big thank-you to the entire Bazel community for your support. Whether it was filing issues, contributing code, or discussing ideas, every little bit helped to make Bazel 9 possible. We hope you’ll continue to participate and follow along through the usual channels: &lt;a href=&quot;https://github.com/bazelbuild/bazel/discussions&quot;&gt;GitHub Discussions&lt;/a&gt;, the &lt;a href=&quot;https://slack.bazel.build/&quot;&gt;Bazel Slack channel&lt;/a&gt;, &lt;a href=&quot;https://x.com/bazelbuild&quot;&gt;@bazelbuild on X (Twitter)&lt;/a&gt;, the &lt;a href=&quot;https://blog.bazel.build&quot;&gt;Bazel blog&lt;/a&gt;, and the &lt;a href=&quot;https://groups.google.com/g/bazel-discuss&quot;&gt;bazel-discuss&lt;/a&gt; mailing list. See you next time!&lt;/p&gt;
+</description>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 -0500</pubDate>
+    </item>
+  
+    <item>
+      <title>Postmortem for *.bazel.build SSL certificate expiry</title>
+      <link>/2026/01/16/ssl-cert-expiry.html</link>
+      <description>&lt;p&gt;On 2025-12-26, at 07:35 UTC, the SSL certificates for many &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.bazel.build&lt;/code&gt; domains expired. This resulted in widespread build breakages for many Bazel users, as several crucial domains serve essential functionality used by nearly all Bazel builds. It was reported by users on &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28101&quot;&gt;GitHub&lt;/a&gt;, &lt;a href=&quot;https://bazelbuild.slack.com/archives/CA31HN1T3/p1766739655375159&quot;&gt;Slack&lt;/a&gt;, and the &lt;a href=&quot;https://groups.google.com/g/bazel-discuss/c/pnxWzgE_UbU&quot;&gt;bazel-discuss&lt;/a&gt; mailing list. The outage lasted for approximately 13 hours before being resolved.&lt;/p&gt;
+
+&lt;h2 id=&quot;impact&quot;&gt;Impact&lt;/h2&gt;
+
+&lt;p&gt;The majority of the impact was Bazel builds in CI environments breaking due to the following domains being inaccessible:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;releases.bazel.build&lt;/code&gt;: This domain hosts Bazel release binaries and serves as the primary source for Bazelisk to fetch specific versions of Bazel. The majority of builds failed immediately at this stage, as CI environments often don’t have a Bazel binary cached locally.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bcr.bazel.build&lt;/code&gt;: This is the Bazel Central Registry (BCR), which serves metadata Bazel uses to resolve external dependencies. Access to the BCR is required unless the lockfile is up to date and the download cache is primed, the latter of which is often not set up for CI environments.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mirror.bazel.build&lt;/code&gt;: This is a mirror that hosts copies of source archives for certain popular Bazel projects. Users who managed to work around the unavailability of the previous two domains could nevertheless be unable to build because of this mirror being down.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
+
+&lt;p&gt;The Bazel team at Google operates a number of websites under the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bazel.build&lt;/code&gt; domain. These domains are backed by various underlying systems; for example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bazel.build&lt;/code&gt; itself is currently hosted on the same backend that powers the &lt;a href=&quot;https://developers.google.com/&quot;&gt;Google Developers&lt;/a&gt; site, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;registry.bazel.build&lt;/code&gt; is currently hosted on GitHub Pages.&lt;/p&gt;
+
+&lt;p&gt;Most other subdomains (including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;releases&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bcr&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mirror&lt;/code&gt;) are hosted on Google Cloud Platform (GCP). They each statically serve files from a Google Cloud Storage (GCS) bucket, and share a &lt;a href=&quot;https://docs.cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs&quot;&gt;Compute Engine Google-managed SSL certificate&lt;/a&gt;. These are the subdomains impacted by the outage.&lt;/p&gt;
+
+&lt;p&gt;A Google-managed SSL certificate is set up to cover a list of domains, and is valid for 90 days. About one month before expiry, an auto-renewal process triggers, which checks the validity of each of the domains it covers and provisions a renewed certificate. Crucially, &lt;em&gt;every&lt;/em&gt; domain needs to be reachable before the renewed certificate is provisioned.&lt;/p&gt;
+
+&lt;h2 id=&quot;timeline-of-outage&quot;&gt;Timeline of outage&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;All times are UTC unless otherwise noted.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;On 2023-02-23, a new Google-managed SSL certificate was set up to cover all GCP-hosted &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.bazel.build&lt;/code&gt; domains, including &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;releases&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bcr&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mirror&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docs-staging.bazel.build&lt;/code&gt;. The certificate then went on to auto-renew successfully for the next 2+ years.&lt;/li&gt;
+  &lt;li&gt;On 2025-10-30, a change was submitted to our DNS records to remove the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docs-staging.bazel.build&lt;/code&gt; subdomain, which was no longer used.&lt;/li&gt;
+  &lt;li&gt;Around 2025-11-26, the auto-renewal process for the Google-managed SSL certificate kicked off. This process went on to fail repeatedly due to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docs-staging.bazel.build&lt;/code&gt; no longer being accessible. However, these failures never triggered any notifications.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;[Outage start]&lt;/strong&gt; On 2025-12-26, at 07:35:39, the certificate expired. Affected Bazel builds immediately started failing.&lt;/li&gt;
+  &lt;li&gt;At 09:00, a user reported build breakages to the &lt;a href=&quot;https://bazelbuild.slack.com/archives/CA31HN1T3/p1766739655375159&quot;&gt;Bazel Slack server&lt;/a&gt;. At 09:01, a user filed an issue on &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28101&quot;&gt;Bazel’s GitHub repo&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;At 12:15, a Bazel team member based in Munich noticed the GitHub issue and posted a message in the team chat group. The team member was out of office and could not help investigate.&lt;/li&gt;
+  &lt;li&gt;At 15:08 (10:08 Eastern Time), a Bazel team member based in New York started investigating.&lt;/li&gt;
+  &lt;li&gt;In the next few hours, two more team members based in New York joined the investigation and attempted various mitigation approaches, initially without success.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;[Outage end]&lt;/strong&gt; At 20:31, a new SSL certificate was finally set up and propagated to all necessary frontends. Access to all affected domains was restored.&lt;/li&gt;
+  &lt;li&gt;At 20:32, the resolution was communicated to users on GitHub, Slack, and the bazel-discuss mailing list.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;what-went-wrong&quot;&gt;What went wrong&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;No alerting&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;The Google-managed SSL certificate renewal failures did not trigger any notifications.&lt;/li&gt;
+      &lt;li&gt;Moreover, the Bazel team didn’t have alerting set up for SSL certificate expiry, despite a &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/15515&quot;&gt;previous similar outage&lt;/a&gt; having left an action item to set up alerts. The action item remained unprioritized and unaddressed until this outage.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Unfortunate timing and lack of expertise&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;The outage happened during the winter holidays, when many Bazel team members (including the entire team based in Munich, where Dec 26th is a public holiday) were on vacation. The outage also happened at 2am in New York, way before any team members started working.&lt;/li&gt;
+      &lt;li&gt;Only a small fraction of team members were familiar with the infrastructure used to manage the bazel.build domain, and the team member with the most expertise was completely unavailable. Other teams whose expertise might have been helpful were also mostly OOO, so we had to investigate on our own.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Outdated or insufficient documentation&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;The Bazel team’s internal documentation for managing SSL certificates included instructions to set up a manual certificate in case of emergency, but this turned out to be a red herring as this manual certificate system had already been deprecated. The instructions also involved requesting a specific permission that only some team members on vacation could grant, which led to more wasted time.&lt;/li&gt;
+      &lt;li&gt;The documentation did not mention that deleting a subdomain’s DNS records required creating a new Google-managed certificate, nor were there any automated checks in place to keep these in sync.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Poor error messaging and GCP complexity&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;When a new Google-managed certificate is set up but fails to provision, it provides no error message to suggest &lt;em&gt;why&lt;/em&gt; the provision failed. The GCP documentation offers a &lt;a href=&quot;https://docs.cloud.google.com/load-balancing/docs/ssl-certificates/troubleshooting&quot;&gt;troubleshooting page&lt;/a&gt; that lists a number of potential failure modes, which meant that the incident responders had to investigate every single one.&lt;/li&gt;
+      &lt;li&gt;In the end, it turned out that the new SSL certificate had to be associated with both IPv4 and IPv6 “target proxies”.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Slow provisioning process&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;SSL certificates naturally take a long time (up to 45 minutes) to provision and propagate. Coupled with the trial-and-error nature of the investigation, this time cost had to be paid repeatedly, lengthening the duration of the outage.&lt;/li&gt;
+      &lt;li&gt;What made this more confusing was that the provisioning had transient states of failure: the provisioning process could report a state of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FAILED_NOT_VISIBLE&lt;/code&gt; but still return to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ACTIVE&lt;/code&gt; after as many as 30 minutes. This made it very difficult to tell how long we had to wait.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;where-we-got-lucky&quot;&gt;Where we got lucky&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Despite not being perfect, the documentation from the previous similar outage was immensely helpful for the resolution of the new outage.&lt;/li&gt;
+  &lt;li&gt;Many community members stepped up to offer mitigation strategies, including &lt;a href=&quot;https://github.com/DataDog/datadog-agent/pull/44621&quot;&gt;@AliDatadog&lt;/a&gt;, &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28101#issuecomment-3692747741&quot;&gt;@lshirui&lt;/a&gt;, and &lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28101#issuecomment-3693126654&quot;&gt;@blackliner&lt;/a&gt;. (See also “Recommendations for Bazel users” below.)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;next-steps&quot;&gt;Next steps&lt;/h2&gt;
+
+&lt;p&gt;To prevent similar outages from happening in the future, we’re taking the following steps:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Set up alerting&lt;/strong&gt;: We have set up a GitHub Actions &lt;a href=&quot;https://github.com/bazelbuild/bazel/blob/master/.github/workflows/ssl-monitor.yml&quot;&gt;workflow&lt;/a&gt; to detect when SSL certificates are nearing expiry and file issues (&lt;a href=&quot;https://github.com/bazelbuild/bazel/issues/28201&quot;&gt;example&lt;/a&gt;) to notify Bazel team members. We’re also looking into setting up a prober to report general access issues with resources.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Improve internal documentation and automation&lt;/strong&gt;: We’ve removed the outdated instructions from our internal documentation. Changes to add or remove DNS records will now require creating a new Google-managed SSL certificate with a matching domain list.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Recommendations for Bazel users&lt;/strong&gt;: We’ve &lt;a href=&quot;https://bazel.build/external/faq#how-do-i-insulate-my-builds-from-the-internet&quot;&gt;updated our recommendations&lt;/a&gt; for Bazel users to insulate themselves from potential outages of this kind. This includes properly populating the download cache and ensuring the lockfile is up to date in CI environments, and hosting internal mirrors for Bazel release binaries, BCR metadata, and source archives.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;see-also&quot;&gt;See also&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://surfingcomplexity.blog/2025/12/27/the-dangers-of-ssl-certificates/&quot;&gt;The dangers of SSL certificates&lt;/a&gt; by Lorin Hochstein&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.engflow.com/2026/01/05/december-2025-bazel-central-registry-outage/&quot;&gt;December 2025 Bazel Central Registry Outage&lt;/a&gt; by John Cater&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      <pubDate>Fri, 16 Jan 2026 00:00:00 -0500</pubDate>
+    </item>
+  
+    <item>
+      <title>BazelCon 2025 Recap: Recordings and Birds of a Feather Session Notes</title>
+      <link>/2025/12/08/bazelcon-recap.html</link>
+      <description>&lt;p&gt;Autumn is BazelCon season, and this year was no different: Last month we hosted &lt;a href=&quot;https://bazelcon2025.sched.com/&quot;&gt;BazelCon 2025&lt;/a&gt; together with the Linux Foundation and our sponsors.&lt;/p&gt;
+
+&lt;p&gt;We were able to welcome &lt;strong&gt;331 attendees&lt;/strong&gt; from 214 organizations to Atlanta, Georgia.
+The conference kicked off with a day of sponsored sessions on Sunday, followed by two days filled with conference talks, birds-of-a-feather sessions and multiple unconferences.&lt;/p&gt;
+
+&lt;p&gt;If you want to learn more, you can take a look at the &lt;a href=&quot;https://events.linuxfoundation.org/wp-content/uploads/2025/12/BazelCon25_PostEventReport.pdf&quot;&gt;post-event report&lt;/a&gt;, browse through some &lt;a href=&quot;https://flic.kr/s/aHBqjCAQoA&quot;&gt;photos&lt;/a&gt;, watch the recordings of the main stage talks or read through the birds-of-a-feather notes linked below.&lt;/p&gt;
+
+&lt;p&gt;A heartfelt “thank you” goes out to everyone who made this BazelCon another great success: the Linux Foundation, our sponsors, our amazing presenters and all the attendees.
+We’re looking forward to seeing all of you again in 2026!&lt;/p&gt;
+
+&lt;h2 id=&quot;recordings&quot;&gt;Recordings&lt;/h2&gt;
+
+&lt;p&gt;You can find the recordings on our new &lt;a href=&quot;https://www.youtube.com/@BazelCon&quot;&gt;@BazelCon&lt;/a&gt; channel (&lt;a href=&quot;https://www.youtube.com/playlist?list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&quot;&gt;full playlist&lt;/a&gt;):&lt;/p&gt;
+
+&lt;h3 id=&quot;sunday-november-9-2025&quot;&gt;Sunday, November 9, 2025&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=1CX6x2siC28&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=1&quot;&gt;Sponsored Session: Enough Bazel to Be Dangerous: A Debugging Cookbook&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=MB6Txen7rUk&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=2&quot;&gt;Sponsored Session: Bazel102: Python&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=gpkzkv1ifkc&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=3&quot;&gt;Sponsored Session: Bazel Management for Developer Productivity Experts&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=yhRW_Fugm9c&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=4&quot;&gt;Sponsored Session: Bzlmod Migration Bootcamp&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=AeL9XeMh97U&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=5&quot;&gt;Sponsored Session: Integrate Dev Workflows&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=owg6h-eGb5g&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=6&quot;&gt;Sponsored Session: Writing Bazel Rules&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;monday-november-10-2025&quot;&gt;Monday, November 10, 2025&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=N4e5TsiFqzQ&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=7&quot;&gt;Opening Remarks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Zpfl82MU4U0&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=8&quot;&gt;Community Update&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=FwruvTfClwk&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=9&quot;&gt;State of the Union&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=iQqLtuBzkKE&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=10&quot;&gt;Lessons From Routing Remote Actions at Scale &lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=l8XmaodF_Vg&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=11&quot;&gt;Deploying High-Performance Remote Execution Setup in Multi-Region Topology&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=NdZIeAbS32Q&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=12&quot;&gt;Bazel Build Data: Avoiding Pitfalls in Debugging and Optimizing Builds at Scale&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Otjbpn2rB3w&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=13&quot;&gt;CI on Spot: Bazel at 30% the Cost With Zero Downtime&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=vzTqkmeXDGA&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=14&quot;&gt;What to Remote Expect When You’re Executing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=g_5jyXsCELk&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=15&quot;&gt;Review of State of the Art Solutions for IDE support and Developer Tooling in Monorepos using Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=952Rr7wgfWo&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=16&quot;&gt;CMake To Bazel, Migrating Spotify’s Desktop Apps&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=cfM7lo7_bJo&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=17&quot;&gt;Gazelle Across the Stack: Same Tool, Different Problems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=1A8LMZ21t6Y&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=18&quot;&gt;Skycache: Slashing the Cold Build Tax in Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=eA-3Gfr4epU&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=19&quot;&gt;Haskell Builds at Scale: Comparing Bazel and Buck2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=NO028kW_VDc&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=20&quot;&gt;Sponsored Lightning Talk: Building at Scale: How EngFlow and Databricks Use Build Data to Manage 1 Billion Actions a Day&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=j7-IMZ2q5W4&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=21&quot;&gt;Sponsored Lightning Talk: Beyond Make Serve: Starlarkification for Tasks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=i07kTWg38q8&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=22&quot;&gt;asset-fuse: Bringing Large Files to Buck2 and Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Tt7Zpt4BsoY&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=23&quot;&gt;Lightning-Fast Build File Generation with Gazelle Lazy Indexing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=uiZ6_2nenJQ&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=24&quot;&gt;Multi-platform &amp;amp; Sanitizer Builds With One Command&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=26CoMExb6FE&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=25&quot;&gt;Improving Bazel TypeScript Type-Checks With IsolatedDeclarations&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Ats32wOtjrY&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=26&quot;&gt;Optimizing for Scale: Lessons From Building Robinhood Legend&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=YrcsDu63OWA&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=27&quot;&gt;Lights, Camera, Build! Reproducible Media Editing With Bazel, Ffmpeg, and Sox&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;tuesday-november-11-2025&quot;&gt;Tuesday, November 11, 2025&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=kqMOwABJguc&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=28&quot;&gt;Flagsets&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=rCFc3tFcVVE&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=29&quot;&gt;Precision CI at Scale: Target-Aware Workflows with Bazel Diff&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=Q4p-I9TsUnA&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=30&quot;&gt;Automating Software Supply Chain Security With Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=ZBYWI4vdeco&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=31&quot;&gt;A Product-First Approach to Growing BCR&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=HI7LwgyOQO4&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=32&quot;&gt;Nix and Bazel: A New Hope&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=oN7uUQBLLDw&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=33&quot;&gt;How We Automated 3rd-Party Dependency Management in a Bazel Monorepo&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=IvJD0kSJcoI&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=34&quot;&gt;A Bazel Story: Cargo Splicing and the Three Lockfiles&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=u8oNVX2sgms&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=35&quot;&gt;Gradle-Backed Dependency Resolution in Rules_jvm_external&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=9L32zheIr-A&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=36&quot;&gt;Immutable Infrastructure for Clinical AI: Bazel for Dependency Governance in Healthcare ML&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=xIWge1XEZew&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=37&quot;&gt;Managing Flaky Tests With Bazel and rules_go&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=biYXmAv4Ppk&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=38&quot;&gt;rules_img: A Ground-Up Redesign of Container Image Building for Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=jsIzSkaUcx8&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=39&quot;&gt;Sponsored Lightning Talk: Rootcausing Rebuilds with “bb explain”&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=xa-4_hdk_C4&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=40&quot;&gt;Bazel Beyond Code: Scalable AI Data Pipelines for Autonomous Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=-1qrpqFsqQ0&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=41&quot;&gt;The Curious Case of Slow Java Tests After Moving to Bazel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=8k9ZKBKyjuA&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=42&quot;&gt;Scaling Java Dependency Hygiene: Bazel deps_filter &amp;amp; the Dependencyset Macro&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=5j2bb44CV1g&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=43&quot;&gt;Using Fawltydeps: or When Gazelle Does Not Tame Your Python&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=OnaWiq07V2Q&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=44&quot;&gt;Determinism in a Non-Hermetic World&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=RCcE5sxOn2o&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=45&quot;&gt;Hermeticity the Bazel Way: Relative Paths Everywhere&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=CiHJctRxI78&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=46&quot;&gt;Bazel “At the Edge”: Building for the World’s Toughest Environments&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=lh-NaENSEBU&amp;amp;list=PLak8-7eFSpowmNiR2lhvJEomLA140yban&amp;amp;index=47&quot;&gt;Go, Wasm, &amp;amp; Bazel: A Blueprint for Hermetic, High-Performance Web Applications&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you are interested in presentation slides, you can find them attached to the &lt;a href=&quot;https://bazelcon2025.sched.com/area/Yes&quot;&gt;schedule&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;birds-of-a-feather-notes&quot;&gt;Birds of a Feather notes&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1HgNSpCslH2FJiF2KiaNrQUJ05nk7hYZV_IdXB2zHIlM/edit?usp=sharing&quot;&gt;Bazel in the IDE 2025&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1GcN0Bi-qrokHT_kE4dt6vFPMvAaIeEVtj3jsSSROB6w/edit?usp=sharing&quot;&gt;AI Breaks Everything: Is Your Build Infrastructure Ready?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1R-02--2NQuu2TR7covDTqNMExMhjHfPS-YHoqOweaqk/edit?usp=sharing&quot;&gt;Let’s Build the Future of Bazel Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1aqn9aZl3JA4AbTkkNj7UmGEGAegrhn5VHy5m50joUGY/edit?usp=sharing&quot;&gt;Bzlmod&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1T7VxMDdjVD5pWghylOBGQf0KfVMX0dbwYQDJv_oky1U/edit?usp=sharing&quot;&gt;Android&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/10AgoOcCbt3q4SzoVsHiKkQzVLxUNug2BOsmZ9RThAtE/edit?usp=sharing&quot;&gt;Supply Chain Security&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;unconference-notes&quot;&gt;Unconference notes&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.google.com/document/d/1v3nG9Vg-56VACel9pKwiDhL9LZgcTUWOFw4fk1Zr6vM/edit?usp=sharing&quot;&gt;Types on Starlark&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+      <pubDate>Mon, 08 Dec 2025 00:00:00 -0500</pubDate>
+    </item>
+  
+</channel>
+
+</rss>
